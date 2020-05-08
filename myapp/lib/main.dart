@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.lightGreen,
       ),
-      home: MyHomePage(title: 'This is my Orbital Project'),
+      home: MyHomePage(title: 'Orbital Project'),
     );
   }
 }
