@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.lightGreen,
       ),
-      home: MyHomePage(title: 'Flutter Home Page'),
+      home: MyHomePage(title: 'This is my Orbital Project'),
     );
   }
 }
