@@ -2,14 +2,15 @@ import 'package:DaySpend/add_expense.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rounded_progress_bar/rounded_progress_bar_style.dart';
 import 'package:flutter_rounded_progress_bar/flutter_rounded_progress_bar.dart';
-class HomePage extends StatefulWidget {
-  HomePage({Key key}) : super(key: key);
+
+class Expenses extends StatefulWidget {
+  Expenses({Key key}) : super(key: key);
 
   @override
-  _HomePageState createState() => _HomePageState();
+  _ExpensesState createState() => _ExpensesState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _ExpensesState extends State<Expenses> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -156,27 +157,28 @@ class _HomePageState extends State<HomePage> {
                               ))
                         ])),
                       )),
-                     Container(
-                  padding: const EdgeInsets.all(10),
-                  margin:
-                      const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                  height: 200,
-                  width: 350,
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.all(Radius.circular(20)),
-                    color: Colors.tealAccent,
-                  ),
-                  child: Column(
-                    children: <Widget>[
-                      Text(
-                        'HAPPENING TODAY',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w300,
-                          color: Colors.blueGrey,
-                          fontSize: 20,
-                  //insert planner widget
-    ))]))]))));
+                  Container(
+                      padding: const EdgeInsets.all(10),
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 10, horizontal: 15),
+                      height: 200,
+                      width: 350,
+                      decoration: BoxDecoration(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(20)),
+                        color: Colors.tealAccent,
+                      ),
+                      child: Column(children: <Widget>[
+                        Text('HAPPENING TODAY',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w300,
+                              color: Colors.blueGrey,
+                              fontSize: 20,
+                              //insert planner widget
+                            ))
+                      ]))
+                ]))));
   }
 }
 
