@@ -1,9 +1,9 @@
+import 'homepage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'home.dart';
-import 'planner.dart';
-import 'expenses.dart';
+import 'package:DaySpend/planner/planner.dart';
+
 
 void main() {
   runApp(MyApp());
@@ -20,7 +20,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    controller = PageController(initialPage: 1);
+    controller = PageController(initialPage: 0);
   }
 
   @override
@@ -29,7 +29,7 @@ class _MyAppState extends State<MyApp> {
     super.dispose();
   }
 
-  List<Widget> pages = [Expenses(), Home(), Planner()];
+  List<Widget> pages = [Homepage(), Planner()];
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
