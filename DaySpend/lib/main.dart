@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'homepage_expenses.dart';
+import 'homepage.dart';
 
 void main() {
   runApp(MyApp());
@@ -15,6 +15,6 @@ class MyApp extends StatefulWidget {
 class MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(debugShowCheckedModeBanner: false, home: HomePage());
+    return MaterialApp(debugShowCheckedModeBanner: false, home: HomePage() );
   }
 }
