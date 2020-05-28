@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:DaySpend/planner/planner.dart';
 
-
 void main() {
   runApp(MyApp());
 }
