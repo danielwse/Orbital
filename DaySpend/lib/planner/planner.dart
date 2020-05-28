@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:grouped_list/grouped_list.dart';
+import 'package:DaySpend/fonts/header.dart';
 
 List _elements = [
   {'name': 'Study', 'group': 'Monday'},
@@ -21,14 +22,12 @@ class Planner extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: Color(0xffF7F7F7),
         appBar: AppBar(
-          title: Text(
-            'DaySpend',
-            style: TextStyle(
-                fontWeight: FontWeight.w300,
-                fontStyle: FontStyle.italic,
-                color: Colors.black),
+          title: Header(
+            text: 'DaySpend',
+            italic: true,
+            size: 20,
           ),
           backgroundColor: Colors.transparent,
           elevation: 0.0,
@@ -38,6 +37,13 @@ class Planner extends StatelessWidget {
             ),
           ),
           actions: <Widget>[
+            IconButton(
+              onPressed: () {},
+              icon: Icon(
+                Icons.today,
+                color: Colors.black,
+              ),
+            ),
             IconButton(
               onPressed: () {},
               icon: Icon(
@@ -69,17 +75,21 @@ class Planner extends StatelessWidget {
           ],
         ),
         body: GroupedListView<dynamic, String>(
+          order: GroupedListOrder.ASC,
           groupBy: (element) => element['group'],
           elements: _elements,
-          useStickyGroupSeparators: true,
+          useStickyGroupSeparators: false,
           groupSeparatorBuilder: (String value) => Padding(
-            padding: const EdgeInsets.all(8.0),
+            // EdgeInsets.fromLTRB(15, 40, 10, 10)
+            padding: (value == 'Monday'
+                ? EdgeInsets.fromLTRB(15, 10, 10, 10)
+                : EdgeInsets.fromLTRB(15, 40, 10, 10)),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
                   value,
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w300),
                 ),
               ],
             ),
@@ -91,7 +101,13 @@ class Planner extends StatelessWidget {
               child: Container(
                 child: ListTile(
                   contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
-                  title: Text(element['name']),
+                  title: Text(
+                    element['name'],
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.5),
+                  ),
                   trailing: Icon(Icons.arrow_forward),
                 ),
               ),

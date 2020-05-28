@@ -1,6 +1,7 @@
 import 'package:DaySpend/expenses/add_expense_popup.dart';
 import 'package:flutter/material.dart';
 import 'package:DaySpend/expenses/homepage_expenses.dart';
+
 class Homepage extends StatefulWidget {
   Homepage({Key key}) : super(key: key);
 
@@ -15,6 +16,7 @@ class _HomepageState extends State<Homepage> {
         debugShowCheckedModeBanner: false,
         home: SafeArea(
             child: Scaffold(
+                backgroundColor: Color(0xffF7F7F7),
                 floatingActionButton: AddExpense(),
                 floatingActionButtonLocation:
                     FloatingActionButtonLocation.endFloat,
@@ -45,4 +47,3 @@ class _HomepageState extends State<Homepage> {
                 ]))));
   }
 }
-
