@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:DaySpend/planner/planner.dart';
+import 'package:DaySpend/expenses/expenses.dart';
 
 void main() {
   runApp(MyApp());
@@ -28,7 +29,7 @@ class _MyAppState extends State<MyApp> {
     super.dispose();
   }
 
-  List<Widget> pages = [Homepage(), Planner()];
+  List<Widget> pages = [Expenses(),Homepage(), Planner()];
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

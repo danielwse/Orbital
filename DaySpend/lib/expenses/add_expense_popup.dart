@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:DaySpend/expenses/expense_db.dart';
 
 class AddExpense extends StatefulWidget {
   AddExpense({Key key}) : super(key: key);
@@ -13,20 +14,21 @@ class _AddExpenseState extends State<AddExpense> {
   PersistentBottomSheetController bottomSheetController;
   @override
   Widget build(BuildContext context) {
-    return FloatingActionButton(
-        child: Icon(Icons.add),
-        mini: true,
-        backgroundColor: Colors.lightBlue,
-        onPressed: () {
-          bottomSheetController = showBottomSheet(
-              context: context, builder: (context) => BottomSheetWidget());
-          // bottomSheetController.closed.then((value) {
-          // showFloatingActionButton(false);
-          // });
-
-          //bottomSheetController.close();
-          // showFloatingActionButton(true);
-        });
+    return showFab
+        ? FloatingActionButton(
+            child: Icon(Icons.add),
+            mini: true,
+            backgroundColor: Colors.lightBlue,
+            onPressed: () {
+              var bottomSheetController = showBottomSheet(
+                  context: context, builder: (context) => BottomSheetWidget());
+              showFloatingActionButton(false);
+              bottomSheetController.closed.then((value) {
+                showFloatingActionButton(true);
+              });
+            },
+          )
+        : Container();
   }
 
   void showFloatingActionButton(bool value) {
@@ -48,13 +50,13 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
     return SingleChildScrollView(
         child: Container(
       margin: const EdgeInsets.only(top: 5, left: 15, right: 15),
-      height: 300,
-      child: Column(
+      height: 350,
+      child: SingleChildScrollView(child: Column(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
-              height: 300,
+              height: 450,
               decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.all(Radius.circular(15)),
@@ -64,33 +66,71 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
                         color: Colors.grey[300],
                         spreadRadius: 5)
                   ]),
-              child: Column(children: [DecoratedTextField(), DatePicker()]),
+              child: Column(children: [DecoratedTextField()]),
             )
           ]),
-    ));
+    )));
   }
 }
 
-class DecoratedTextField extends StatelessWidget {
+class DecoratedTextField extends StatefulWidget {
+  DecoratedTextField({Key key}) : super(key: key);
+
+  @override
+  _DecoratedTextFieldState createState() => _DecoratedTextFieldState();
+}
+
+class _DecoratedTextFieldState extends State<DecoratedTextField> {
+  final descriptionController = TextEditingController();
+  final amountController = TextEditingController();
+  bool isButtonEnabled = false;
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    descriptionController.dispose();
+    amountController.dispose();
+    super.dispose();
+  }
+
+    bool isEmpty() {
+      setState(() {
+        if ((descriptionController.text.isEmpty) ||
+            (amountController.text.isEmpty)) {
+          isButtonEnabled = false;
+        } else {
+          isButtonEnabled = true;
+        }
+      });
+      return isButtonEnabled;
+    }
+  
+
   @override
   Widget build(BuildContext context) {
     return Column(children: <Widget>[
-      Container(
-        height: 60,
-        alignment: Alignment.topCenter,
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-        margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-        decoration: BoxDecoration(
-            color: Colors.grey[300], borderRadius: BorderRadius.circular(10)),
-        child: TextField(
-            autocorrect: true,
-            showCursor: true,
-            maxLengthEnforced: true,
-            maxLength: 20,
-            textAlign: TextAlign.start,
-            decoration: InputDecoration.collapsed(
-              hintText: 'Item Description',
-            )),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          Spacer(),
+          Column(
+            children: <Widget>[
+              FlatButton(
+                  onPressed: isButtonEnabled
+                      ? () {
+                          DBProvider.db.newExpense(
+                              descriptionController.text,
+                              _CategorySelectorState.getTextValue,
+                              amountController.text,
+                              _DatePickerState.formattedDate);
+                          Navigator.of(context).pop();
+                        }
+                      : null,
+                  child: Icon(Icons.check, size: 40)),
+              Text('Post')
+            ],
+          ),
+        ],
       ),
       Container(
         height: 60,
@@ -100,16 +140,45 @@ class DecoratedTextField extends StatelessWidget {
         decoration: BoxDecoration(
             color: Colors.grey[300], borderRadius: BorderRadius.circular(10)),
         child: TextField(
-            textAlign: TextAlign.start,
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration.collapsed(
-              hintText: '0.00',
-            )),
-      ),
-      CategorySelector()
-    ]);
+            controller: descriptionController,
+             onChanged: (val) {
+                isEmpty();
+                              },
+                            autocorrect: true,
+                            showCursor: true,
+                            maxLengthEnforced: true,
+                            maxLength: 20,
+                            textAlign: TextAlign.start,
+                            decoration: InputDecoration.collapsed(
+                              hintText: 'Item Description',
+                            )),
+                      ),
+                      Container(
+                        height: 60,
+                        alignment: Alignment.topCenter,
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                        margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                        decoration: BoxDecoration(
+                            color: Colors.grey[300], borderRadius: BorderRadius.circular(10)),
+                        child: TextField(
+                            controller: amountController,
+                             onChanged: (val) {
+                                isEmpty();
+                              },
+                            textAlign: TextAlign.start,
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration.collapsed(
+                              hintText: '0.00',
+                            )),
+                      ),
+                      CategorySelector(),
+                      DatePicker()
+                    ]);
+                  }
+              
   }
-}
+                  
+
 
 class CategorySelector extends StatefulWidget {
   CategorySelector({Key key}) : super(key: key);
@@ -119,7 +188,10 @@ class CategorySelector extends StatefulWidget {
 }
 
 class _CategorySelectorState extends State<CategorySelector> {
-  String newValue;
+  String newValue = "1";
+  static String textValue = 'Entertainment';
+
+  static String get getTextValue => textValue;
   @override
   Widget build(BuildContext context) {
     return DropdownButton(
@@ -161,14 +233,14 @@ class DatePicker extends StatefulWidget {
 }
 
 class _DatePickerState extends State<DatePicker> {
-  DateTime pickedDate = DateTime.now();
-
+  static DateTime pickedDate = DateTime.now();
+  static String formattedDate = convertDate(pickedDate);
   @override
   void initState() {
     super.initState();
   }
 
-  String convertDate(DateTime datetime) {
+  static String convertDate(DateTime datetime) {
     String result =
         "${datetime.year.toString()}-${datetime.month.toString().padLeft(2, '0')}-${datetime.day.toString().padLeft(2, '0')}";
     return result;
