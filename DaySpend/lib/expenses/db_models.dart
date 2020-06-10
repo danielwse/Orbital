@@ -1,3 +1,5 @@
+//contains models for database tables
+
 import 'dart:convert';
 
 Expense expenseFromJson(String str) {
@@ -42,7 +44,7 @@ class Variable {
   String type;
   String value;
 
-  Variable( {
+  Variable({
     this.type,
     this.value,
   });
@@ -58,3 +60,25 @@ class Variable {
       };
 }
 
+class Categories {
+  int id;
+  String name;
+  double amount;
+  double budget;
+
+  Categories({this.id, this.name, this.amount, this.budget});
+
+  factory Categories.fromMap(Map<String, dynamic> json) => new Categories(
+        id: json["id"],
+        name: json["name"],
+        amount: json["amount"],
+        budget: json["budget"],
+      );
+
+  Map<String, dynamic> toMap() => {
+        "id": id,
+        "name": name,
+        "amount": amount,
+        "budget": budget,
+      };
+}

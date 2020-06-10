@@ -3,14 +3,14 @@ import 'dart:io';
 
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:DaySpend/expenses/expense_model.dart';
+import 'package:DaySpend/expenses/db_models.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DBProvider {
   DBProvider._();
 
   static final DBProvider db = DBProvider._();
-  String maxSpend = 'Not Set';
+  static String maxSpend;
 
   Database _database;
 
@@ -22,7 +22,7 @@ class DBProvider {
 
   initDB() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, "Expenses.db");
+    String path = join(documentsDirectory.path, "Expense.db");
     return await openDatabase(path, version: 2, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE Expenses ("
@@ -32,6 +32,12 @@ class DBProvider {
           "amount TEXT,"
           "date TEXT"
           ")");
+      await db.execute("CREATE TABLE Categories ("
+          "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+          "name TEXT UNIQUE,"
+          "amount TEXT,"
+          "budget TEXT"
+          ")");
       await db.execute("CREATE TABLE Variables ("
           "type TEXT PRIMARY KEY,"
           "value TEXT "
@@ -40,27 +46,21 @@ class DBProvider {
     });
   }
 
-getMaxSpend() {
-  return maxSpend;
-}
-  // getMaxSpend() async {
-  //   // Get a reference to the database.
-  //   final Database db = await database;
-  //   var res = await db.rawQuery('SELECT value FROM Variables').then((value) => value[0]['value']);
-  //   maxSpend = res;
-  //   return maxSpend;
-  // }
+  getMaxSpend() async {
+    // Get a reference to the database.
+    final Database db = await database;
+    maxSpend = await db
+        .rawQuery('SELECT value FROM Variables')
+        .then((value) => value[0]['value']);
+  }
 
   updateMaxSpend(String maximumSpend) async {
-  
     final db = await database;
-    Variable newVar = Variable(type: "MaxSpend", value: maximumSpend);
     maxSpend = maximumSpend;
-    var res = await db.insert(
-        "Variables", newVar.toMap(),
-        conflictAlgorithm: ConflictAlgorithm.replace);
+    var res = await db
+        .update("Variables", {"type": "MaxSpend", "value": maximumSpend});
     return res;
-     }
+  }
 
   newExpense(
       String description, String category, String amount, String date) async {
@@ -73,7 +73,13 @@ getMaxSpend() {
     var res = await db.insert("Expenses", expense.toMap());
     return res;
   }
-
+Future<List<Variable>> getAllVariables() async {
+    final db = await database;
+    var res = await db.query("Variables");
+    List<Variable> list =
+        res.isNotEmpty ? res.map((c) => Variable.fromMap(c)).toList() : [];
+    return list;
+  }
   // blockOrUnblock(Expense Expense) async {
   //   final db = await database;
   //   Expense blocked = Expense(
@@ -111,13 +117,7 @@ getMaxSpend() {
   //   return list;
   // }
 
-  Future<List<Variable>> getAllVariables() async {
-    final db = await database;
-    var res = await db.query("Variables");
-    List<Variable> list =
-        res.isNotEmpty ? res.map((c) => Variable.fromMap(c)).toList() : [];
-    return list;
-  }
+  
 
   // deleteExpense(int id) async {
   //   final db = await database;

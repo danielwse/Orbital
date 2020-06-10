@@ -20,7 +20,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    controller = PageController(initialPage: 0);
+    controller = PageController(initialPage: 1);
   }
 
   @override
