@@ -23,14 +23,14 @@ class DBProvider {
 
   initDB() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, "Expenses.db");
+    String path = join(documentsDirectory.path, "Expense.db");
     return await openDatabase(path, version: 2, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE Expenses ("
           "id INTEGER PRIMARY KEY AUTOINCREMENT,"
           "description TEXT,"
           "category TEXT,"
-          "amount TEXT,"
+          "amount DOUBLE,"
           "date TEXT"
           ")");
       await db.execute("CREATE TABLE Categories ("

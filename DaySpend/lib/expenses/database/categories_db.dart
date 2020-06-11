@@ -28,6 +28,16 @@ class CategoryDao {
     return res;
   }
 
+ Future<int> removeAmountFromCategory(double deleteAmount, String category) async {
+    final db = await dbProvider.database;
+    var res = await db.rawUpdate('''
+    UPDATE Categories
+    SET amount = amount - $deleteAmount
+    WHERE name = '$category'
+    ''');
+    return res;
+  }
+
   Future<List<Categories>> getAllCategories() async {
     final db = await dbProvider.database;
     var res = await db.query("Categories");
@@ -43,4 +53,6 @@ class CategoryRepository {
   Future getAllCategories() => categoryDao.getAllCategories();
   Future deleteCategory(int id) => categoryDao.deleteCategory(id);
   Future addAmountToCategory(double addAmount, int id) => categoryDao.addAmountToCategory(addAmount, id);
+  Future removeAmountFromCategory(double deleteAmount, String category) => categoryDao.removeAmountFromCategory(deleteAmount, category);
+
 }

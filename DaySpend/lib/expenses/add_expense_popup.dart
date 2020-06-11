@@ -88,7 +88,9 @@ class _DecoratedTextFieldState extends State<DecoratedTextField> {
   final amountController = TextEditingController();
   final ExpensesBloc expensesBloc = ExpensesBloc();
   final CategoryBloc categoryBloc = CategoryBloc();
+  Categories _currentCategory;
   bool isButtonEnabled = false;
+
 
   @override
   void dispose() {
@@ -103,13 +105,40 @@ class _DecoratedTextFieldState extends State<DecoratedTextField> {
   bool isEmpty() {
     setState(() {
       if ((descriptionController.text.isEmpty) ||
-          (amountController.text.isEmpty)) {
+          (amountController.text.isEmpty) ||
+          (_currentCategory == null)) {
         isButtonEnabled = false;
       } else {
         isButtonEnabled = true;
       }
     });
     return isButtonEnabled;
+  }
+
+  Widget _showCategoryPicker() {
+    return StreamBuilder(
+        stream: categoryBloc.categories,
+        builder:
+            (BuildContext context, AsyncSnapshot<List<Categories>> snapshot) {
+          if (!snapshot.hasData) return Container();
+          return DropdownButton<Categories>(
+            value: _currentCategory != null ? _currentCategory : null,
+            items: snapshot.data
+                .map((category) => DropdownMenuItem<Categories>(
+                      child: Text(category.name),
+                      value: category,
+                    ))
+                .toList(),
+            onChanged: (Categories category) {
+              setState(() {
+                _currentCategory = category;
+                isEmpty();
+              });
+            },
+            isExpanded: false,
+            hint: Text("Select Category"),
+          );
+        });
   }
 
   @override
@@ -136,12 +165,12 @@ class _DecoratedTextFieldState extends State<DecoratedTextField> {
                       ? () {
                           expensesBloc.newExpense(
                               descriptionController.text,
-                              _CategorySelectorState.getTextValue,
-                              amountController.text,
+                              _currentCategory.name,
+                              double.parse(amountController.text),
                               _DatePickerState.formattedDate);
                           categoryBloc.addAmountToCategory(
                               double.parse(amountController.text),
-                              _CategorySelectorState.getCategoryID);
+                              _currentCategory.id);
 
                           Navigator.of(context).pop();
                         }
@@ -191,59 +220,9 @@ class _DecoratedTextFieldState extends State<DecoratedTextField> {
               hintText: '0.00',
             )),
       ),
-      SizedBox(height: 50, child: CategorySelector()),
+      SizedBox(height: 50, child: _showCategoryPicker()),
       DatePicker()
     ]);
-  }
-}
-
-class CategorySelector extends StatefulWidget {
-  CategorySelector({Key key}) : super(key: key);
-
-  @override
-  _CategorySelectorState createState() => _CategorySelectorState();
-}
-
-class _CategorySelectorState extends State<CategorySelector> {
-  CategoryBloc categoryBloc = CategoryBloc();
-  static String _textCategory;
-  static int _categoryID;
-  Categories _currentCategory;
-
-  @override
-  void dispose() {
-    categoryBloc.dispose();
-    super.dispose();
-  }
-
-  static String get getTextValue => _textCategory;
-  static int get getCategoryID => _categoryID;
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder(
-        stream: categoryBloc.categories,
-        builder:
-            (BuildContext context, AsyncSnapshot<List<Categories>> snapshot) {
-          if (!snapshot.hasData) return Container();
-          return DropdownButton<Categories>(
-            value: _currentCategory,
-            items: snapshot.data
-                .map((category) => DropdownMenuItem<Categories>(
-                      child: Text(category.name),
-                      value: category,
-                    ))
-                .toList(),
-            onChanged: (Categories category) {
-              setState(() {
-                _categoryID = category.id;
-                _textCategory = category.name;
-                _currentCategory = category;
-              });
-            },
-            isExpanded: false,
-            hint: Text("Select Category"),
-          );
-        });
   }
 }
 

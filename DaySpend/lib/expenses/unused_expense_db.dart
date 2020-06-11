@@ -63,7 +63,7 @@ class DBProvider {
   }
 
   newExpense(
-      String description, String category, String amount, String date) async {
+      String description, String category, double amount, String date) async {
     Expense expense = new Expense(
         description: description,
         category: category,
