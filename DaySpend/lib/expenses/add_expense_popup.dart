@@ -1,5 +1,9 @@
+//bottom sheet when clicking on add button on homepage
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:DaySpend/expenses/database/DatabaseBloc.dart';
+import 'package:DaySpend/expenses/db_models.dart';
 
 class AddExpense extends StatefulWidget {
   AddExpense({Key key}) : super(key: key);
@@ -13,20 +17,21 @@ class _AddExpenseState extends State<AddExpense> {
   PersistentBottomSheetController bottomSheetController;
   @override
   Widget build(BuildContext context) {
-    return FloatingActionButton(
-        child: Icon(Icons.add),
-        mini: true,
-        backgroundColor: Colors.lightBlue,
-        onPressed: () {
-          bottomSheetController = showBottomSheet(
-              context: context, builder: (context) => BottomSheetWidget());
-          // bottomSheetController.closed.then((value) {
-          // showFloatingActionButton(false);
-          // });
-
-          //bottomSheetController.close();
-          // showFloatingActionButton(true);
-        });
+    return showFab
+        ? FloatingActionButton(
+            child: Icon(Icons.add),
+            mini: true,
+            backgroundColor: Colors.lightBlue,
+            onPressed: () {
+              var bottomSheetController = showBottomSheet(
+                  context: context, builder: (context) => BottomSheetWidget());
+              showFloatingActionButton(false);
+              bottomSheetController.closed.then((value) {
+                showFloatingActionButton(true);
+              });
+            },
+          )
+        : Container();
   }
 
   void showFloatingActionButton(bool value) {
@@ -45,36 +50,108 @@ class BottomSheetWidget extends StatefulWidget {
 class _BottomSheetWidgetState extends State<BottomSheetWidget> {
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-        child: Container(
-      margin: const EdgeInsets.only(top: 5, left: 15, right: 15),
-      height: 300,
-      child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Container(
-              height: 300,
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(15)),
-                  boxShadow: [
-                    BoxShadow(
-                        blurRadius: 10,
-                        color: Colors.grey[300],
-                        spreadRadius: 5)
-                  ]),
-              child: Column(children: [DecoratedTextField(), DatePicker()]),
-            )
-          ]),
-    ));
+    return Container(
+        margin: const EdgeInsets.only(top: 5, left: 15, right: 15),
+        height: 350,
+        child: SingleChildScrollView(
+          child: Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  height: 450,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(15)),
+                      boxShadow: [
+                        BoxShadow(
+                            blurRadius: 10,
+                            color: Colors.grey[300],
+                            spreadRadius: 5)
+                      ]),
+                  child: Column(children: [DecoratedTextField()]),
+                )
+              ]),
+        ));
   }
 }
 
-class DecoratedTextField extends StatelessWidget {
+class DecoratedTextField extends StatefulWidget {
+  DecoratedTextField({Key key}) : super(key: key);
+
+  @override
+  _DecoratedTextFieldState createState() => _DecoratedTextFieldState();
+}
+
+class _DecoratedTextFieldState extends State<DecoratedTextField> {
+  final descriptionController = TextEditingController();
+  final amountController = TextEditingController();
+  final ExpensesBloc expensesBloc = ExpensesBloc();
+  final CategoryBloc categoryBloc = CategoryBloc();
+  bool isButtonEnabled = false;
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    descriptionController.dispose();
+    amountController.dispose();
+    categoryBloc.dispose();
+    expensesBloc.dispose();
+    super.dispose();
+  }
+
+  bool isEmpty() {
+    setState(() {
+      if ((descriptionController.text.isEmpty) ||
+          (amountController.text.isEmpty)) {
+        isButtonEnabled = false;
+      } else {
+        isButtonEnabled = true;
+      }
+    });
+    return isButtonEnabled;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(children: <Widget>[
+      Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          Column(
+            children: <Widget>[
+              FlatButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Icon(Icons.clear, size: 40)),
+              Text('Cancel')
+            ],
+          ),
+          Spacer(),
+          Column(
+            children: <Widget>[
+              FlatButton(
+                  onPressed: isButtonEnabled
+                      ? () {
+                          expensesBloc.newExpense(
+                              descriptionController.text,
+                              _CategorySelectorState.getTextValue,
+                              amountController.text,
+                              _DatePickerState.formattedDate);
+                          categoryBloc.addAmountToCategory(
+                              double.parse(amountController.text),
+                              _CategorySelectorState.getCategoryID);
+
+                          Navigator.of(context).pop();
+                        }
+                      : null,
+                  child: Icon(Icons.done, size: 40)),
+              Text('Add')
+            ],
+          ),
+        ],
+      ),
       Container(
         height: 60,
         alignment: Alignment.topCenter,
@@ -83,6 +160,10 @@ class DecoratedTextField extends StatelessWidget {
         decoration: BoxDecoration(
             color: Colors.grey[300], borderRadius: BorderRadius.circular(10)),
         child: TextField(
+            controller: descriptionController,
+            onChanged: (val) {
+              isEmpty();
+            },
             autocorrect: true,
             showCursor: true,
             maxLengthEnforced: true,
@@ -100,13 +181,18 @@ class DecoratedTextField extends StatelessWidget {
         decoration: BoxDecoration(
             color: Colors.grey[300], borderRadius: BorderRadius.circular(10)),
         child: TextField(
+            controller: amountController,
+            onChanged: (val) {
+              isEmpty();
+            },
             textAlign: TextAlign.start,
             keyboardType: TextInputType.number,
             decoration: InputDecoration.collapsed(
               hintText: '0.00',
             )),
       ),
-      CategorySelector()
+      SizedBox(height: 50, child: CategorySelector()),
+      DatePicker()
     ]);
   }
 }
@@ -119,37 +205,45 @@ class CategorySelector extends StatefulWidget {
 }
 
 class _CategorySelectorState extends State<CategorySelector> {
-  String newValue;
+  CategoryBloc categoryBloc = CategoryBloc();
+  static String _textCategory;
+  static int _categoryID;
+  Categories _currentCategory;
+
+  @override
+  void dispose() {
+    categoryBloc.dispose();
+    super.dispose();
+  }
+
+  static String get getTextValue => _textCategory;
+  static int get getCategoryID => _categoryID;
   @override
   Widget build(BuildContext context) {
-    return DropdownButton(
-      value: newValue,
-      items: [
-        DropdownMenuItem<String>(
-          value: "1",
-          child: Text(
-            "Entertainment",
-          ),
-        ),
-        DropdownMenuItem<String>(
-          value: "2",
-          child: Text(
-            "Food",
-          ),
-        ),
-      ],
-      onChanged: (value) {
-        setState(() {
-          newValue = value;
+    return StreamBuilder(
+        stream: categoryBloc.categories,
+        builder:
+            (BuildContext context, AsyncSnapshot<List<Categories>> snapshot) {
+          if (!snapshot.hasData) return Container();
+          return DropdownButton<Categories>(
+            value: _currentCategory,
+            items: snapshot.data
+                .map((category) => DropdownMenuItem<Categories>(
+                      child: Text(category.name),
+                      value: category,
+                    ))
+                .toList(),
+            onChanged: (Categories category) {
+              setState(() {
+                _categoryID = category.id;
+                _textCategory = category.name;
+                _currentCategory = category;
+              });
+            },
+            isExpanded: false,
+            hint: Text("Select Category"),
+          );
         });
-      },
-      hint: Text(
-        "Category",
-        style: TextStyle(
-          color: Colors.black,
-        ),
-      ),
-    );
   }
 }
 
@@ -161,14 +255,14 @@ class DatePicker extends StatefulWidget {
 }
 
 class _DatePickerState extends State<DatePicker> {
-  DateTime pickedDate = DateTime.now();
-
+  static DateTime pickedDate = DateTime.now();
+  static String formattedDate = convertDate(pickedDate);
   @override
   void initState() {
     super.initState();
   }
 
-  String convertDate(DateTime datetime) {
+  static String convertDate(DateTime datetime) {
     String result =
         "${datetime.year.toString()}-${datetime.month.toString().padLeft(2, '0')}-${datetime.day.toString().padLeft(2, '0')}";
     return result;

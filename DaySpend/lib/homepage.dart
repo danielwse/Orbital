@@ -20,7 +20,7 @@ class _HomepageState extends State<Homepage> {
                 floatingActionButton: AddExpense(),
                 floatingActionButtonLocation:
                     FloatingActionButtonLocation.endFloat,
-                body: Column(children: <Widget>[
+                body: SingleChildScrollView(child:Column(children: <Widget>[
                   HomePageExpenses(),
                   //replace with planner homepage widget
                   Container(
@@ -44,6 +44,6 @@ class _HomepageState extends State<Homepage> {
                               //insert planner widget
                             ))
                       ]))
-                ]))));
+                ])))));
   }
 }
