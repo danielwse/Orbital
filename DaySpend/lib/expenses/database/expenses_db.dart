@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:DaySpend/expenses/database/DatabaseHelper.dart';
-import 'package:DaySpend/expenses/db_models.dart';
+import 'package:DaySpend/expenses/database/db_models.dart';
 
 class ExpensesDao {
   final dbProvider = DBProvider.db;
@@ -42,6 +42,26 @@ class ExpensesDao {
     return res;
   }
 
+  Future<int> changeDescription(String newDescription, int id) async {
+    final db = await dbProvider.database;
+    var res = await db.rawUpdate('''
+    UPDATE Expenses 
+    SET description = '$newDescription'
+    WHERE id = $id
+    ''');
+    return res;
+  }
+
+  Future<int> changeAmount(double newAmount, int id) async {
+    final db = await dbProvider.database;
+    var res = await db.rawUpdate('''
+    UPDATE Expenses 
+    SET amount = '$newAmount'
+    WHERE id = $id
+    ''');
+    return res;
+  }
+
   Future getExpensesByCategory(String category) async {
     final db = await dbProvider.database;
     final List<Map<String, dynamic>> maps = await db.rawQuery('''
@@ -71,4 +91,8 @@ class ExpensesRepository {
       expensesDao.getExpensesByCategory(category);
   Future changeExpenseCategory(String category, int id) =>
       expensesDao.changeExpenseCategory(category, id);
+  Future changeDescription(String newDescription, int id) =>
+      expensesDao.changeDescription(newDescription, id);
+  Future changeAmount(double newAmount, int id) =>
+      expensesDao.changeAmount(newAmount, id);
 }

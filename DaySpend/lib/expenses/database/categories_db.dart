@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:DaySpend/expenses/db_models.dart';
+import 'package:DaySpend/expenses/database/db_models.dart';
 import 'package:DaySpend/expenses/database/DatabaseHelper.dart';
 
 class CategoryDao {
@@ -18,12 +18,12 @@ class CategoryDao {
     return result;
   }
 
-  Future<int> addAmountToCategory(double addAmount, int id) async {
+  Future<int> addAmountToCategory(double addAmount, String category) async {
     final db = await dbProvider.database;
     var res = await db.rawUpdate('''
     UPDATE Categories 
     SET amount = amount + $addAmount
-    WHERE id = $id
+    WHERE name = '$category'
     ''');
     return res;
   }
@@ -36,6 +36,17 @@ class CategoryDao {
     WHERE name = '$category'
     ''');
     return res;
+  }
+
+  Future<int> renameCategory(String oldName, String newName) async {
+    final db = await dbProvider.database;
+    var res = await db.rawUpdate('''
+    UPDATE Categories
+    SET name = '$newName'
+    WHERE name = '$oldName'
+    ''');
+    return res;
+    
   }
 
   Future<List<Categories>> getAllCategories() async {
@@ -52,7 +63,8 @@ class CategoryRepository {
   Future newCategory(Categories category) => categoryDao.newCategory(category);
   Future getAllCategories() => categoryDao.getAllCategories();
   Future deleteCategory(int id) => categoryDao.deleteCategory(id);
-  Future addAmountToCategory(double addAmount, int id) => categoryDao.addAmountToCategory(addAmount, id);
+  Future addAmountToCategory(double addAmount, String category) => categoryDao.addAmountToCategory(addAmount, category);
   Future removeAmountFromCategory(double deleteAmount, String category) => categoryDao.removeAmountFromCategory(deleteAmount, category);
+  Future renameCategory(String oldName, String newName) => categoryDao.renameCategory(oldName, newName);
 
 }

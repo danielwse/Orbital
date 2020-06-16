@@ -1,9 +1,17 @@
 //entitre page when swipe right on homepage
 
+// import 'package:DaySpend/expenses/database/ExpensesBloc.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:DaySpend/expenses/database/DatabaseBloc.dart';
 import 'package:DaySpend/expenses/database/variables_db.dart';
-import 'package:DaySpend/expenses/db_models.dart';
+import 'package:DaySpend/expenses/database/db_models.dart';
+import 'package:DaySpend/expenses/add_expense_popup.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:DaySpend/expenses/edit_category.dart';
+import 'package:DaySpend/expenses/edit_expense.dart';
+import 'package:moneytextformfield/moneytextformfield.dart';
+import 'package:wc_form_validators/wc_form_validators.dart';
 
 class Expenses extends StatelessWidget {
   const Expenses({Key key}) : super(key: key);
@@ -79,7 +87,6 @@ class _MaxSpendState extends State<MaxSpend> {
                                       .requestFocus(FocusNode());
                                   variableBloc
                                       .updateMaxSpend(_maxSpendController.text);
-
                                   setState(() {});
                                 },
                               )))),
@@ -97,18 +104,28 @@ class BudgetList extends StatefulWidget {
 }
 
 class _BudgetListState extends State<BudgetList> {
-  final DismissDirection _dismissDirectionCategory =
-      DismissDirection.endToStart;
   final CategoryBloc categoryBloc = CategoryBloc();
   final categoryController = TextEditingController();
-  final DismissDirection _dismissDirectionReceipt = DismissDirection.endToStart;
   final ExpensesBloc expensesBloc = ExpensesBloc();
+  final SlidableController slidableController = SlidableController();
+  final percentageController = TextEditingController();
+  final VariablesBloc variablesBloc = VariablesBloc();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool _autoValidate;
+
+  @override
+  void initState() {
+    _autoValidate = false;
+    super.initState();
+  }
 
   @override
   dispose() {
     categoryBloc.dispose();
     categoryController.dispose();
     expensesBloc.dispose();
+    percentageController.dispose();
+    variablesBloc.dispose();
     super.dispose();
   }
 
@@ -145,74 +162,116 @@ class _BudgetListState extends State<BudgetList> {
         context: context,
         builder: (builder) {
           return SingleChildScrollView(
-              child: Container(
-                  margin: const EdgeInsets.only(top: 5, left: 15, right: 15),
-                  height: 190,
-                  child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Container(
-                          height: 190,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(15)),
-                              boxShadow: [
-                                BoxShadow(
-                                    blurRadius: 10,
-                                    color: Colors.grey[300],
-                                    spreadRadius: 5)
-                              ]),
-                          child: Column(children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: <Widget>[
-                                Spacer(),
-                                Column(children: <Widget>[
-                                  FlatButton(
-                                      onPressed: () {
-                                        Categories category = Categories(
-                                            name: categoryController.text,
-                                            amount: 0,
-                                            budget: 0);
-                                        if (categoryController
-                                            .text.isNotEmpty) {
-                                          categoryBloc.addCategory(category);
-                                        }
-                                        Navigator.of(context).pop();
-                                        FocusScope.of(context)
-                                            .requestFocus(FocusNode());
-                                        categoryController.clear();
-                                      },
-                                      child: Icon(Icons.check, size: 40)),
-                                  Text('Add')
+              child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                Container(
+                  height: 300,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(15)),
+                      boxShadow: [
+                        BoxShadow(
+                            blurRadius: 10,
+                            color: Colors.grey[300],
+                            spreadRadius: 5)
+                      ]),
+                  child: Column(children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        Column(
+                          children: <Widget>[
+                            FlatButton(
+                                onPressed: () {
+                                  categoryController.clear();
+                                  Navigator.of(context).pop();
+                                },
+                                child: Icon(Icons.clear, size: 40)),
+                            Text('Cancel')
+                          ],
+                        ),
+                        Spacer(),
+                        Column(children: <Widget>[
+                          FlatButton(
+                              onPressed: () {
+                                Categories category = Categories(
+                                    name: categoryController.text,
+                                    amount: 0,
+                                    budget: 0);
+                                if (percentageController.text == 'Not Set' ||
+                                    percentageController.text.isEmpty &&
+                                        categoryController.text.isNotEmpty) {
+                                  categoryBloc.addCategory(category);
+
+                                  Navigator.of(context).pop();
+                                  FocusScope.of(context)
+                                      .requestFocus(FocusNode());
+                                  categoryController.clear();
+                                } else if (categoryController.text.isNotEmpty &&
+                                    _formKey.currentState.validate()) {
+                                  categoryBloc.addCategory(category);
+
+                                  Navigator.of(context).pop();
+                                  FocusScope.of(context)
+                                      .requestFocus(FocusNode());
+                                  categoryController.clear();
+                                } else if (!_formKey.currentState.validate()) {
+                                  setState(() {
+                                    _autoValidate = true;
+                                  });
+                                }
+                              },
+                              child: Icon(Icons.check, size: 40)),
+                          Text('Add')
+                        ]),
+                      ],
+                    ),
+                    Container(
+                        height: 60,
+                        alignment: Alignment.topCenter,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 10),
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 10),
+                        decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(10)),
+                        child: TextField(
+                            controller: categoryController,
+                            autocorrect: true,
+                            showCursor: true,
+                            maxLengthEnforced: true,
+                            maxLength: 20,
+                            textAlign: TextAlign.start,
+                            decoration: InputDecoration.collapsed(
+                              hintText: 'Category Name',
+                            ))),
+                   
+                    Form(
+                        key: _formKey,
+                        autovalidate: true,
+                        child: MoneyTextFormField(
+                            maxSpend: double.parse(VariablesDao.maxSpend),
+                            settings: MoneyTextFormFieldSettings(
+                              
+                                validator: Validators.compose([
+                                  Validators.required(
+                                      "Indicate % or reset to default"),
+                                  Validators.max(100, "% must be less than 100")
                                 ]),
-                              ],
-                            ),
-                            Container(
-                                height: 60,
-                                alignment: Alignment.topCenter,
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 10),
-                                margin: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 10),
-                                decoration: BoxDecoration(
-                                    color: Colors.grey[300],
-                                    borderRadius: BorderRadius.circular(10)),
-                                child: TextField(
-                                    controller: categoryController,
-                                    autocorrect: true,
-                                    showCursor: true,
-                                    maxLengthEnforced: true,
-                                    maxLength: 20,
-                                    textAlign: TextAlign.start,
-                                    decoration: InputDecoration.collapsed(
-                                      hintText: 'Category Name',
-                                    )))
-                          ]),
-                        )
-                      ])));
+                                controller: percentageController,
+                                appearanceSettings: AppearanceSettings(
+                                   
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 20),
+                                    labelText: "Budget: % of Max Spend",
+                                    labelStyle: TextStyle(fontSize: 25),
+                                    formattedStyle: TextStyle(fontSize: 20)))))
+                  ]),
+                )
+              ]));
         });
   }
 
@@ -242,52 +301,69 @@ class _BudgetListState extends State<BudgetList> {
                               child: ListTile(
                                   title: Text(item.name),
                                   subtitle: Text(
-                                    'Spent: ${item.amount}',
+                                    'Spent: ${item.amount.toStringAsFixed(2)}',
                                   ),
                                   trailing: Text('Budgeted: ${item.budget}')),
                             );
                           }
-                          return Dismissible(
-                              background: Container(
-                                  height: 80,
-                                  margin: EdgeInsets.symmetric(
-                                      horizontal: 45, vertical: 1),
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.rectangle,
-                                      borderRadius: BorderRadius.circular(18.0),
-                                      color: Colors.redAccent),
-                                  child: Container(
-                                      child: Align(
-                                    alignment: Alignment.centerRight,
-                                    child:
-                                        Icon(Icons.delete, color: Colors.white),
-                                  ))),
-                              key: new ObjectKey(item),
-                              onDismissed: (direction) async {
-                                categoryBloc.deleteCategory(item.id);
-                                expensesBloc
-                                    .getExpensesByCategory(item.name)
-                                    .then((list) => !list.isEmpty
-                                        ? list.forEach((expense) =>
-                                            { expensesBloc.changeExpenseCategory(
-                                                'Others', expense.id),
-                                               categoryBloc.addAmountToCategory(expense.amount, 1 )})
-                                        : null);
-                              },
-                              direction: _dismissDirectionCategory,
-                              child: Card(
-                                margin: EdgeInsets.symmetric(
-                                    horizontal: 45, vertical: 1),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(18.0),
-                                    side: BorderSide(color: Colors.white)),
-                                child: ListTile(
-                                    title: Text(item.name),
-                                    subtitle: Text(
-                                      'Spent: ${item.amount}',
-                                    ),
-                                    trailing: Text('Budgeted: ${item.budget}')),
-                              ));
+                          return Container(
+                              height: 80,
+                              margin: EdgeInsets.symmetric(
+                                  horizontal: 40, vertical: 1),
+                              child: Slidable(
+                                  controller: slidableController,
+                                  actionPane: SlidableDrawerActionPane(),
+                                  actionExtentRatio: 0.20,
+                                  child: Card(
+                                    // margin: EdgeInsets.symmetric(
+                                    //     horizontal: 45, vertical: 1),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(18.0),
+                                        side: BorderSide(color: Colors.white)),
+                                    child: ListTile(
+                                        title: Text(item.name),
+                                        subtitle: Text(
+                                          'Spent: ${item.amount.toStringAsFixed(2)}',
+                                        ),
+                                        trailing:
+                                            Text('Budgeted: ${item.budget}')),
+                                  ),
+                                  secondaryActions: <Widget>[
+                                    new IconButton(
+                                        color: Colors.blue[200],
+                                        icon: Icon(Icons.edit, size: 30),
+                                        onPressed: () {
+                                          showBottomSheet(
+                                              context: context,
+                                              builder: (context) =>
+                                                  EditCategory(expensesBloc,
+                                                      categoryBloc, item.name));
+                                          slidableController.activeState
+                                              ?.close();
+                                        }),
+                                    new IconButton(
+                                        color: Colors.redAccent,
+                                        icon: Icon(Icons.delete_outline,
+                                            size: 30),
+                                        onPressed: () {
+                                          categoryBloc.deleteCategory(item.id);
+                                          expensesBloc
+                                              .getExpensesByCategory(item.name)
+                                              .then((list) => list.isNotEmpty
+                                                  ? list.forEach((expense) => {
+                                                        expensesBloc
+                                                            .changeExpenseCategory(
+                                                                'Others',
+                                                                expense.id),
+                                                        categoryBloc
+                                                            .addAmountToCategory(
+                                                                expense.amount,
+                                                                'Others')
+                                                      })
+                                                  : null);
+                                        }),
+                                  ]));
                         },
                       ))
                 ]))
@@ -298,18 +374,51 @@ class _BudgetListState extends State<BudgetList> {
     );
   }
 
+  // void _showAddExpense(BuildContext context) {
+  //   showBottomSheet(
+  //       context: context,
+  //       builder: (builder) {
+  //         return Container(
+  //             margin: const EdgeInsets.only(top: 5, left: 15, right: 15),
+  //             height: 350,
+  //             child: SingleChildScrollView(
+  //               child: Column(
+  //                   mainAxisSize: MainAxisSize.max,
+  //                   mainAxisAlignment: MainAxisAlignment.start,
+  //                   children: [
+  //                     Container(
+  //                       height: 450,
+  //                       decoration: BoxDecoration(
+  //                           color: Colors.white,
+  //                           borderRadius: BorderRadius.all(Radius.circular(15)),
+  //                           boxShadow: [
+  //                             BoxShadow(
+  //                                 blurRadius: 10,
+  //                                 color: Colors.grey[300],
+  //                                 spreadRadius: 5)
+  //                           ]),
+  //                       child: Column(children: [DecoratedTextField(expensesBloc, categoryBloc)]),
+  //                     )
+  //                   ]),
+  //             ));
+  //       });
+  // }
+
   Widget receiptHeader() {
     return Row(
       children: <Widget>[
         SizedBox(
           width: 30,
         ),
-        // IconButton(
-        //     icon: Icon(Icons.add),
-        //     iconSize: 32.0,
-        //     onPressed: () {
-        //       _showAddCategory(context);
-        //     }),
+        IconButton(
+            icon: Icon(Icons.add),
+            iconSize: 32.0,
+            onPressed: () {
+              showBottomSheet(
+                  context: context,
+                  builder: (context) =>
+                      BottomSheetWidget(expensesBloc, categoryBloc));
+            }),
         Spacer(),
         Padding(
           padding: const EdgeInsets.only(right: 28.0),
@@ -340,43 +449,55 @@ class _BudgetListState extends State<BudgetList> {
                         itemBuilder: (context, int position) {
                           final item = snapshot.data[position];
 
-                          return Dismissible(
-                              background: Container(
-                                  height: 80,
-                                  margin: EdgeInsets.symmetric(
-                                      horizontal: 45, vertical: 1),
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.rectangle,
-                                      borderRadius: BorderRadius.circular(18.0),
-                                      color: Colors.redAccent),
-                                  child: Container(
-                                      child: Align(
-                                    alignment: Alignment.centerRight,
-                                    child:
-                                        Icon(Icons.delete, color: Colors.white),
-                                  ))),
-                              key: new ObjectKey(item),
-                              onDismissed: (direction) {
-                                expensesBloc.deleteExpense(
-                                    item.id, item.amount, item.category);
-                                categoryBloc.removeAmountFromCategory(
-                                    item.amount, item.category);
-                              },
-                              direction: _dismissDirectionReceipt,
-                              child: Card(
-                                margin: EdgeInsets.symmetric(
-                                    horizontal: 45, vertical: 1),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(18.0),
-                                    side: BorderSide(color: Colors.white)),
-                                child: ListTile(
-                                    title: Text(item.description),
-                                    subtitle: Text(
-                                      'Spent: ${item.amount}',
-                                    ),
-                                    trailing:
-                                        Text('Category: ${item.category}')),
-                              ));
+                          return Container(
+                              height: 80,
+                              margin: EdgeInsets.symmetric(
+                                  horizontal: 40, vertical: 1),
+                              child: Slidable(
+                                  controller: slidableController,
+                                  actionPane: SlidableDrawerActionPane(),
+                                  actionExtentRatio: 0.20,
+                                  child: Card(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(18.0),
+                                        side: BorderSide(color: Colors.white)),
+                                    child: ListTile(
+                                        title: Text(item.description),
+                                        subtitle: Text(
+                                          'Spent: ${item.amount.toStringAsFixed(2)}',
+                                        ),
+                                        trailing:
+                                            Text('Category: ${item.category}')),
+                                  ),
+                                  secondaryActions: <Widget>[
+                                    new IconButton(
+                                        color: Colors.blue[200],
+                                        icon: Icon(Icons.edit, size: 30),
+                                        onPressed: () {
+                                          showBottomSheet(
+                                              context: context,
+                                              builder: (context) => EditExpense(
+                                                  expensesBloc,
+                                                  categoryBloc,
+                                                  item.description,
+                                                  item.id,
+                                                  item.amount,
+                                                  item.category));
+                                          slidableController.activeState
+                                              .close();
+                                        }),
+                                    new IconButton(
+                                        color: Colors.redAccent,
+                                        icon: Icon(Icons.delete_outline,
+                                            size: 30),
+                                        onPressed: () {
+                                          expensesBloc.deleteExpense(item.id,
+                                              item.amount, item.category);
+                                          categoryBloc.removeAmountFromCategory(
+                                              item.amount, item.category);
+                                        }),
+                                  ]));
                         },
                       ))
                 ]))

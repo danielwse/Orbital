@@ -1,11 +1,15 @@
 //CONTAINS ALL THE BLoCS
 import 'dart:async';
-import 'package:DaySpend/expenses/db_models.dart';
+import 'package:DaySpend/expenses/database/db_models.dart';
 import 'package:DaySpend/expenses/database/categories_db.dart';
 import 'package:DaySpend/expenses/database/variables_db.dart';
 import 'package:DaySpend/expenses/database/expenses_db.dart';
 
-class ExpensesBloc {
+abstract class Bloc {
+  void dispose();
+}
+
+class ExpensesBloc implements Bloc {
   final _expensesRepository = ExpensesRepository();
   final _expensesController = StreamController<List<Expense>>.broadcast();
   final CategoryBloc categoryBloc = CategoryBloc();
@@ -31,7 +35,7 @@ class ExpensesBloc {
     getExpenses();
   }
 
-  getExpensesByCategory(String category) async {
+  Future<List<Expense>> getExpensesByCategory(String category) async {
     var res = await _expensesRepository.getExpensesByCategory(category);
     getExpenses();
     return res;
@@ -42,12 +46,22 @@ class ExpensesBloc {
     getExpenses();
   }
 
+  changeDescription(String newDescription, int id) async {
+    await _expensesRepository.changeDescription(newDescription, id);
+    getExpenses();
+  }
+
+  changeAmount(double newAmount, int id) async {
+    await _expensesRepository.changeAmount(newAmount, id);
+    getExpenses();
+  }
+
   dispose() {
     _expensesController.close();
   }
 }
 
-class VariablesBloc {
+class VariablesBloc implements Bloc {
   //Get instance of the Repository
   final _variablesRepository = VariablesRepository();
   //Stream controller is the 'Admin' that manages
@@ -83,7 +97,7 @@ class VariablesBloc {
   }
 }
 
-class CategoryBloc {
+class CategoryBloc implements Bloc {
   final _categoryRepository = CategoryRepository();
   final _categoryController = StreamController<List<Categories>>.broadcast();
 
@@ -110,8 +124,8 @@ class CategoryBloc {
     getCategories();
   }
 
-  addAmountToCategory(double addAmount, int id) async {
-    await _categoryRepository.addAmountToCategory(addAmount, id);
+  addAmountToCategory(double addAmount, String category) async {
+    await _categoryRepository.addAmountToCategory(addAmount, category);
     getCategories();
   }
 
@@ -124,6 +138,11 @@ class CategoryBloc {
     var res = await _categoryRepository.getAllCategories();
     getCategories();
     return res;
+  }
+
+  renameCategory(String oldName, String newName) async {
+    await _categoryRepository.renameCategory(oldName, newName);
+    getCategories();
   }
 
   dispose() {

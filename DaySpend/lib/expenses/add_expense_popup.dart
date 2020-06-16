@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:DaySpend/expenses/database/DatabaseBloc.dart';
-import 'package:DaySpend/expenses/db_models.dart';
+import 'package:DaySpend/expenses/database/db_models.dart';
 
 class AddExpense extends StatefulWidget {
   AddExpense({Key key}) : super(key: key);
@@ -24,7 +24,9 @@ class _AddExpenseState extends State<AddExpense> {
             backgroundColor: Colors.lightBlue,
             onPressed: () {
               var bottomSheetController = showBottomSheet(
-                  context: context, builder: (context) => BottomSheetWidget());
+                  context: context,
+                  builder: (context) => BottomSheetWidget(
+                      new ExpensesBloc(), new CategoryBloc()));
               showFloatingActionButton(false);
               bottomSheetController.closed.then((value) {
                 showFloatingActionButton(true);
@@ -43,6 +45,9 @@ class _AddExpenseState extends State<AddExpense> {
 
 //widget inside the pop-up
 class BottomSheetWidget extends StatefulWidget {
+  final ExpensesBloc expensesBloc;
+  final CategoryBloc categoryBloc;
+  BottomSheetWidget(this.expensesBloc, this.categoryBloc);
   @override
   _BottomSheetWidgetState createState() => _BottomSheetWidgetState();
 }
@@ -69,7 +74,9 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
                             color: Colors.grey[300],
                             spreadRadius: 5)
                       ]),
-                  child: Column(children: [DecoratedTextField()]),
+                  child: Column(children: [
+                    DecoratedTextField(widget.expensesBloc, widget.categoryBloc)
+                  ]),
                 )
               ]),
         ));
@@ -77,7 +84,9 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
 }
 
 class DecoratedTextField extends StatefulWidget {
-  DecoratedTextField({Key key}) : super(key: key);
+  final ExpensesBloc expensesBloc;
+  final CategoryBloc categoryBloc;
+  const DecoratedTextField(this.expensesBloc, this.categoryBloc);
 
   @override
   _DecoratedTextFieldState createState() => _DecoratedTextFieldState();
@@ -86,19 +95,17 @@ class DecoratedTextField extends StatefulWidget {
 class _DecoratedTextFieldState extends State<DecoratedTextField> {
   final descriptionController = TextEditingController();
   final amountController = TextEditingController();
-  final ExpensesBloc expensesBloc = ExpensesBloc();
-  final CategoryBloc categoryBloc = CategoryBloc();
+  final CategoryBloc pickerCategoryBloc = CategoryBloc();
   Categories _currentCategory;
   bool isButtonEnabled = false;
-
 
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
     descriptionController.dispose();
+    pickerCategoryBloc.dispose();
     amountController.dispose();
-    categoryBloc.dispose();
-    expensesBloc.dispose();
+
     super.dispose();
   }
 
@@ -117,12 +124,12 @@ class _DecoratedTextFieldState extends State<DecoratedTextField> {
 
   Widget _showCategoryPicker() {
     return StreamBuilder(
-        stream: categoryBloc.categories,
+        stream: pickerCategoryBloc.categories,
         builder:
             (BuildContext context, AsyncSnapshot<List<Categories>> snapshot) {
           if (!snapshot.hasData) return Container();
           return DropdownButton<Categories>(
-            value: _currentCategory != null ? _currentCategory : null,
+            value: _currentCategory,
             items: snapshot.data
                 .map((category) => DropdownMenuItem<Categories>(
                       child: Text(category.name),
@@ -163,14 +170,14 @@ class _DecoratedTextFieldState extends State<DecoratedTextField> {
               FlatButton(
                   onPressed: isButtonEnabled
                       ? () {
-                          expensesBloc.newExpense(
+                          widget.expensesBloc.newExpense(
                               descriptionController.text,
                               _currentCategory.name,
                               double.parse(amountController.text),
                               _DatePickerState.formattedDate);
-                          categoryBloc.addAmountToCategory(
+                          widget.categoryBloc.addAmountToCategory(
                               double.parse(amountController.text),
-                              _currentCategory.id);
+                              _currentCategory.name);
 
                           Navigator.of(context).pop();
                         }
