@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:DaySpend/expenses/database/DatabaseBloc.dart';
-import 'package:DaySpend/expenses/db_models.dart';
+import 'package:DaySpend/expenses/database/db_models.dart';
 
 class AddExpense extends StatefulWidget {
   AddExpense({Key key}) : super(key: key);
@@ -24,7 +24,9 @@ class _AddExpenseState extends State<AddExpense> {
             backgroundColor: Colors.lightBlue,
             onPressed: () {
               var bottomSheetController = showBottomSheet(
-                  context: context, builder: (context) => BottomSheetWidget());
+                  context: context,
+                  builder: (context) => BottomSheetWidget(
+                      new ExpensesBloc(), new CategoryBloc()));
               showFloatingActionButton(false);
               bottomSheetController.closed.then((value) {
                 showFloatingActionButton(true);
@@ -43,6 +45,9 @@ class _AddExpenseState extends State<AddExpense> {
 
 //widget inside the pop-up
 class BottomSheetWidget extends StatefulWidget {
+  final ExpensesBloc expensesBloc;
+  final CategoryBloc categoryBloc;
+  BottomSheetWidget(this.expensesBloc, this.categoryBloc);
   @override
   _BottomSheetWidgetState createState() => _BottomSheetWidgetState();
 }
@@ -69,7 +74,9 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
                             color: Colors.grey[300],
                             spreadRadius: 5)
                       ]),
-                  child: Column(children: [DecoratedTextField()]),
+                  child: Column(children: [
+                    DecoratedTextField(widget.expensesBloc, widget.categoryBloc)
+                  ]),
                 )
               ]),
         ));
@@ -77,7 +84,9 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
 }
 
 class DecoratedTextField extends StatefulWidget {
-  DecoratedTextField({Key key}) : super(key: key);
+  final ExpensesBloc expensesBloc;
+  final CategoryBloc categoryBloc;
+  const DecoratedTextField(this.expensesBloc, this.categoryBloc);
 
   @override
   _DecoratedTextFieldState createState() => _DecoratedTextFieldState();
@@ -86,30 +95,105 @@ class DecoratedTextField extends StatefulWidget {
 class _DecoratedTextFieldState extends State<DecoratedTextField> {
   final descriptionController = TextEditingController();
   final amountController = TextEditingController();
-  final ExpensesBloc expensesBloc = ExpensesBloc();
-  final CategoryBloc categoryBloc = CategoryBloc();
+  final CategoryBloc pickerCategoryBloc = CategoryBloc();
+  Categories _currentCategory;
   bool isButtonEnabled = false;
+  DateTime pickedDate = DateTime.now();
+  String formattedDate;
+
+  @override
+  void initState() {
+    formattedDate = convertDate(pickedDate);
+    super.initState();
+  } 
 
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
     descriptionController.dispose();
+    pickerCategoryBloc.dispose();
     amountController.dispose();
-    categoryBloc.dispose();
-    expensesBloc.dispose();
+
     super.dispose();
   }
 
   bool isEmpty() {
     setState(() {
       if ((descriptionController.text.isEmpty) ||
-          (amountController.text.isEmpty)) {
+          (amountController.text.isEmpty) ||
+          (_currentCategory == null)) {
         isButtonEnabled = false;
       } else {
         isButtonEnabled = true;
       }
     });
     return isButtonEnabled;
+  }
+
+  Widget _showCategoryPicker() {
+    return StreamBuilder(
+        stream: pickerCategoryBloc.categories,
+        builder:
+            (BuildContext context, AsyncSnapshot<List<Categories>> snapshot) {
+          if (!snapshot.hasData) return Container();
+          return DropdownButton<Categories>(
+            value: _currentCategory,
+            items: snapshot.data
+                .map((category) => DropdownMenuItem<Categories>(
+                      child: Text(category.name),
+                      value: category,
+                    ))
+                .toList(),
+            onChanged: (Categories category) {
+              setState(() {
+                _currentCategory = category;
+                isEmpty();
+              });
+            },
+            isExpanded: false,
+            hint: Text("Select Category"),
+          );
+        });
+  }
+
+  static String convertDate(DateTime datetime) {
+    String result =
+        "${datetime.year.toString()}-${datetime.month.toString().padLeft(2, '0')}-${datetime.day.toString().padLeft(2, '0')}";
+    return result;
+  }
+
+
+  Widget _showDatePicker() {
+    return MaterialButton(
+      child: Text(
+        convertDate(pickedDate),
+        style: TextStyle(color: Colors.white),
+      ),
+      color: Colors.orange,
+      onPressed: () {
+        showModalBottomSheet(
+            context: context,
+            builder: (BuildContext builder) {
+              return Container(
+                child: CupertinoDatePicker(
+        initialDateTime: DateTime.now(),
+        onDateTimeChanged: (DateTime newdate) {
+          pickedDate = newdate;
+          setState(() {
+            formattedDate = convertDate(pickedDate);
+          });
+        },
+        use24hFormat: true,
+        maximumDate: new DateTime(DateTime.now().year, DateTime.now().month + 3,
+            DateTime.now().day + 14),
+        minimumYear: DateTime.now().year,
+        maximumYear: DateTime.now().year,
+        mode: CupertinoDatePickerMode.date),
+                height: MediaQuery.of(context).copyWith().size.height / 3,
+              );
+            });
+      },
+    );
   }
 
   @override
@@ -134,14 +218,14 @@ class _DecoratedTextFieldState extends State<DecoratedTextField> {
               FlatButton(
                   onPressed: isButtonEnabled
                       ? () {
-                          expensesBloc.newExpense(
+                          widget.expensesBloc.newExpense(
                               descriptionController.text,
-                              _CategorySelectorState.getTextValue,
-                              amountController.text,
-                              _DatePickerState.formattedDate);
-                          categoryBloc.addAmountToCategory(
+                              _currentCategory.name,
                               double.parse(amountController.text),
-                              _CategorySelectorState.getCategoryID);
+                              formattedDate);
+                          widget.categoryBloc.addAmountToCategory(
+                              double.parse(amountController.text),
+                              _currentCategory.name);
 
                           Navigator.of(context).pop();
                         }
@@ -191,116 +275,9 @@ class _DecoratedTextFieldState extends State<DecoratedTextField> {
               hintText: '0.00',
             )),
       ),
-      SizedBox(height: 50, child: CategorySelector()),
-      DatePicker()
+      SizedBox(height: 50, child: _showCategoryPicker()),
+      _showDatePicker()
     ]);
   }
 }
 
-class CategorySelector extends StatefulWidget {
-  CategorySelector({Key key}) : super(key: key);
-
-  @override
-  _CategorySelectorState createState() => _CategorySelectorState();
-}
-
-class _CategorySelectorState extends State<CategorySelector> {
-  CategoryBloc categoryBloc = CategoryBloc();
-  static String _textCategory;
-  static int _categoryID;
-  Categories _currentCategory;
-
-  @override
-  void dispose() {
-    categoryBloc.dispose();
-    super.dispose();
-  }
-
-  static String get getTextValue => _textCategory;
-  static int get getCategoryID => _categoryID;
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder(
-        stream: categoryBloc.categories,
-        builder:
-            (BuildContext context, AsyncSnapshot<List<Categories>> snapshot) {
-          if (!snapshot.hasData) return Container();
-          return DropdownButton<Categories>(
-            value: _currentCategory,
-            items: snapshot.data
-                .map((category) => DropdownMenuItem<Categories>(
-                      child: Text(category.name),
-                      value: category,
-                    ))
-                .toList(),
-            onChanged: (Categories category) {
-              setState(() {
-                _categoryID = category.id;
-                _textCategory = category.name;
-                _currentCategory = category;
-              });
-            },
-            isExpanded: false,
-            hint: Text("Select Category"),
-          );
-        });
-  }
-}
-
-class DatePicker extends StatefulWidget {
-  DatePicker({Key key}) : super(key: key);
-
-  @override
-  _DatePickerState createState() => _DatePickerState();
-}
-
-class _DatePickerState extends State<DatePicker> {
-  static DateTime pickedDate = DateTime.now();
-  static String formattedDate = convertDate(pickedDate);
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  static String convertDate(DateTime datetime) {
-    String result =
-        "${datetime.year.toString()}-${datetime.month.toString().padLeft(2, '0')}-${datetime.day.toString().padLeft(2, '0')}";
-    return result;
-  }
-
-  Widget datetime() {
-    return CupertinoDatePicker(
-        initialDateTime: DateTime.now(),
-        onDateTimeChanged: (DateTime newdate) {
-          pickedDate = newdate;
-          setState(() {});
-        },
-        use24hFormat: true,
-        maximumDate: new DateTime(DateTime.now().year, DateTime.now().month + 3,
-            DateTime.now().day + 14),
-        minimumYear: DateTime.now().year,
-        maximumYear: DateTime.now().year,
-        mode: CupertinoDatePickerMode.date);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialButton(
-      child: Text(
-        convertDate(pickedDate),
-        style: TextStyle(color: Colors.white),
-      ),
-      color: Colors.orange,
-      onPressed: () {
-        showModalBottomSheet(
-            context: context,
-            builder: (BuildContext builder) {
-              return Container(
-                child: datetime(),
-                height: MediaQuery.of(context).copyWith().size.height / 3,
-              );
-            });
-      },
-    );
-  }
-}

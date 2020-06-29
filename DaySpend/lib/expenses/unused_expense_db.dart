@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:DaySpend/expenses/db_models.dart';
+import 'package:DaySpend/expenses/database/db_models.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DBProvider {
@@ -63,7 +63,7 @@ class DBProvider {
   }
 
   newExpense(
-      String description, String category, String amount, String date) async {
+      String description, String category, double amount, String date) async {
     Expense expense = new Expense(
         description: description,
         category: category,

@@ -23,28 +23,28 @@ class DBProvider {
 
   initDB() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, "Expenses.db");
+    String path = join(documentsDirectory.path, "Expense.db");
     return await openDatabase(path, version: 2, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE Expenses ("
           "id INTEGER PRIMARY KEY AUTOINCREMENT,"
           "description TEXT,"
           "category TEXT,"
-          "amount TEXT,"
+          "amount DOUBLE,"
           "date TEXT"
           ")");
       await db.execute("CREATE TABLE Categories ("
           "id INTEGER PRIMARY KEY AUTOINCREMENT,"
           "name TEXT UNIQUE,"
           "amount DOUBLE,"
-          "budget DOUBLE"
+          "budgetPercentage TEXT"
           ")");
       await db.execute("CREATE TABLE Variables ("
           "type TEXT PRIMARY KEY,"
           "value TEXT "
           ")");
       await db.insert("Variables", {"type": 'MaxSpend', "value": 'Not Set'});
-      await db.insert("Categories", {"name": "Others", "amount": 0, "budget": 0});
+      await db.insert("Categories", {"name": "Others", "amount": 0, "budgetPercentage": "Not Set"});
     });
   }
 }
