@@ -26,11 +26,12 @@ dependencies:
   wc_form_validators:
     git:
       url: git://github.com/danielwse/flutter_form_validators.git
- 
-
   moneytextformfield:
    git:
      url: git://github.com/danielwse/flutter_moneytextfieldform.git
+  flutter_form_builder: ^3.10.1
+  fswitch: ^1.1.2
+
 
 dev_dependencies:
   build_runner: ^1.7.2

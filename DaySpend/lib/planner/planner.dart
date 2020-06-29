@@ -4,6 +4,7 @@ import 'package:flutter/rendering.dart';
 import 'package:DaySpend/fonts/header.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:fswitch/fswitch.dart';
 
 IconSlideAction switchStatus(status) {
   switch (status) {
@@ -70,8 +71,9 @@ class Task implements Comparable {
   final String index;
   final String time;
   final String status;
+  final String description;
 
-  Task(this.index, this.name, this.time, this.status);
+  Task(this.index, this.name, this.time, this.status, this.description);
 
   @override
   int compareTo(other) {
@@ -80,23 +82,30 @@ class Task implements Comparable {
 }
 
 List<Task> _tasks = [
-  Task('1', 'Run', '17:30', 'overdue'),
-  Task('1', 'Eat', '20:00', 'overdue'),
-  Task('1', 'Study', '16:00', 'completed'),
-  Task('2', 'Study', '16:00', ''),
-  Task('2', 'Eat', '17:00', 'notify'),
-  Task('3', 'Study', '16:00', ''),
-  Task('4', 'Study', '16:00', 'completed'),
-  Task('4', 'Run', '20:00', ''),
-  Task('5', 'Study', '16:00', ''),
-  Task('5', 'Study', '20:00', 'notify'),
-  Task('5', 'Play', '22:00', ''),
-  Task('6', 'Study', '16:00', 'notify'),
-  Task('7', 'Study', '16:00', ''),
-  Task('2', 'Study', '11:00', '')
+  Task('1', 'Run', '17:30', 'overdue','Lorem ipsum dolor sit amet consectetur adipiscing elit. Duis dapibus rutrum facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.'),
+  Task('1', 'Eat', '20:00', 'overdue','Lorem ipsum dolor sit amet consectetur adipiscing elit. Duis dapibus rutrum facilisis.'),
+  Task('1', 'Study', '16:00', 'completed', 'Lorem ipsum dolor sit amet consectetur adipiscing elit. Duis dapibus rutrum facilisis.'),
+  Task('2', 'Study', '16:00', '', 'Lorem ipsum dolor sit amet consectetur adipiscing elit. Duis dapibus rutrum facilisis.'),
+  Task('2', 'Eat', '17:00', 'notify','Lorem ipsum dolor sit amet consectetur adipiscing elit. Duis dapibus rutrum facilisis.'),
+  Task('3', 'Study', '16:00', '', 'Duis dapibus rutrum facilisis.'),
+  Task('4', 'Study', '16:00', 'completed','Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.'),
+  Task('4', 'Run', '20:00', '', 'Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.'),
+  Task('5', 'Study', '16:00', '','Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.'),
+  Task('5', 'Study', '20:00', 'notify','Lorem ipsum dolor sit amet consectetur adipiscing elit. Duis dapibus rutrum facilisis.'),
+  Task('5', 'Play', '22:00', '','Lorem ipsum dolor sit amet consectetur adipiscing elit. Duis dapibus rutrum facilisis.'),
+  Task('6', 'Study', '16:00', 'notify','Lorem ipsum dolor sit amet consectetur adipiscing elit. Duis dapibus rutrum facilisis.'),
+  Task('7', 'Study', '16:00', '','Duis dapibus rutrum facilisis.'),
+  Task('2', 'Study', '11:00', '','Duis dapibus rutrum facilisis.')
 ]; //should import from database
 
-class Planner extends StatelessWidget {
+class Planner extends StatefulWidget {
+  @override
+  _PlannerState createState() => _PlannerState();
+}
+
+class _PlannerState extends State<Planner> {
+  //insert all states here
+  final ValueNotifier<bool> SwitchState = new ValueNotifier<bool>(true);
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -157,36 +166,47 @@ class Planner extends StatelessWidget {
             return Slidable(
               actionPane: SlidableDrawerActionPane(),
               actionExtentRatio: 0.25,
-              child: Card(
-                elevation: 2.0,
-                margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-                child: Container(
-                  color: Colors.white,
-                  child: ListTile(
-                    contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
-                    title: Text(
-                      task.name,
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.5),
-                    ),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        statusInput(task.status),
-                        Container(
-                          margin: EdgeInsets.fromLTRB(12, 0, 6, 0),
-                          child: Text(
-                            task.time,
-                            style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                letterSpacing: 0.2),
+              child: GestureDetector(
+                onTap: () => {
+                  getDetails(context,task),
+                },
+                onLongPress: () => {
+                  getDescriptionOnly(context, task),
+                },
+                onLongPressUp: () => {
+                  Navigator.of(context).pop(true),
+                },
+                child: Card(
+                  elevation: 2.0,
+                  margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+                  child: Container(
+                    color: Colors.white,
+                    child: ListTile(
+                      contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
+                      title: Text(
+                        task.name,
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.5),
+                      ),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          statusInput(task.status),
+                          Container(
+                            margin: EdgeInsets.fromLTRB(12, 0, 6, 0),
+                            child: Text(
+                              task.time,
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  letterSpacing: 0.2),
+                            ),
                           ),
-                        ),
-                        Icon(Icons.arrow_right),
-                      ],
+                          Icon(Icons.arrow_right),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -228,5 +248,146 @@ class Planner extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> getDescriptionOnly(BuildContext context, task) {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          elevation: 10,
+          shape: RoundedRectangleBorder(
+              borderRadius:
+              BorderRadius.circular(10)),
+          content: Text(
+            task.description,
+            style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.5),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> getDetails(BuildContext context, task) {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          elevation: 10,
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Row(
+                textBaseline: TextBaseline.alphabetic,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        task.name,
+                        style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.5),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Visibility(
+                        visible: ((task.status != 'overdue' && task.status != 'completed') ? true : false),
+                        child: FSwitch(
+                          open: (task.status == 'notify' ? true : false),
+                          width: 40,
+                          height: 24,
+                          openColor: Colors.teal,
+                          onChanged: (v) {
+                            //change status from notify to ''
+                            },
+                          closeChild: Icon(
+                            Icons.notifications_off,
+                            size: 12,
+                            color: Colors.brown,
+                          ),
+                          openChild: Icon(
+                            Icons.notifications,
+                            size: 12,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 12),
+                        child: Text(
+                          task.time,
+                          style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w300,
+                              letterSpacing: 0.5),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 12,horizontal: 0),
+                child: Text(
+                  task.description,
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.5),
+                ),
+              ),
+              typeOfButton(task.status),
+            ],
+          )
+        );
+      },
+    );
+  }
+
+  RaisedButton typeOfButton(String status) {
+    switch (status) {
+      case 'completed':
+        return RaisedButton(
+          elevation: 10,
+          shape: RoundedRectangleBorder(
+              borderRadius:
+              BorderRadius.circular(10)),
+          child: Header(text:'Remove', size: 14, italic: false, weight: FontWeight.w500),
+          color: Colors.greenAccent,
+          onPressed: () => {},
+        );
+        break;
+      case 'overdue':
+        return RaisedButton(
+          elevation: 10,
+          shape: RoundedRectangleBorder(
+              borderRadius:
+              BorderRadius.circular(10)),
+          child: Header(text:'Reschedule', size: 14, italic: false, color: Colors.white, weight: FontWeight.w500),
+          color: Colors.redAccent,
+          onPressed: () => {},
+        );
+        break;
+      default:
+        return RaisedButton(
+          elevation: 6,
+          shape: RoundedRectangleBorder(
+              borderRadius:
+              BorderRadius.circular(10)),
+          child: Header(text:'Complete', size: 14, italic: false, weight: FontWeight.w500),
+          color: Colors.tealAccent,
+          onPressed: () => {},
+        );
+    }
   }
 }
