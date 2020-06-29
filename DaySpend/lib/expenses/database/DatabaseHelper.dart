@@ -37,14 +37,14 @@ class DBProvider {
           "id INTEGER PRIMARY KEY AUTOINCREMENT,"
           "name TEXT UNIQUE,"
           "amount DOUBLE,"
-          "budget DOUBLE"
+          "budgetPercentage TEXT"
           ")");
       await db.execute("CREATE TABLE Variables ("
           "type TEXT PRIMARY KEY,"
           "value TEXT "
           ")");
       await db.insert("Variables", {"type": 'MaxSpend', "value": 'Not Set'});
-      await db.insert("Categories", {"name": "Others", "amount": 0, "budget": 0});
+      await db.insert("Categories", {"name": "Others", "amount": 0, "budgetPercentage": "Not Set"});
     });
   }
 }

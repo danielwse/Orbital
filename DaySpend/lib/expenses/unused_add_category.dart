@@ -84,7 +84,7 @@ class _DecoratedTextFieldState extends State<DecoratedTextField> {
                           _categoriesBloc.addCategory(Categories(
                               name: categoryController.text,
                               amount: 0,
-                              budget: 0));
+                              budgetPercentage: "0"));
                           Navigator.of(context).pop();
                           setState(() {});
                         }

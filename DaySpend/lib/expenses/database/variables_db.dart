@@ -6,20 +6,24 @@ class VariablesDao {
   final dbProvider = DBProvider.db;
   static String maxSpend;
 
-  getMaxSpend() async {
+  Future<dynamic> getMaxSpend() async {
     // Get a reference to the database.
     final db = await dbProvider.database;
     maxSpend = await db
         .rawQuery('SELECT value FROM Variables')
         .then((value) => value[0]['value']);
+        return maxSpend;
   }
 
   Future<int> updateMaxSpend(String maximumSpend) async {
+    if (maximumSpend != null) {
     final db = await dbProvider.database;
     maxSpend = maximumSpend;
     var res = await db
         .update("Variables", {"type": "MaxSpend", "value": maximumSpend});
     return res;
+    }
+    return null;
   }
 
   Future<List<Variable>> getAllVariables() async {

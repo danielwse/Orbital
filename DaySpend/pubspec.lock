@@ -361,8 +361,8 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "600e709e3077a221028e1868e8199695fc54ead1"
-      url: "git://github.com/danielwse/flutter_moneytextfieldform"
+      resolved-ref: b44702cf4ed04da9ae634e6c103c89c6ab77dd51
+      url: "git://github.com/danielwse/flutter_moneytextfieldform.git"
     source: git
     version: "0.3.5+1"
   node_interop:
@@ -606,8 +606,8 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "44742bc4d454fe6872c71232a83dc7226f4bd3ab"
-      url: "git://github.com/danielwse/flutter_form_validators"
+      resolved-ref: "1b559f3c3116432b80dcb89330cba90e6f2deccd"
+      url: "git://github.com/danielwse/flutter_form_validators.git"
     source: git
     version: "0.1.1"
   web_socket_channel:

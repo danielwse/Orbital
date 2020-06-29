@@ -1,6 +1,7 @@
 import 'package:DaySpend/expenses/database/DatabaseBloc.dart';
 import 'package:flutter/material.dart';
 import 'package:DaySpend/expenses/database/db_models.dart';
+import 'package:flutter/cupertino.dart';
 
 class EditExpense extends StatefulWidget {
   final ExpensesBloc expensesBloc;
@@ -9,9 +10,10 @@ class EditExpense extends StatefulWidget {
   final int expenseID;
   final double initialAmount;
   final String category;
+  final String date;
 
   EditExpense(this.expensesBloc, this.categoryBloc, this.initialDescription,
-      this.expenseID, this.initialAmount, this.category);
+      this.expenseID, this.initialAmount, this.category, this.date);
   @override
   _EditExpenseState createState() => _EditExpenseState();
 }
@@ -25,6 +27,9 @@ class _EditExpenseState extends State<EditExpense> {
   bool categoryChanged = false;
   Categories _currentCategory;
   bool isButtonEnabled = false;
+  DateTime pickedDate = DateTime.now();
+  String formattedDate;
+
   @override
   void dispose() {
     _renameController.dispose();
@@ -37,6 +42,7 @@ class _EditExpenseState extends State<EditExpense> {
   void initState() {
     _renameController.text = widget.initialDescription;
     _amountController.text = widget.initialAmount.toString();
+    formattedDate =  widget.date;
     return super.initState();
   }
 
@@ -65,6 +71,46 @@ class _EditExpenseState extends State<EditExpense> {
     else {
       isButtonEnabled = true;
     }
+  }
+
+  static String convertDate(DateTime datetime) {
+    String result =
+        "${datetime.year.toString()}-${datetime.month.toString().padLeft(2, '0')}-${datetime.day.toString().padLeft(2, '0')}";
+    return result;
+  }
+
+
+  Widget _showDatePicker() {
+    return MaterialButton(
+      child: Text(
+        convertDate(pickedDate),
+        style: TextStyle(color: Colors.white),
+      ),
+      color: Colors.orange,
+      onPressed: () {
+        showModalBottomSheet(
+            context: context,
+            builder: (BuildContext builder) {
+              return Container(
+                child: CupertinoDatePicker(
+        initialDateTime: DateTime.now(),
+        onDateTimeChanged: (DateTime newdate) {
+          pickedDate = newdate;
+          setState(() {
+            formattedDate = convertDate(pickedDate);
+          });
+        },
+        use24hFormat: true,
+        maximumDate: new DateTime(DateTime.now().year, DateTime.now().month + 3,
+            DateTime.now().day + 14),
+        minimumYear: DateTime.now().year,
+        maximumYear: DateTime.now().year,
+        mode: CupertinoDatePickerMode.date),
+                height: MediaQuery.of(context).copyWith().size.height / 3,
+              );
+            });
+      },
+    );
   }
   @override
   Widget build(BuildContext context) {
@@ -134,19 +180,6 @@ class _EditExpenseState extends State<EditExpense> {
                                       widget.categoryBloc.addAmountToCategory(double.parse(_amountController.text), _currentCategory.name); 
                                       
                                     }
-
-                                    // widget.expensesBloc
-                                    //     .getExpensesByCategory(
-                                    //         widget.initialName)
-                                    //     .then((list) => list.isNotEmpty
-                                    //         ? list.forEach((expense) => {
-                                    //               widget.expensesBloc
-                                    //                   .changeExpenseCategory(
-                                    //                       _renameController
-                                    //                           .text,
-                                    //                       expense.id)
-                                    //             })
-                                    //         : null);
                                     Navigator.of(context).pop();
                                   } : null,
                                   child: Icon(Icons.done, size: 40)),
@@ -202,7 +235,8 @@ class _EditExpenseState extends State<EditExpense> {
                               hintText: 'Item Amount',
                             )),
                       ),
-                      _showCategoryPicker()
+                      _showCategoryPicker(),
+                      _showDatePicker()
                     ]),
                   ]),
                 )

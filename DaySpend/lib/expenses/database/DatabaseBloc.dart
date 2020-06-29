@@ -82,9 +82,10 @@ class VariablesBloc implements Bloc {
     _variablesController.sink.add(await _variablesRepository.getAllVariables());
   }
 
-  getMaxSpend() async {
-    await _variablesRepository.getMaxSpend();
+  Future<dynamic> getMaxSpend() async {
+    var res = await _variablesRepository.getMaxSpend();
     getVariables();
+    return res;
   }
 
   updateMaxSpend(String maximumSpend) async {
@@ -100,7 +101,6 @@ class VariablesBloc implements Bloc {
 class CategoryBloc implements Bloc {
   final _categoryRepository = CategoryRepository();
   final _categoryController = StreamController<List<Categories>>.broadcast();
-
 
   get categories => _categoryController.stream;
 
@@ -142,6 +142,23 @@ class CategoryBloc implements Bloc {
 
   renameCategory(String oldName, String newName) async {
     await _categoryRepository.renameCategory(oldName, newName);
+    getCategories();
+  }
+
+  Future<int> categoriesCount() async {
+    var res = await _categoryRepository.categoriesCount();
+    getCategories();
+    return res;
+  }
+
+  Future<double> getTotalBudgets() async {
+    var res = await _categoryRepository.getTotalBudgets();
+    getCategories();
+    return res;
+  }
+
+  changeBudget(String newBudget, int categoryID) async {
+    await _categoryRepository.changeBudget(newBudget, categoryID);
     getCategories();
   }
 

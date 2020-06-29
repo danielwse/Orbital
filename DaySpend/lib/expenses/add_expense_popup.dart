@@ -98,6 +98,14 @@ class _DecoratedTextFieldState extends State<DecoratedTextField> {
   final CategoryBloc pickerCategoryBloc = CategoryBloc();
   Categories _currentCategory;
   bool isButtonEnabled = false;
+  DateTime pickedDate = DateTime.now();
+  String formattedDate;
+
+  @override
+  void initState() {
+    formattedDate = convertDate(pickedDate);
+    super.initState();
+  } 
 
   @override
   void dispose() {
@@ -148,6 +156,46 @@ class _DecoratedTextFieldState extends State<DecoratedTextField> {
         });
   }
 
+  static String convertDate(DateTime datetime) {
+    String result =
+        "${datetime.year.toString()}-${datetime.month.toString().padLeft(2, '0')}-${datetime.day.toString().padLeft(2, '0')}";
+    return result;
+  }
+
+
+  Widget _showDatePicker() {
+    return MaterialButton(
+      child: Text(
+        convertDate(pickedDate),
+        style: TextStyle(color: Colors.white),
+      ),
+      color: Colors.orange,
+      onPressed: () {
+        showModalBottomSheet(
+            context: context,
+            builder: (BuildContext builder) {
+              return Container(
+                child: CupertinoDatePicker(
+        initialDateTime: DateTime.now(),
+        onDateTimeChanged: (DateTime newdate) {
+          pickedDate = newdate;
+          setState(() {
+            formattedDate = convertDate(pickedDate);
+          });
+        },
+        use24hFormat: true,
+        maximumDate: new DateTime(DateTime.now().year, DateTime.now().month + 3,
+            DateTime.now().day + 14),
+        minimumYear: DateTime.now().year,
+        maximumYear: DateTime.now().year,
+        mode: CupertinoDatePickerMode.date),
+                height: MediaQuery.of(context).copyWith().size.height / 3,
+              );
+            });
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(children: <Widget>[
@@ -174,7 +222,7 @@ class _DecoratedTextFieldState extends State<DecoratedTextField> {
                               descriptionController.text,
                               _currentCategory.name,
                               double.parse(amountController.text),
-                              _DatePickerState.formattedDate);
+                              formattedDate);
                           widget.categoryBloc.addAmountToCategory(
                               double.parse(amountController.text),
                               _currentCategory.name);
@@ -228,65 +276,8 @@ class _DecoratedTextFieldState extends State<DecoratedTextField> {
             )),
       ),
       SizedBox(height: 50, child: _showCategoryPicker()),
-      DatePicker()
+      _showDatePicker()
     ]);
   }
 }
 
-class DatePicker extends StatefulWidget {
-  DatePicker({Key key}) : super(key: key);
-
-  @override
-  _DatePickerState createState() => _DatePickerState();
-}
-
-class _DatePickerState extends State<DatePicker> {
-  static DateTime pickedDate = DateTime.now();
-  static String formattedDate = convertDate(pickedDate);
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  static String convertDate(DateTime datetime) {
-    String result =
-        "${datetime.year.toString()}-${datetime.month.toString().padLeft(2, '0')}-${datetime.day.toString().padLeft(2, '0')}";
-    return result;
-  }
-
-  Widget datetime() {
-    return CupertinoDatePicker(
-        initialDateTime: DateTime.now(),
-        onDateTimeChanged: (DateTime newdate) {
-          pickedDate = newdate;
-          setState(() {});
-        },
-        use24hFormat: true,
-        maximumDate: new DateTime(DateTime.now().year, DateTime.now().month + 3,
-            DateTime.now().day + 14),
-        minimumYear: DateTime.now().year,
-        maximumYear: DateTime.now().year,
-        mode: CupertinoDatePickerMode.date);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialButton(
-      child: Text(
-        convertDate(pickedDate),
-        style: TextStyle(color: Colors.white),
-      ),
-      color: Colors.orange,
-      onPressed: () {
-        showModalBottomSheet(
-            context: context,
-            builder: (BuildContext builder) {
-              return Container(
-                child: datetime(),
-                height: MediaQuery.of(context).copyWith().size.height / 3,
-              );
-            });
-      },
-    );
-  }
-}
