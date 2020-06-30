@@ -25,4 +25,10 @@ class TaskFunction extends ChangeNotifier{
   List<Task> get tasks {
     return _tasks;
   }
+
+  void addTask(String index, String name, String time, String status, String des) {
+    final task = Task(index,name,time,status,des);
+    _tasks.add(task);
+    notifyListeners();
+  }
 }

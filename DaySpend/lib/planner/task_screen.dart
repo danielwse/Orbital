@@ -2,6 +2,8 @@ import 'package:DaySpend/fonts/header.dart';
 import 'package:DaySpend/planner/task_list.dart';
 import 'package:flutter/material.dart';
 
+import 'add_task.dart';
+
 class TaskScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -17,7 +19,18 @@ class TaskScreen extends StatelessWidget {
         elevation: 0.0,
         actions: <Widget>[
           IconButton(
-            onPressed: () {},
+            onPressed: () => {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                builder: (context) => SingleChildScrollView(
+                  child:Container(
+                  padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                    child: AddTask(),
+                  )
+                )
+              ),
+            },
             icon: Padding(
               padding: const EdgeInsets.only(right: 100),
               child: Icon(
@@ -26,16 +39,6 @@ class TaskScreen extends StatelessWidget {
               ),
             ),
           ),
-          IconButton(
-            onPressed: () {},
-            icon: Padding(
-              padding: const EdgeInsets.only(right: 100),
-              child: Icon(
-                Icons.delete_forever,
-                color: Colors.black,
-              ),
-            ),
-          )
         ],
       ),
       body: TaskList(),
