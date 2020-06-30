@@ -83,10 +83,10 @@ class Task implements Comparable {
 
 List<Task> _tasks = [
   Task('1', 'Run', '17:30', 'overdue','Lorem ipsum dolor sit amet consectetur adipiscing elit. Duis dapibus rutrum facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.'),
-  Task('1', 'Eat', '20:00', 'overdue','Lorem ipsum dolor sit amet consectetur adipiscing elit. Duis dapibus rutrum facilisis.'),
+  Task('1', 'Eat', '20:00', 'notify','Lorem ipsum dolor sit amet consectetur adipiscing elit. Duis dapibus rutrum facilisis.'),
   Task('1', 'Study', '16:00', 'completed', 'Lorem ipsum dolor sit amet consectetur adipiscing elit. Duis dapibus rutrum facilisis.'),
-  Task('2', 'Study', '16:00', '', 'Lorem ipsum dolor sit amet consectetur adipiscing elit. Duis dapibus rutrum facilisis.'),
-  Task('2', 'Eat', '17:00', 'notify','Lorem ipsum dolor sit amet consectetur adipiscing elit. Duis dapibus rutrum facilisis.'),
+  Task('2', 'Study', '16:00', 'completed', 'Lorem ipsum dolor sit amet consectetur adipiscing elit. Duis dapibus rutrum facilisis.'),
+  Task('2', 'Eat', '17:00', '','Lorem ipsum dolor sit amet consectetur adipiscing elit. Duis dapibus rutrum facilisis.'),
   Task('3', 'Study', '16:00', '', 'Duis dapibus rutrum facilisis.'),
   Task('4', 'Study', '16:00', 'completed','Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.'),
   Task('4', 'Run', '20:00', '', 'Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.'),
@@ -95,7 +95,7 @@ List<Task> _tasks = [
   Task('5', 'Play', '22:00', '','Lorem ipsum dolor sit amet consectetur adipiscing elit. Duis dapibus rutrum facilisis.'),
   Task('6', 'Study', '16:00', 'notify','Lorem ipsum dolor sit amet consectetur adipiscing elit. Duis dapibus rutrum facilisis.'),
   Task('7', 'Study', '16:00', '','Duis dapibus rutrum facilisis.'),
-  Task('2', 'Study', '11:00', '','Duis dapibus rutrum facilisis.')
+  Task('2', 'Study', '11:00', 'overdue','Duis dapibus rutrum facilisis.')
 ]; //should import from database
 
 class Planner extends StatefulWidget {
@@ -174,7 +174,7 @@ class _PlannerState extends State<Planner> {
                   getDescriptionOnly(context, task),
                 },
                 onLongPressUp: () => {
-                  Navigator.of(context).pop(true),
+                  Navigator.pop(context),
                 },
                 child: Card(
                   elevation: 2.0,
