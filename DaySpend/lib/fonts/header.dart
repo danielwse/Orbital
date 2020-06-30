@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class Header extends StatelessWidget {
   Header({@required this.text, @required this.size, this.italic, this.color, this.weight});
   final double size;

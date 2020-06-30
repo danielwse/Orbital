@@ -1,5 +1,3 @@
-//entitre page when swipe right on homepage
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:DaySpend/expenses/database/DatabaseBloc.dart';
@@ -10,7 +8,6 @@ import 'package:DaySpend/expenses/edit_category.dart';
 import 'package:DaySpend/expenses/edit_expense.dart';
 import 'package:moneytextformfield/moneytextformfield.dart';
 import 'package:wc_form_validators/wc_form_validators.dart';
-import 'package:DaySpend/fonts/header.dart';
 
 class Expenses extends StatelessWidget {
   const Expenses({Key key}) : super(key: key);
