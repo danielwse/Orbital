@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:DaySpend/expenses/db_models.dart';
+import 'package:DaySpend/expenses/database/db_models.dart';
 import 'package:DaySpend/expenses/database/DatabaseBloc.dart';
 
 //widget inside the pop-up
@@ -84,7 +84,7 @@ class _DecoratedTextFieldState extends State<DecoratedTextField> {
                           _categoriesBloc.addCategory(Categories(
                               name: categoryController.text,
                               amount: 0,
-                              budget: 0));
+                              budgetPercentage: "0"));
                           Navigator.of(context).pop();
                           setState(() {});
                         }

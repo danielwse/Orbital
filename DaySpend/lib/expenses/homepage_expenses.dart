@@ -58,6 +58,7 @@ class HomePageExpenses extends StatelessWidget {
             SizedBox(
                 width: 300,
                 child: RoundedProgressBar(
+                  percent: 100,
                   height: 12,
                   theme: RoundedProgressBarTheme.blue,
                   style:
