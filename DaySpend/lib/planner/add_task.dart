@@ -1,6 +1,7 @@
 import 'package:DaySpend/planner/task_function.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fswitch/fswitch.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
@@ -12,6 +13,7 @@ class AddTask extends StatelessWidget {
     String index = getDay(datetime);
     String time = DateFormat('Hm').format(datetime).toString();
     String description;
+    bool notify = false;
 
     return Container(
       color: Color(0xff757575),
@@ -26,6 +28,25 @@ class AddTask extends StatelessWidget {
         ),
         child: Column(
           children: <Widget>[
+            FSwitch(
+              open: notify,
+              width: 40,
+              height: 24,
+              openColor: Colors.teal,
+              onChanged: (v) {
+                notify = !notify;
+              },
+              closeChild: Icon(
+                Icons.notifications_off,
+                size: 12,
+                color: Colors.brown,
+              ),
+              openChild: Icon(
+                Icons.notifications,
+                size: 12,
+                color: Colors.white,
+              ),
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
@@ -51,16 +72,12 @@ class AddTask extends StatelessWidget {
               maxLength: 20,
               autofocus: true,
               textAlign: TextAlign.center,
-              onChanged: (newName) {
-                name = newName;
-              },
+              onChanged: (newName) {name = newName;},
             ),
             TextField(
               autofocus: true,
               textAlign: TextAlign.start,
-              onChanged: (newDes) {
-                description = newDes;
-              },
+              onChanged: (newDes) {description = newDes;},
             ),
             FlatButton(
               child: Text(
@@ -72,7 +89,7 @@ class AddTask extends StatelessWidget {
               color: Colors.lightBlueAccent,
               onPressed: () {
                 if (name != null) {
-                  Provider.of<TaskFunction>(context).addTask(index,name,time,(description != null ? description : 'This task has no description'),false,false,false);
+                  Provider.of<TaskFunction>(context).addTask(index,name,time,(description != null ? description : 'This task has no description'),notify,false,false);
                 }
                 Navigator.pop(context);
               },
