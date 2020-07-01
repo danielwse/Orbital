@@ -31,10 +31,20 @@ class TaskList extends StatelessWidget {
             ),
           ),
           itemBuilder: (context, task) {
-            return TaskTile(task);
+            return TaskTile(
+              taskName: task.name,
+              taskIndex: task.index,
+              taskTime: task.time,
+              taskDes: task.description,
+              taskNotify: task.notify,
+              taskComplete: task.isComplete,
+              taskOverdue: task.isOverdue,
+            );
           },
         );
       }
     );
   }
 }
+
+

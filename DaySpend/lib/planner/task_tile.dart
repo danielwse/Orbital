@@ -1,14 +1,19 @@
 import 'package:DaySpend/fonts/header.dart';
-import 'package:DaySpend/planner/task.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:fswitch/fswitch.dart';
 
 class TaskTile extends StatelessWidget {
-  final Task task;
+  final String taskName;
+  final String taskIndex;
+  final String taskTime;
+  final String taskDes;
+  final bool taskNotify;
+  final bool taskComplete;
+  final bool taskOverdue;
 
-  TaskTile(this.task);
+  TaskTile({this.taskIndex,this.taskName,this.taskTime,this.taskDes,this.taskNotify, this.taskComplete, this.taskOverdue});
 
   @override
   Widget build(BuildContext context) {
@@ -17,10 +22,10 @@ class TaskTile extends StatelessWidget {
       actionExtentRatio: 0.25,
       child: GestureDetector(
         onTap: () => {
-          getDetails(context,task),
+          getDetails(context,taskName, taskTime, taskDes, taskNotify, taskComplete, taskOverdue),
         },
         onLongPress: () => {
-          getDescriptionOnly(context, task),
+          getDescriptionOnly(context, taskDes),
           print("peek"),
         },
         onLongPressUp: () => {
@@ -35,7 +40,7 @@ class TaskTile extends StatelessWidget {
             child: ListTile(
               contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
               title: Text(
-                task.name,
+                taskName,
                 style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
@@ -44,11 +49,11 @@ class TaskTile extends StatelessWidget {
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  statusInput(task.status),
+                  (taskNotify ? Icon(Icons.notifications, color: Colors.orangeAccent, size: 22) : (taskOverdue ? Icon(Icons.check_circle, color: Colors.lightBlueAccent, size: 20) : (taskComplete ? Icon(Icons.cancel, color: Colors.redAccent, size: 20) : Icon(Icons.cancel, color: Colors.redAccent, size: 0)))),
                   Container(
                     margin: EdgeInsets.fromLTRB(12, 0, 6, 0),
                     child: Text(
-                      task.time,
+                      taskTime,
                       style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
@@ -63,7 +68,11 @@ class TaskTile extends StatelessWidget {
         ),
       ),
       actions: <Widget>[
-        Container(height: 55, child: switchStatus(task.status)),
+        Container(height: 55, child:
+        (taskComplete ? IconSlideAction(
+            caption: 'Remove', color: Colors.greenAccent, icon: Icons.archive) : (taskOverdue ? IconSlideAction(
+            caption: 'Reschedule', color: Colors.redAccent, icon: Icons.refresh) : IconSlideAction(
+            caption: 'Complete', color: Colors.tealAccent, icon: Icons.check)))),
       ],
       secondaryActions: <Widget>[
         Container(
@@ -98,23 +107,6 @@ class TaskTile extends StatelessWidget {
   }
 }
 
-
-IconSlideAction switchStatus(status) {
-  switch (status) {
-    case 'completed':
-      return IconSlideAction(
-          caption: 'Remove', color: Colors.greenAccent, icon: Icons.archive);
-      break;
-    case 'overdue':
-      return IconSlideAction(
-          caption: 'Reschedule', color: Colors.redAccent, icon: Icons.refresh);
-      break;
-    default:
-      return IconSlideAction(
-          caption: 'Complete', color: Colors.tealAccent, icon: Icons.check);
-  }
-}
-
 String switchDays(i) {
   switch (i) {
     case '1':
@@ -143,23 +135,7 @@ String switchDays(i) {
   }
 }
 
-Icon statusInput(input) {
-  switch (input) {
-    case 'notify':
-      return Icon(Icons.notifications, color: Colors.orangeAccent, size: 22);
-      break;
-    case 'completed':
-      return Icon(Icons.check_circle, color: Colors.lightBlueAccent, size: 20);
-      break;
-    case 'overdue':
-      return Icon(Icons.cancel, color: Colors.redAccent, size: 20);
-      break;
-    default:
-      return Icon(Icons.cancel, size: 0);
-  }
-}
-
-Future<void> getDescriptionOnly(BuildContext context, task) {
+Future<void> getDescriptionOnly(BuildContext context, des) {
   return showDialog<void>(
     context: context,
     builder: (BuildContext context) {
@@ -169,7 +145,7 @@ Future<void> getDescriptionOnly(BuildContext context, task) {
             borderRadius:
             BorderRadius.circular(10)),
         content: Text(
-          task.description,
+          des,
           style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w700,
@@ -180,7 +156,7 @@ Future<void> getDescriptionOnly(BuildContext context, task) {
   );
 }
 
-Future<void> getDetails(BuildContext context, task) {
+Future<void> getDetails(BuildContext context, name, time, des, notify, complete, overdue) {
   return showDialog<void>(
     context: context,
     builder: (BuildContext context) {
@@ -198,7 +174,7 @@ Future<void> getDetails(BuildContext context, task) {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        task.name,
+                        name,
                         style: TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.w700,
@@ -210,14 +186,14 @@ Future<void> getDetails(BuildContext context, task) {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
                       Visibility(
-                        visible: ((task.status != 'overdue' && task.status != 'completed') ? true : false),
+                        visible: (complete && overdue),
                         child: FSwitch(
-                          open: (task.status == 'notify' ? true : false),
+                          open: (notify),
                           width: 40,
                           height: 24,
                           openColor: Colors.teal,
                           onChanged: (v) {
-                            //change status from notify to ''
+                            notify = !notify;
                           },
                           closeChild: Icon(
                             Icons.notifications_off,
@@ -234,7 +210,7 @@ Future<void> getDetails(BuildContext context, task) {
                       Padding(
                         padding: EdgeInsets.only(left: 12),
                         child: Text(
-                          task.time,
+                          time,
                           style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w300,
@@ -248,54 +224,41 @@ Future<void> getDetails(BuildContext context, task) {
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 12,horizontal: 0),
                 child: Text(
-                  task.description,
+                  des,
                   style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 0.5),
                 ),
               ),
-              typeOfButton(task.status),
+              (complete ? RaisedButton(
+                elevation: 10,
+                shape: RoundedRectangleBorder(
+                    borderRadius:
+                    BorderRadius.circular(10)),
+                child: Header(text:'Remove', size: 14, italic: false, weight: FontWeight.w500),
+                color: Colors.greenAccent,
+                onPressed: () => {},
+              ) : (overdue ? RaisedButton(
+                elevation: 10,
+                shape: RoundedRectangleBorder(
+                    borderRadius:
+                    BorderRadius.circular(10)),
+                child: Header(text:'Reschedule', size: 14, italic: false, color: Colors.white, weight: FontWeight.w500),
+                color: Colors.redAccent,
+                onPressed: () => {},
+              ) : RaisedButton(
+                elevation: 6,
+                shape: RoundedRectangleBorder(
+                    borderRadius:
+                    BorderRadius.circular(10)),
+                child: Header(text:'Complete', size: 14, italic: false, weight: FontWeight.w500),
+                color: Colors.tealAccent,
+                onPressed: () => {},
+              ))),
             ],
           )
       );
     },
   );
-}
-
-RaisedButton typeOfButton(String status) {
-  switch (status) {
-    case 'completed':
-      return RaisedButton(
-        elevation: 10,
-        shape: RoundedRectangleBorder(
-            borderRadius:
-            BorderRadius.circular(10)),
-        child: Header(text:'Remove', size: 14, italic: false, weight: FontWeight.w500),
-        color: Colors.greenAccent,
-        onPressed: () => {},
-      );
-      break;
-    case 'overdue':
-      return RaisedButton(
-        elevation: 10,
-        shape: RoundedRectangleBorder(
-            borderRadius:
-            BorderRadius.circular(10)),
-        child: Header(text:'Reschedule', size: 14, italic: false, color: Colors.white, weight: FontWeight.w500),
-        color: Colors.redAccent,
-        onPressed: () => {},
-      );
-      break;
-    default:
-      return RaisedButton(
-        elevation: 6,
-        shape: RoundedRectangleBorder(
-            borderRadius:
-            BorderRadius.circular(10)),
-        child: Header(text:'Complete', size: 14, italic: false, weight: FontWeight.w500),
-        color: Colors.tealAccent,
-        onPressed: () => {},
-      );
-  }
 }
