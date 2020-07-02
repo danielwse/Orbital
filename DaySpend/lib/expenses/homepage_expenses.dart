@@ -54,7 +54,7 @@ class _HomePageExpensesState extends State<HomePageExpenses> {
                                         .length,
                                     itemBuilder: (context, int position) {
                                       final item = snapshot.data[position];
-                                      double percentSpent = snapshot1.data ==
+                                      double percentSpent = snapshot1.data !=
                                               "Not Set"
                                           ? (item.amount /
                                                   (double.parse(item
@@ -76,20 +76,26 @@ class _HomePageExpensesState extends State<HomePageExpenses> {
                                               ),
                                               Spacer(),
                                               Icon(
-                                                percentSpent >= 100
-                                                    ? Icons.mood_bad
-                                                    : Icons.mood,
-                                                color: percentSpent >= 100
+                                                percentSpent == null
+                                                    ? Icons.warning
+                                                    : percentSpent >= 100
+                                                        ? Icons.mood_bad
+                                                        : Icons.mood,
+                                                color: percentSpent == null
                                                     ? Colors.red
-                                                    : percentSpent >= 80
-                                                        ? Colors.orange
-                                                        : Colors.green,
+                                                    : percentSpent >= 100
+                                                        ? Colors.red
+                                                        : percentSpent >= 80
+                                                            ? Colors.orange
+                                                            : Colors.green,
                                               )
                                             ])),
                                         SizedBox(
                                             width: 300,
                                             child: RoundedProgressBar(
-                                              percent: percentSpent,
+                                              percent: percentSpent == null
+                                                  ? 100
+                                                  : percentSpent,
                                               height: 12,
                                               theme: list[
                                                   _random.nextInt(list.length)],
@@ -100,7 +106,16 @@ class _HomePageExpensesState extends State<HomePageExpenses> {
                                                   vertical: 5),
                                               borderRadius:
                                                   BorderRadius.circular(24),
-                                            ))
+                                            )),
+                                        percentSpent == null
+                                            ? SizedBox(
+                                                child: Text(
+                                                  "Start Budgeting Today!",
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                                width: 300,
+                                              )
+                                            : Container()
                                       ]);
                                     }))
                           ]))

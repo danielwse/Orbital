@@ -29,16 +29,17 @@ class _MyAppState extends State<MyApp> {
     super.dispose();
   }
 
-  List<Widget> pages = [Expenses(),Homepage(), Planner()];
+  List<Widget> pages = [Expenses(), Homepage(), Planner()];
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: PageView(
-        children: pages,
-        scrollDirection: Axis.horizontal,
-        controller: controller,
-      ),
-    );
+        debugShowCheckedModeBanner: false,
+        home: Scaffold(
+          body: PageView(
+            children: pages,
+            scrollDirection: Axis.horizontal,
+            controller: controller,
+          ),
+        ));
   }
 }

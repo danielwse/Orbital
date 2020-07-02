@@ -10,28 +10,7 @@ import 'package:DaySpend/expenses/edit_category.dart';
 import 'package:DaySpend/expenses/edit_expense.dart';
 import 'package:moneytextformfield/moneytextformfield.dart';
 import 'package:wc_form_validators/wc_form_validators.dart';
-
-class Expenses extends StatelessWidget {
-  const Expenses({Key key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: Scaffold(
-            body: GestureDetector(
-                onTap: () {
-                  FocusScope.of(context).requestFocus(new FocusNode());
-                },
-                child: SafeArea(
-                    child: Flex(direction: Axis.vertical, children: [
-                  Expanded(
-                      child: Column(
-                    children: <Widget>[BudgetList()],
-                  ))
-                ])))));
-  }
-}
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 //max spend part at top of page
 class MaxSpend extends StatefulWidget {
@@ -121,14 +100,14 @@ class _MaxSpendState extends State<MaxSpend> {
   }
 }
 
-class BudgetList extends StatefulWidget {
-  BudgetList({Key key}) : super(key: key);
+class Expenses extends StatefulWidget {
+  Expenses({Key key}) : super(key: key);
 
   @override
-  _BudgetListState createState() => _BudgetListState();
+  _ExpensesState createState() => _ExpensesState();
 }
 
-class _BudgetListState extends State<BudgetList> {
+class _ExpensesState extends State<Expenses> {
   final CategoryBloc categoryBloc = CategoryBloc();
   final categoryController = TextEditingController();
   final ExpensesBloc expensesBloc = ExpensesBloc();
@@ -150,27 +129,15 @@ class _BudgetListState extends State<BudgetList> {
   //row of add, category text at the top
   Widget categoryHeader() {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        SizedBox(
-          width: 30,
-        ),
-        IconButton(
-            icon: Icon(Icons.add),
-            iconSize: 32.0,
-            onPressed: () {
-              FocusScope.of(context).requestFocus(new FocusNode());
-              _showAddCategory(context);
-            }),
         Spacer(),
-        Padding(
-          padding: const EdgeInsets.only(right: 28.0),
-          child: Text(
-            "Categories",
-            style: TextStyle(fontSize: 28),
-            textAlign: TextAlign.center,
-          ),
+        Text(
+          "Categories",
+          style: TextStyle(fontSize: 28),
+          textAlign: TextAlign.center,
         ),
-        Spacer(flex: 2),
+        Spacer()
       ],
     );
   }
@@ -614,29 +581,13 @@ class _BudgetListState extends State<BudgetList> {
   Widget receiptHeader() {
     return Row(
       children: <Widget>[
-        SizedBox(
-          width: 30,
-        ),
-        IconButton(
-            icon: Icon(Icons.add),
-            iconSize: 32.0,
-            onPressed: () {
-              FocusScope.of(context).requestFocus(new FocusNode());
-              showBottomSheet(
-                  context: context,
-                  builder: (context) =>
-                      BottomSheetWidget(expensesBloc, categoryBloc));
-            }),
         Spacer(),
-        Padding(
-          padding: const EdgeInsets.only(right: 28.0),
-          child: Text(
-            "Receipts",
-            style: TextStyle(fontSize: 28),
-            textAlign: TextAlign.center,
-          ),
+        Text(
+          "Receipts",
+          style: TextStyle(fontSize: 28),
+          textAlign: TextAlign.center,
         ),
-        Spacer(flex: 2),
+        Spacer(),
       ],
     );
   }
@@ -757,18 +708,57 @@ class _BudgetListState extends State<BudgetList> {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-        child: ListView(children: [
-      Column(
-        children: <Widget>[
-          MaxSpend(categoryBloc, variablesBloc),
-          categoryHeader(),
-          getCategoriesWidget(),
-          SizedBox(height: 20),
-          receiptHeader(),
-          allReceipts()
-        ],
-      )
-    ]));
+    return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: Scaffold(
+            floatingActionButton: SpeedDial(
+                backgroundColor: Colors.white,
+                foregroundColor: Colors.black,
+                child: Icon(Icons.add),
+                overlayColor: Colors.black,
+                overlayOpacity: 0.4,
+                children: [
+                  SpeedDialChild(
+                      child: Icon(
+                        Icons.receipt,
+                        size: 25,
+                      ),
+                      backgroundColor: Colors.red,
+                      label: 'Add Expense',
+                      labelStyle: TextStyle(fontSize: 15),
+                      onTap: () => showBottomSheet(
+                          context: context,
+                          builder: (context) =>
+                              BottomSheetWidget(expensesBloc, categoryBloc))),
+                  SpeedDialChild(
+                      child: Icon(
+                        Icons.category,
+                        size: 25,
+                      ),
+                      backgroundColor: Colors.green,
+                      label: "Add Category",
+                      labelStyle: TextStyle(fontSize: 15),
+                      onTap: () => _showAddCategory(context))
+                ]),
+            body: GestureDetector(
+                onTap: () {
+                  FocusScope.of(context).requestFocus(new FocusNode());
+                },
+                child: SafeArea(
+                    child: Flex(direction: Axis.vertical, children: [
+                  Expanded(
+                      child: ListView(children: [
+                    Column(
+                      children: <Widget>[
+                        MaxSpend(categoryBloc, variablesBloc),
+                        categoryHeader(),
+                        getCategoriesWidget(),
+                        SizedBox(height: 20),
+                        receiptHeader(),
+                        allReceipts()
+                      ],
+                    )
+                  ]))
+                ])))));
   }
 }
