@@ -12,6 +12,16 @@ String expenseToJson(Expense data) {
   return json.encode(dyn);
 }
 
+Categories categoriesFromJson(String str) {
+  final jsonData = json.decode(str);
+  return Categories.fromMap(jsonData);
+}
+
+String categoriesToJson(Categories data) {
+  final dyn = data.toMap();
+  return json.encode(dyn);
+}
+
 class Expense {
   int id;
   String description;

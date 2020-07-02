@@ -82,20 +82,31 @@ class Task implements Comparable {
 }
 
 List<Task> _tasks = [
-  Task('1', 'Run', '17:30', 'overdue','Lorem ipsum dolor sit amet consectetur adipiscing elit. Duis dapibus rutrum facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.'),
-  Task('1', 'Eat', '20:00', 'overdue','Lorem ipsum dolor sit amet consectetur adipiscing elit. Duis dapibus rutrum facilisis.'),
-  Task('1', 'Study', '16:00', 'completed', 'Lorem ipsum dolor sit amet consectetur adipiscing elit. Duis dapibus rutrum facilisis.'),
-  Task('2', 'Study', '16:00', '', 'Lorem ipsum dolor sit amet consectetur adipiscing elit. Duis dapibus rutrum facilisis.'),
-  Task('2', 'Eat', '17:00', 'notify','Lorem ipsum dolor sit amet consectetur adipiscing elit. Duis dapibus rutrum facilisis.'),
+  Task('1', 'Run', '17:30', 'overdue',
+      'Lorem ipsum dolor sit amet consectetur adipiscing elit. Duis dapibus rutrum facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.'),
+  Task('1', 'Eat', '20:00', 'overdue',
+      'Lorem ipsum dolor sit amet consectetur adipiscing elit. Duis dapibus rutrum facilisis.'),
+  Task('1', 'Study', '16:00', 'completed',
+      'Lorem ipsum dolor sit amet consectetur adipiscing elit. Duis dapibus rutrum facilisis.'),
+  Task('2', 'Study', '16:00', '',
+      'Lorem ipsum dolor sit amet consectetur adipiscing elit. Duis dapibus rutrum facilisis.'),
+  Task('2', 'Eat', '17:00', 'notify',
+      'Lorem ipsum dolor sit amet consectetur adipiscing elit. Duis dapibus rutrum facilisis.'),
   Task('3', 'Study', '16:00', '', 'Duis dapibus rutrum facilisis.'),
-  Task('4', 'Study', '16:00', 'completed','Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.'),
-  Task('4', 'Run', '20:00', '', 'Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.'),
-  Task('5', 'Study', '16:00', '','Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.'),
-  Task('5', 'Study', '20:00', 'notify','Lorem ipsum dolor sit amet consectetur adipiscing elit. Duis dapibus rutrum facilisis.'),
-  Task('5', 'Play', '22:00', '','Lorem ipsum dolor sit amet consectetur adipiscing elit. Duis dapibus rutrum facilisis.'),
-  Task('6', 'Study', '16:00', 'notify','Lorem ipsum dolor sit amet consectetur adipiscing elit. Duis dapibus rutrum facilisis.'),
-  Task('7', 'Study', '16:00', '','Duis dapibus rutrum facilisis.'),
-  Task('2', 'Study', '11:00', '','Duis dapibus rutrum facilisis.')
+  Task('4', 'Study', '16:00', 'completed',
+      'Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.'),
+  Task('4', 'Run', '20:00', '',
+      'Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.'),
+  Task('5', 'Study', '16:00', '',
+      'Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.'),
+  Task('5', 'Study', '20:00', 'notify',
+      'Lorem ipsum dolor sit amet consectetur adipiscing elit. Duis dapibus rutrum facilisis.'),
+  Task('5', 'Play', '22:00', '',
+      'Lorem ipsum dolor sit amet consectetur adipiscing elit. Duis dapibus rutrum facilisis.'),
+  Task('6', 'Study', '16:00', 'notify',
+      'Lorem ipsum dolor sit amet consectetur adipiscing elit. Duis dapibus rutrum facilisis.'),
+  Task('7', 'Study', '16:00', '', 'Duis dapibus rutrum facilisis.'),
+  Task('2', 'Study', '11:00', '', 'Duis dapibus rutrum facilisis.')
 ]; //should import from database
 
 class Planner extends StatefulWidget {
@@ -105,7 +116,7 @@ class Planner extends StatefulWidget {
 
 class _PlannerState extends State<Planner> {
   //insert all states here
-  final ValueNotifier<bool> SwitchState = new ValueNotifier<bool>(true);
+  final ValueNotifier<bool> switchState = new ValueNotifier<bool>(true);
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -168,7 +179,7 @@ class _PlannerState extends State<Planner> {
               actionExtentRatio: 0.25,
               child: GestureDetector(
                 onTap: () => {
-                  getDetails(context,task),
+                  getDetails(context, task),
                 },
                 onLongPress: () => {
                   getDescriptionOnly(context, task),
@@ -256,15 +267,12 @@ class _PlannerState extends State<Planner> {
       builder: (BuildContext context) {
         return AlertDialog(
           elevation: 10,
-          shape: RoundedRectangleBorder(
-              borderRadius:
-              BorderRadius.circular(10)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           content: Text(
             task.description,
             style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0.5),
+                fontSize: 16, fontWeight: FontWeight.w700, letterSpacing: 0.5),
           ),
         );
       },
@@ -276,80 +284,82 @@ class _PlannerState extends State<Planner> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          elevation: 10,
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Row(
-                textBaseline: TextBaseline.alphabetic,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        task.name,
-                        style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 0.5),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      Visibility(
-                        visible: ((task.status != 'overdue' && task.status != 'completed') ? true : false),
-                        child: FSwitch(
-                          open: (task.status == 'notify' ? true : false),
-                          width: 40,
-                          height: 24,
-                          openColor: Colors.teal,
-                          onChanged: (v) {
-                            //change status from notify to ''
-                            },
-                          closeChild: Icon(
-                            Icons.notifications_off,
-                            size: 12,
-                            color: Colors.brown,
-                          ),
-                          openChild: Icon(
-                            Icons.notifications,
-                            size: 12,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 12),
-                        child: Text(
-                          task.time,
+            elevation: 10,
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Row(
+                  textBaseline: TextBaseline.alphabetic,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          task.name,
                           style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w300,
+                              fontSize: 22,
+                              fontWeight: FontWeight.w700,
                               letterSpacing: 0.5),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 12,horizontal: 0),
-                child: Text(
-                  task.description,
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.5),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Visibility(
+                          visible: ((task.status != 'overdue' &&
+                                  task.status != 'completed')
+                              ? true
+                              : false),
+                          child: FSwitch(
+                            open: (task.status == 'notify' ? true : false),
+                            width: 40,
+                            height: 24,
+                            openColor: Colors.teal,
+                            onChanged: (v) {
+                              //change status from notify to ''
+                            },
+                            closeChild: Icon(
+                              Icons.notifications_off,
+                              size: 12,
+                              color: Colors.brown,
+                            ),
+                            openChild: Icon(
+                              Icons.notifications,
+                              size: 12,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 12),
+                          child: Text(
+                            task.time,
+                            style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w300,
+                                letterSpacing: 0.5),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-              ),
-              typeOfButton(task.status),
-            ],
-          )
-        );
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 12, horizontal: 0),
+                  child: Text(
+                    task.description,
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.5),
+                  ),
+                ),
+                typeOfButton(task.status),
+              ],
+            ));
       },
     );
   }
@@ -359,10 +369,10 @@ class _PlannerState extends State<Planner> {
       case 'completed':
         return RaisedButton(
           elevation: 10,
-          shape: RoundedRectangleBorder(
-              borderRadius:
-              BorderRadius.circular(10)),
-          child: Header(text:'Remove', size: 14, italic: false, weight: FontWeight.w500),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          child: Header(
+              text: 'Remove', size: 14, italic: false, weight: FontWeight.w500),
           color: Colors.greenAccent,
           onPressed: () => {},
         );
@@ -370,10 +380,14 @@ class _PlannerState extends State<Planner> {
       case 'overdue':
         return RaisedButton(
           elevation: 10,
-          shape: RoundedRectangleBorder(
-              borderRadius:
-              BorderRadius.circular(10)),
-          child: Header(text:'Reschedule', size: 14, italic: false, color: Colors.white, weight: FontWeight.w500),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          child: Header(
+              text: 'Reschedule',
+              size: 14,
+              italic: false,
+              color: Colors.white,
+              weight: FontWeight.w500),
           color: Colors.redAccent,
           onPressed: () => {},
         );
@@ -381,10 +395,13 @@ class _PlannerState extends State<Planner> {
       default:
         return RaisedButton(
           elevation: 6,
-          shape: RoundedRectangleBorder(
-              borderRadius:
-              BorderRadius.circular(10)),
-          child: Header(text:'Complete', size: 14, italic: false, weight: FontWeight.w500),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          child: Header(
+              text: 'Complete',
+              size: 14,
+              italic: false,
+              weight: FontWeight.w500),
           color: Colors.tealAccent,
           onPressed: () => {},
         );

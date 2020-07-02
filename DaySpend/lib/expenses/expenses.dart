@@ -10,7 +10,6 @@ import 'package:DaySpend/expenses/edit_category.dart';
 import 'package:DaySpend/expenses/edit_expense.dart';
 import 'package:moneytextformfield/moneytextformfield.dart';
 import 'package:wc_form_validators/wc_form_validators.dart';
-import 'package:DaySpend/fonts/header.dart';
 
 class Expenses extends StatelessWidget {
   const Expenses({Key key}) : super(key: key);
@@ -18,7 +17,6 @@ class Expenses extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-     
         debugShowCheckedModeBanner: false,
         home: Scaffold(
             body: GestureDetector(
@@ -387,65 +385,70 @@ class _BudgetListState extends State<BudgetList> {
                                         .toStringAsFixed(2);
                                 final String amountLeft =
                                     budgetedAmount != 'Not Set'
-                                        ?  
-                                            (double.parse(budgetedAmount) -
-                                                    item.amount)
-                                                .toStringAsFixed(2) 
-                                          
+                                        ? (double.parse(budgetedAmount) -
+                                                item.amount)
+                                            .toStringAsFixed(2)
                                         : null;
                                 if (item.name == "Others") {
-                                                                  return Container(
-                                    height: 80,
-                                    margin: EdgeInsets.symmetric(
-                                        horizontal: 40, vertical: 1),
-                                    child: Slidable(
-                                        controller: slidableController,
-                                        actionPane: SlidableDrawerActionPane(),
-                                        actionExtentRatio: 0.20,
-                                        child: Card(
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(18.0),
-                                                side: BorderSide(
-                                                    color: Colors.white)),
-                                            child: ListTile(
-                                                title: Text(item.name),
-                                                subtitle: Text(
-                                                  'Spent: ${item.amount.toStringAsFixed(2)}',
-                                                ),
-                                                trailing: Column(children: [
-                                                  Text(
-                                                    'Budget: ${item.budgetPercentage == "Set A Max Spend" || item.budgetPercentage == "Not Set" ? "Not Set" : item.budgetPercentage + '\%'}',
-                                                    textAlign: TextAlign.left,
+                                  return Container(
+                                      height: 80,
+                                      margin: EdgeInsets.symmetric(
+                                          horizontal: 40, vertical: 1),
+                                      child: Slidable(
+                                          controller: slidableController,
+                                          actionPane:
+                                              SlidableDrawerActionPane(),
+                                          actionExtentRatio: 0.20,
+                                          child: Card(
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          18.0),
+                                                  side: BorderSide(
+                                                      color: Colors.white)),
+                                              child: ListTile(
+                                                  title: Text(item.name),
+                                                  subtitle: Text(
+                                                    'Spent: ${item.amount.toStringAsFixed(2)}',
                                                   ),
-                                                  Spacer(),
-                                                  Text(
-                                                    '${item.budgetPercentage == "Set A Max Spend" || item.budgetPercentage == "Not Set" || amountLeft == null ? "Not Set" : double.parse(amountLeft) > 0 ? '\$' + amountLeft + ' left' : '\$' + double.parse(amountLeft).abs().toStringAsFixed(2) + ' exceeded'}',
-                                                    style: TextStyle(
-                                                        color: amountLeft == null ? Colors.green : double.parse(
-                                                                    amountLeft) >
-                                                                0
-                                                            ? Colors.green
-                                                            : Colors.red[800]),
-                                                  )
-                                                ]))),
-                                        secondaryActions: <Widget>[
-                                          new IconButton(
-                                              color: Colors.blue[200],
-                                              icon: Icon(Icons.edit, size: 30),
-                                              onPressed: () {
-                                                showBottomSheet(
-                                                    context: context,
-                                                    builder: (context) =>
-                                                        EditCategory(
-                                                            expensesBloc,
-                                                            categoryBloc,
-                                                            item));
-                                                slidableController.activeState
-                                                    ?.close();
-                                              }),
+                                                  trailing: Column(children: [
+                                                    Text(
+                                                      'Budget: ${item.budgetPercentage == "Set A Max Spend" || item.budgetPercentage == "Not Set" ? "Not Set" : item.budgetPercentage + '\%'}',
+                                                      textAlign: TextAlign.left,
+                                                    ),
+                                                    Spacer(),
+                                                    Text(
+                                                      '${item.budgetPercentage == "Set A Max Spend" || item.budgetPercentage == "Not Set" || amountLeft == null ? "Not Set" : double.parse(amountLeft) > 0 ? '\$' + amountLeft + ' left' : '\$' + double.parse(amountLeft).abs().toStringAsFixed(2) + ' exceeded'}',
+                                                      style: TextStyle(
+                                                          color: amountLeft ==
+                                                                  null
+                                                              ? Colors.green
+                                                              : double.parse(
+                                                                          amountLeft) >
+                                                                      0
+                                                                  ? Colors.green
+                                                                  : Colors.red[
+                                                                      800]),
+                                                    )
+                                                  ]))),
+                                          secondaryActions: <Widget>[
+                                            new IconButton(
+                                                color: Colors.blue[200],
+                                                icon:
+                                                    Icon(Icons.edit, size: 30),
+                                                onPressed: () {
+                                                  showBottomSheet(
+                                                      context: context,
+                                                      builder: (context) =>
+                                                          EditCategory(
+                                                              expensesBloc,
+                                                              categoryBloc,
+                                                              item));
+                                                  slidableController.activeState
+                                                      ?.close();
+                                                }),
                                           ]));
- 
+
                                   // return Card(
                                   //     margin: EdgeInsets.symmetric(
                                   //         horizontal: 45, vertical: 1),
@@ -545,11 +548,15 @@ class _BudgetListState extends State<BudgetList> {
                                                   Text(
                                                     '${item.budgetPercentage == "Set A Max Spend" || item.budgetPercentage == "Not Set" || amountLeft == null ? "Not Set" : double.parse(amountLeft) > 0 ? '\$' + amountLeft + ' left' : '\$' + double.parse(amountLeft).abs().toStringAsFixed(2) + ' exceeded'}',
                                                     style: TextStyle(
-                                                        color: amountLeft == null ? Colors.green : double.parse(
-                                                                    amountLeft) >
-                                                                0
+                                                        color: amountLeft ==
+                                                                null
                                                             ? Colors.green
-                                                            : Colors.red[800]),
+                                                            : double.parse(
+                                                                        amountLeft) >
+                                                                    0
+                                                                ? Colors.green
+                                                                : Colors
+                                                                    .red[800]),
                                                   )
                                                 ]))),
                                         secondaryActions: <Widget>[

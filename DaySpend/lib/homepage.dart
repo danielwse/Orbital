@@ -20,30 +20,32 @@ class _HomepageState extends State<Homepage> {
                 floatingActionButton: AddExpense(),
                 floatingActionButtonLocation:
                     FloatingActionButtonLocation.endFloat,
-                body: SingleChildScrollView(child:Column(children: <Widget>[
-                  HomePageExpenses(),
-                  //replace with planner homepage widget
-                  Container(
-                      padding: const EdgeInsets.all(10),
-                      margin: const EdgeInsets.symmetric(
-                          vertical: 10, horizontal: 15),
-                      height: 200,
-                      width: 350,
-                      decoration: BoxDecoration(
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(20)),
-                        color: Colors.tealAccent,
-                      ),
-                      child: Column(children: <Widget>[
-                        Text('HAPPENING TODAY',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w300,
-                              color: Colors.blueGrey,
-                              fontSize: 20,
-                              //insert planner widget
-                            ))
-                      ]))
-                ])))));
+                body: ListView(children: [
+                  Column(children: <Widget>[
+                    HomePageExpenses(),
+                    //replace with planner homepage widget
+                    Container(
+                        padding: const EdgeInsets.all(10),
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 15),
+                        height: 200,
+                        width: 350,
+                        decoration: BoxDecoration(
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(20)),
+                          color: Colors.tealAccent,
+                        ),
+                        child: Column(children: <Widget>[
+                          Text('HAPPENING TODAY',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w300,
+                                color: Colors.blueGrey,
+                                fontSize: 20,
+                                //insert planner widget
+                              ))
+                        ]))
+                  ])
+                ]))));
   }
 }

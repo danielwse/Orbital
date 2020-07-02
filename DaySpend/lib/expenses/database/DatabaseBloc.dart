@@ -101,7 +101,11 @@ class VariablesBloc implements Bloc {
 class CategoryBloc implements Bloc {
   final _categoryRepository = CategoryRepository();
   final _categoryController = StreamController<List<Categories>>.broadcast();
+  final _categoriesWithBudgetController =
+      StreamController<Categories>.broadcast();
 
+  get categoriesWithBudget => _categoriesWithBudgetController.stream
+      .where((event) => event.budgetPercentage != "Not Set");
   get categories => _categoryController.stream;
 
   CategoryBloc() {
@@ -164,5 +168,6 @@ class CategoryBloc implements Bloc {
 
   dispose() {
     _categoryController.close();
+    _categoriesWithBudgetController.close();
   }
 }
