@@ -103,7 +103,7 @@ class TaskTile extends StatelessWidget {
           ),
         ),
       ],
-    );;
+    );
   }
 }
 
