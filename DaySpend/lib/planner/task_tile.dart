@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -7,6 +9,7 @@ class TaskTile extends StatelessWidget {
   final String taskName;
   final String taskIndex;
   final String taskTime;
+  final DateTime taskDT;
   final String taskDes;
   final bool taskNotify;
   final bool taskComplete;
@@ -18,10 +21,11 @@ class TaskTile extends StatelessWidget {
   final Function archiveCallback;
   final SlidableController slidable;
 
-  TaskTile({this.taskIndex,this.taskName,this.taskTime,this.taskDes,this.taskNotify, this.taskComplete, this.taskOverdue, this.notifyCallback, this.completeCallback, this.overdueCallback, this.removeCallback, this.archiveCallback, this.slidable});
+  TaskTile({this.taskIndex,this.taskName,this.taskTime,this.taskDT, this.taskDes,this.taskNotify, this.taskComplete, this.taskOverdue, this.notifyCallback, this.completeCallback, this.overdueCallback, this.removeCallback, this.archiveCallback, this.slidable});
 
   @override
   Widget build(BuildContext context) {
+    Timer.periodic(Duration(seconds: 1), (Timer t) => (taskDT.isBefore(DateTime.now()) ? overdueCallback(t) : null));
     double heightOfActions = 52;
     return Slidable(
       key: Key(taskName + taskTime),

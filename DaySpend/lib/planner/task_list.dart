@@ -1,7 +1,6 @@
-import 'dart:io';
+import 'dart:async';
 
 import 'package:DaySpend/fonts/header.dart';
-import 'package:DaySpend/planner/task.dart';
 import 'package:DaySpend/planner/task_function.dart';
 import 'package:DaySpend/planner/task_tile.dart';
 import 'package:animated_widgets/animated_widgets.dart';
@@ -51,6 +50,7 @@ class TaskList extends StatelessWidget {
                 taskIndex: task.index,
                 taskTime: task.time,
                 taskDes: task.description,
+                taskDT: task.dt,
                 taskNotify: task.notify,
                 taskComplete: task.isComplete,
                 taskOverdue: task.isOverdue,
@@ -66,8 +66,13 @@ class TaskList extends StatelessWidget {
                     taskData.updateComplete(task);
                   }
                   },
-                overdueCallback: () {
-                  taskData.updateOverdue(task);},
+                overdueCallback: (t) {
+                  if (!task.isOverdue) {
+                    taskData.updateOverdue(task);
+                    print(task.name+" overdue");
+                    t.cancel();
+                  }
+                  },
                 removeCallback: () {
                   taskData.setOpacity(task);
                   Future.delayed(Duration(milliseconds: 300), () {

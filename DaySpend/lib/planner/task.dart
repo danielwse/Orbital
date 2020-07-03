@@ -9,7 +9,7 @@ class Task implements Comparable {
   double opacity;
   DateTime dt;
 
-  Task({this.index, this.name, this.time, this.description, this.notify = false, this.isComplete = false, this.isOverdue = false, this.opacity = 1, this.dt});
+  Task({this.index, this.name, this.time, this.dt, this.description, this.notify = false, this.isComplete = false, this.isOverdue = false, this.opacity = 1});
 
   void toggleNotify() {
     notify = !notify;
@@ -20,7 +20,7 @@ class Task implements Comparable {
   }
 
   void toggleOverdue() {
-    isOverdue = !isOverdue;
+    isOverdue = true;
   }
 
   void toggleAnimate() {

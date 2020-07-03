@@ -9,6 +9,7 @@ class AddTask extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     DateTime datetime = DateTime.now();
+    DateTime setTime = DateTime.now();
     String name;
     String index = getDay(datetime);
     String time = DateFormat('Hm').format(datetime).toString();
@@ -59,6 +60,7 @@ class AddTask extends StatelessWidget {
                     onDateTimeChanged: (DateTime dt) {
                       time = DateFormat('Hm').format(dt).toString();
                       index = getDay(dt);
+                      setTime = dt;
                     },
                     use24hFormat: true,
                     minuteInterval: 1,
@@ -89,7 +91,7 @@ class AddTask extends StatelessWidget {
               color: Colors.lightBlueAccent,
               onPressed: () {
                 if (name != null) {
-                  Provider.of<TaskFunction>(context).addTask(index,name,time,(description != null ? description : 'This task has no description'), notify, datetime);
+                  Provider.of<TaskFunction>(context).addTask(index,name,time,(description != null ? description : 'This task has no description'), notify, setTime);
                 }
                 Navigator.pop(context);
               },

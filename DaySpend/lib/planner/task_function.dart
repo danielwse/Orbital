@@ -40,9 +40,7 @@ class TaskFunction extends ChangeNotifier {
   }
 
   void updateOverdue(Task task) {
-    if (task.dt.isBefore(DateTime.now())) {
-      task.toggleOverdue();
-    }
+    task.toggleOverdue();
     notifyListeners();
   }
 
