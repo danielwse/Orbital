@@ -1,12 +1,15 @@
 import 'package:DaySpend/fonts/header.dart';
 import 'package:DaySpend/planner/task_function.dart';
 import 'package:DaySpend/planner/task_tile.dart';
+import 'package:animated_widgets/animated_widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:provider/provider.dart';
 
 class TaskList extends StatelessWidget {
+  final SlidableController slidable = SlidableController();
   @override
   Widget build(BuildContext context) {
     return Consumer<TaskFunction>(
@@ -31,14 +34,33 @@ class TaskList extends StatelessWidget {
             ),
           ),
           itemBuilder: (context, task) {
-            return TaskTile(
-              taskName: task.name,
-              taskIndex: task.index,
-              taskTime: task.time,
-              taskDes: task.description,
-              taskNotify: task.notify,
-              taskComplete: task.isComplete,
-              taskOverdue: task.isOverdue,
+            print(task.opacity);
+            return OpacityAnimatedWidget.tween(
+              enabled: true,
+              opacityDisabled: 1,
+              opacityEnabled: task.opacity,
+              child: TaskTile(
+                slidable: slidable,
+                taskName: task.name,
+                taskIndex: task.index,
+                taskTime: task.time,
+                taskDes: task.description,
+                taskNotify: task.notify,
+                taskComplete: task.isComplete,
+                taskOverdue: task.isOverdue,
+                notifyCallback: (bool) {
+                  taskData.updateNotify(task);},
+                completeCallback: () {
+                  taskData.updateComplete(task);},
+                overdueCallback: () {
+                  taskData.updateOverdue(task);},
+                removeCallback: () {
+                  taskData.setOpacity(task);
+                  Future.delayed(Duration(milliseconds: 300), () {
+                    taskData.deleteTask(task);
+                  });
+                },
+              ),
             );
           },
         );
@@ -46,5 +68,6 @@ class TaskList extends StatelessWidget {
     );
   }
 }
+
 
 

@@ -1,6 +1,8 @@
 import 'package:DaySpend/planner/task_function.dart';
+import 'package:DaySpend/planner/task_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:fswitch/fswitch.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -89,7 +91,7 @@ class AddTask extends StatelessWidget {
               color: Colors.lightBlueAccent,
               onPressed: () {
                 if (name != null) {
-                  Provider.of<TaskFunction>(context).addTask(index,name,time,(description != null ? description : 'This task has no description'),notify,false,false);
+                  Provider.of<TaskFunction>(context).addTask(index,name,time,(description != null ? description : 'This task has no description'), notify);
                 }
                 Navigator.pop(context);
               },

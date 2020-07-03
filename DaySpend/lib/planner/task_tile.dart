@@ -1,4 +1,3 @@
-import 'package:DaySpend/fonts/header.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -12,71 +11,83 @@ class TaskTile extends StatelessWidget {
   final bool taskNotify;
   final bool taskComplete;
   final bool taskOverdue;
+  final Function notifyCallback;
+  final Function completeCallback;
+  final Function overdueCallback;
+  final Function removeCallback;
+  final SlidableController slidable;
 
-  TaskTile({this.taskIndex,this.taskName,this.taskTime,this.taskDes,this.taskNotify, this.taskComplete, this.taskOverdue});
+  TaskTile({this.taskIndex,this.taskName,this.taskTime,this.taskDes,this.taskNotify, this.taskComplete, this.taskOverdue, this.notifyCallback, this.completeCallback, this.overdueCallback, this.removeCallback, this.slidable});
 
   @override
   Widget build(BuildContext context) {
+    double heightOfActions = 52;
     return Slidable(
+      key: Key(taskName + taskTime),
+      controller: slidable,
+      closeOnScroll: true,
       actionPane: SlidableDrawerActionPane(),
-      actionExtentRatio: 0.25,
-      child: GestureDetector(
-        onTap: () => {
-          getDetails(context,taskName, taskTime, taskDes, taskNotify, taskComplete, taskOverdue),
-        },
-        onLongPress: () => {
-          getDescriptionOnly(context, taskDes),
-          print("peek"),
-        },
-        onLongPressUp: () => {
-          Navigator.pop(context),
-          print("press up"),
-        },
-        child: Card(
-          elevation: 2.0,
-          margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-          child: Container(
+      actionExtentRatio: 0.2,
+      child: Card(
+        shape: RoundedRectangleBorder(
+            borderRadius:
+            BorderRadius.circular(10)),
+        elevation: 7.0,
+        margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+        child: Container(
+          decoration: BoxDecoration(
             color: Colors.white,
-            child: ListTile(
-              contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
-              title: Text(
-                taskName,
-                style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.5),
-              ),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  (taskNotify ? Icon(Icons.notifications, color: Colors.orangeAccent, size: 22) : (taskOverdue ? Icon(Icons.check_circle, color: Colors.lightBlueAccent, size: 20) : (taskComplete ? Icon(Icons.cancel, color: Colors.redAccent, size: 20) : Icon(Icons.cancel, color: Colors.redAccent, size: 0)))),
-                  Container(
-                    margin: EdgeInsets.fromLTRB(12, 0, 6, 0),
-                    child: Text(
-                      taskTime,
-                      style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          letterSpacing: 0.2),
-                    ),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: ListTile(
+            onTap: () => {
+              slidableStateClose(),
+              getDetails(context),
+            },
+            onLongPress: (taskOverdue ? null : completeCallback),
+            contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
+            title: Text(
+              taskName,
+              style: TextStyle(
+                  decoration: taskComplete ? TextDecoration.lineThrough : null,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.5),
+            ),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                (taskComplete ? Icon(Icons.check_circle, color: Colors.lightBlueAccent, size: 22) : (taskOverdue ? Icon(Icons.cancel, color: Colors.redAccent, size: 20) : (taskNotify ? Icon(Icons.notifications, color: Colors.orangeAccent, size: 20) : Icon(Icons.notifications, color: Colors.orangeAccent, size: 0)))),
+                Container(
+                  margin: EdgeInsets.fromLTRB(12, 0, 6, 0),
+                  child: Text(
+                    taskTime,
+                    style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 0.2),
                   ),
-                  Icon(Icons.arrow_right),
-                ],
-              ),
+                ),
+                Icon(Icons.arrow_right),
+              ],
             ),
           ),
         ),
       ),
       actions: <Widget>[
-        Container(height: 55, child:
-        (taskComplete ? IconSlideAction(
-            caption: 'Remove', color: Colors.greenAccent, icon: Icons.archive) : (taskOverdue ? IconSlideAction(
-            caption: 'Reschedule', color: Colors.redAccent, icon: Icons.refresh) : IconSlideAction(
-            caption: 'Complete', color: Colors.tealAccent, icon: Icons.check)))),
-      ],
+        Container(
+            margin: EdgeInsets.only(left: 12),
+            height: heightOfActions,
+            child: (taskComplete ?
+            IconSlideAction(caption: 'Archive', color: Colors.lightBlueAccent, icon: Icons.archive) :
+            (taskOverdue ?
+            IconSlideAction(caption: 'Reschedule', color: Colors.redAccent, icon: Icons.replay) :
+            IconSlideAction(caption: 'Archive', color: Colors.black26, icon: Icons.archive))),
+        ),],
       secondaryActions: <Widget>[
         Container(
-          height: 55,
+          height: heightOfActions,
+          margin: EdgeInsets.only(right:12),
           child: IconSlideAction(
             caption: 'Edit',
             color: Colors.blueGrey,
@@ -89,21 +100,104 @@ class TaskTile extends StatelessWidget {
           ),
         ),
         Container(
-          height: 55,
+          margin: EdgeInsets.only(right: 12),
+          height: heightOfActions,
           child: IconSlideAction(
             closeOnTap: true,
             caption: 'Delete',
             color: Colors.pinkAccent,
             icon: Icons.delete,
-            onTap: () => Scaffold.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Delete'),
-              ),
-            ),
+            onTap: removeCallback,
           ),
         ),
       ],
     );
+  }
+
+  Future<void> getDetails(BuildContext context) {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+            elevation: 10,
+            shape: RoundedRectangleBorder(
+                borderRadius:
+                BorderRadius.circular(10)),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Row(
+                  textBaseline: TextBaseline.alphabetic,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          taskName.toUpperCase(),
+                          style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 0.5),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Visibility(
+                          visible: (!taskComplete && !taskOverdue),
+                          child: FSwitch(
+                            open: (taskNotify),
+                            width: 40,
+                            height: 24,
+                            openColor: Colors.teal,
+                            onChanged: notifyCallback,
+                            closeChild: Icon(
+                              Icons.notifications_off,
+                              size: 12,
+                              color: Colors.brown,
+                            ),
+                            openChild: Icon(
+                              Icons.notifications,
+                              size: 12,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 12),
+                          child: Text(
+                            taskTime,
+                            style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w300,
+                                letterSpacing: 0.5),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(0, 38, 0, 12),
+                  child: Text(
+                    taskDes,
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.5),
+                  ),
+                ),
+              ],
+            )
+        );
+      },
+    );
+  }
+  void slidableStateClose() {
+    this.slidable.activeState?.close();
   }
 }
 
@@ -133,132 +227,4 @@ String switchDays(i) {
     default:
       return '';
   }
-}
-
-Future<void> getDescriptionOnly(BuildContext context, des) {
-  return showDialog<void>(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        elevation: 10,
-        shape: RoundedRectangleBorder(
-            borderRadius:
-            BorderRadius.circular(10)),
-        content: Text(
-          des,
-          style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.5),
-        ),
-      );
-    },
-  );
-}
-
-Future<void> getDetails(BuildContext context, name, time, des, notify, complete, overdue) {
-  return showDialog<void>(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-          elevation: 10,
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Row(
-                textBaseline: TextBaseline.alphabetic,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        name,
-                        style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 0.5),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      Visibility(
-                        visible: (complete && overdue),
-                        child: FSwitch(
-                          open: (notify),
-                          width: 40,
-                          height: 24,
-                          openColor: Colors.teal,
-                          onChanged: (v) {
-                            notify = !notify;
-                          },
-                          closeChild: Icon(
-                            Icons.notifications_off,
-                            size: 12,
-                            color: Colors.brown,
-                          ),
-                          openChild: Icon(
-                            Icons.notifications,
-                            size: 12,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 12),
-                        child: Text(
-                          time,
-                          style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w300,
-                              letterSpacing: 0.5),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 12,horizontal: 0),
-                child: Text(
-                  des,
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.5),
-                ),
-              ),
-              (complete ? RaisedButton(
-                elevation: 10,
-                shape: RoundedRectangleBorder(
-                    borderRadius:
-                    BorderRadius.circular(10)),
-                child: Header(text:'Remove', size: 14, italic: false, weight: FontWeight.w500),
-                color: Colors.greenAccent,
-                onPressed: () => {},
-              ) : (overdue ? RaisedButton(
-                elevation: 10,
-                shape: RoundedRectangleBorder(
-                    borderRadius:
-                    BorderRadius.circular(10)),
-                child: Header(text:'Reschedule', size: 14, italic: false, color: Colors.white, weight: FontWeight.w500),
-                color: Colors.redAccent,
-                onPressed: () => {},
-              ) : RaisedButton(
-                elevation: 6,
-                shape: RoundedRectangleBorder(
-                    borderRadius:
-                    BorderRadius.circular(10)),
-                child: Header(text:'Complete', size: 14, italic: false, weight: FontWeight.w500),
-                color: Colors.tealAccent,
-                onPressed: () => {},
-              ))),
-            ],
-          )
-      );
-    },
-  );
 }
