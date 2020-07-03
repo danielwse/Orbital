@@ -1,14 +1,15 @@
 class Task implements Comparable {
-  final String name;
-  final String index;
-  final String time;
-  final String description;
+  String name;
+  String index;
+  String time;
+  String description;
   bool notify;
   bool isComplete;
   bool isOverdue;
   double opacity;
+  DateTime dt;
 
-  Task({this.index, this.name, this.time, this.description, this.notify = false, this.isComplete = false, this.isOverdue = false, this.opacity = 1});
+  Task({this.index, this.name, this.time, this.description, this.notify = false, this.isComplete = false, this.isOverdue = false, this.opacity = 1, this.dt});
 
   void toggleNotify() {
     notify = !notify;

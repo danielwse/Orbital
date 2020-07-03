@@ -89,7 +89,7 @@ class AddTask extends StatelessWidget {
               color: Colors.lightBlueAccent,
               onPressed: () {
                 if (name != null) {
-                  Provider.of<TaskFunction>(context).addTask(index,name,time,(description != null ? description : 'This task has no description'), notify);
+                  Provider.of<TaskFunction>(context).addTask(index,name,time,(description != null ? description : 'This task has no description'), notify, datetime);
                 }
                 Navigator.pop(context);
               },
