@@ -57,9 +57,15 @@ class TaskList extends StatelessWidget {
                 notifyCallback: (bool) {
                   taskData.updateNotify(task);},
                 completeCallback: () {
-                  slidable.activeState?.close();
-                  sleep(Duration(milliseconds: 300));
-                  taskData.updateComplete(task);},
+                  if (slidable.activeState != null) {
+                    slidable.activeState?.close();
+                    Future.delayed(Duration(milliseconds: 300), () {
+                      taskData.updateComplete(task);
+                    });
+                  } else {
+                    taskData.updateComplete(task);
+                  }
+                  },
                 overdueCallback: () {
                   taskData.updateOverdue(task);},
                 removeCallback: () {
