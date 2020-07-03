@@ -1,4 +1,3 @@
-import 'package:DaySpend/planner/task_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -16,9 +15,10 @@ class TaskTile extends StatelessWidget {
   final Function completeCallback;
   final Function overdueCallback;
   final Function removeCallback;
+  final Function archiveCallback;
   final SlidableController slidable;
 
-  TaskTile({this.taskIndex,this.taskName,this.taskTime,this.taskDes,this.taskNotify, this.taskComplete, this.taskOverdue, this.notifyCallback, this.completeCallback, this.overdueCallback, this.removeCallback, this.slidable});
+  TaskTile({this.taskIndex,this.taskName,this.taskTime,this.taskDes,this.taskNotify, this.taskComplete, this.taskOverdue, this.notifyCallback, this.completeCallback, this.overdueCallback, this.removeCallback, this.archiveCallback, this.slidable});
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +58,7 @@ class TaskTile extends StatelessWidget {
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                (taskComplete ? Icon(Icons.check_circle, color: Colors.lightBlueAccent, size: 22) : (taskOverdue ? Icon(Icons.cancel, color: Colors.redAccent, size: 20) : (taskNotify ? Icon(Icons.notifications, color: Colors.orangeAccent, size: 20) : Icon(Icons.notifications, color: Colors.orangeAccent, size: 0)))),
+                (taskComplete ? Icon(Icons.check_circle, color: Colors.teal, size: 22) : (taskOverdue ? Icon(Icons.cancel, color: Colors.redAccent, size: 20) : (taskNotify ? Icon(Icons.notifications, color: Colors.orangeAccent, size: 20) : Icon(Icons.notifications, color: Colors.orangeAccent, size: 0)))),
                 Container(
                   margin: EdgeInsets.fromLTRB(12, 0, 6, 0),
                   child: Text(
@@ -80,7 +80,7 @@ class TaskTile extends StatelessWidget {
             margin: EdgeInsets.only(left: 12),
             height: heightOfActions,
             child: (taskComplete ?
-            IconSlideAction(caption: 'Archive', color: Colors.lightBlueAccent, icon: Icons.archive) :
+            IconSlideAction(caption: 'Archive', color: Colors.teal, icon: Icons.archive, onTap: archiveCallback) :
             (taskOverdue ?
             IconSlideAction(caption: 'Reschedule', color: Colors.redAccent, icon: Icons.replay) :
             IconSlideAction(caption: 'Archive', color: Colors.black26, icon: Icons.archive))),

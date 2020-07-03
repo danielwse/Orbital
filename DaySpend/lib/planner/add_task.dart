@@ -1,8 +1,6 @@
 import 'package:DaySpend/planner/task_function.dart';
-import 'package:DaySpend/planner/task_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:fswitch/fswitch.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';

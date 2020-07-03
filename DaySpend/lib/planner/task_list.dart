@@ -54,16 +54,29 @@ class TaskList extends StatelessWidget {
                 notifyCallback: (bool) {
                   taskData.updateNotify(task);},
                 completeCallback: () {
-                  taskData.updateComplete(task);},
+                  slidable.activeState?.close();
+                  Future.delayed(Duration(milliseconds: 300), () {
+                    taskData.updateComplete(task);
+                  });},
                 overdueCallback: () {
                   taskData.updateOverdue(task);},
                 removeCallback: () {
                   taskData.setOpacity(task);
                   Future.delayed(Duration(milliseconds: 300), () {
                     taskData.deleteTask(task);
-                  });
-                },
-              ),
+                  });},
+                archiveCallback: () {
+                  taskData.archiveTask(task);
+                  taskData.setOpacity(task);
+                  Scaffold.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Archived Task'),
+                    ),
+                  );
+                  Future.delayed(Duration(milliseconds: 300), () {
+                  taskData.deleteTask(task);
+                  });},
+                ),
             );
           },
         );
