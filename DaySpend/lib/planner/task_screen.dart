@@ -2,6 +2,13 @@ import 'package:DaySpend/fonts/header.dart';
 import 'package:DaySpend/planner/task_list.dart';
 import 'package:flutter/material.dart';
 import 'package:DaySpend/planner/add_task.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+
+final SlidableController slidable = SlidableController();
+
+SlidableController get getSlidable {
+  return slidable;
+}
 
 class TaskScreen extends StatelessWidget {
   @override
@@ -19,6 +26,7 @@ class TaskScreen extends StatelessWidget {
         actions: <Widget>[
           IconButton(
             onPressed: () => {
+              getSlidable.activeState?.close(),
               showModalBottomSheet(
                 context: context,
                 isScrollControlled: true,
@@ -40,7 +48,9 @@ class TaskScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: TaskList(),
+      body: TaskList(
+        slidable: getSlidable,
+      ),
     );
   }
 }

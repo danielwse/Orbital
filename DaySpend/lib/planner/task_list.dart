@@ -9,7 +9,10 @@ import 'package:grouped_list/grouped_list.dart';
 import 'package:provider/provider.dart';
 
 class TaskList extends StatelessWidget {
-  final SlidableController slidable = SlidableController();
+  final SlidableController slidable;
+
+  TaskList({this.slidable});
+
   @override
   Widget build(BuildContext context) {
     return Consumer<TaskFunction>(
