@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:DaySpend/fonts/header.dart';
 import 'package:DaySpend/planner/task.dart';
 import 'package:DaySpend/planner/task_function.dart';
@@ -56,9 +58,8 @@ class TaskList extends StatelessWidget {
                   taskData.updateNotify(task);},
                 completeCallback: () {
                   slidable.activeState?.close();
-                  Future.delayed(Duration(milliseconds: 300), () {
-                    taskData.updateComplete(task);
-                  });},
+                  sleep(Duration(milliseconds: 300));
+                  taskData.updateComplete(task);},
                 overdueCallback: () {
                   taskData.updateOverdue(task);},
                 removeCallback: () {
