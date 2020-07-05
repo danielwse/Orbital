@@ -86,7 +86,7 @@ class TaskTile extends StatelessWidget {
             child: (taskComplete ?
             IconSlideAction(caption: 'Archive', color: Colors.teal, icon: Icons.archive, onTap: archiveCallback) :
             (taskOverdue ?
-            IconSlideAction(caption: 'Reschedule', color: Colors.redAccent, icon: Icons.replay) :
+            IconSlideAction(caption: 'Schedule', color: Colors.redAccent, icon: Icons.replay) :
             IconSlideAction(caption: 'Archive', color: Colors.black26, icon: Icons.archive))),
         ),],
       secondaryActions: <Widget>[

@@ -1,3 +1,4 @@
+import 'package:DaySpend/planner/picker.dart';
 import 'package:DaySpend/planner/task_function.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,12 +10,6 @@ class AddTask extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     DateTime datetime = DateTime.now();
-    DateTime setTime = DateTime.now();
-    String name;
-    String index = getDay(datetime);
-    String time = DateFormat('Hm').format(datetime).toString();
-    String description;
-    bool notify = false;
 
     return Container(
       color: Color(0xff757575),
@@ -30,12 +25,12 @@ class AddTask extends StatelessWidget {
         child: Column(
           children: <Widget>[
             FSwitch(
-              open: notify,
+              open: Provider.of<TaskFunction>(context).storedNotify(),
               width: 40,
               height: 24,
               openColor: Colors.teal,
               onChanged: (v) {
-                notify = !notify;
+                Provider.of<TaskFunction>(context).changeNotify(!Provider.of<TaskFunction>(context).storedNotify());
               },
               closeChild: Icon(
                 Icons.notifications_off,
@@ -51,35 +46,60 @@ class AddTask extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Container(
-                  height: 80,
-                  width: MediaQuery.of(context).copyWith().size.width / 1.2,
-                  child: CupertinoDatePicker(
-                    mode: CupertinoDatePickerMode.dateAndTime,
-                    initialDateTime: datetime,
-                    onDateTimeChanged: (DateTime dt) {
-                      time = DateFormat('Hm').format(dt).toString();
-                      index = getDay(dt);
-                      setTime = dt;
-                    },
-                    use24hFormat: true,
-                    minuteInterval: 1,
-                    minimumDate: datetime,
-                    maximumDate: datetime.add(Duration(days: 7)),
-                  ),
-                )
+                PickerButton(
+                  initDateTime: datetime,
+                ),
               ],
             ),
-            TextField(
-              maxLength: 20,
-              autofocus: true,
-              textAlign: TextAlign.center,
-              onChanged: (newName) {name = newName;},
+            Container(
+              height: 50,
+              alignment: Alignment.topCenter,
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 10, vertical: 10),
+              margin: const EdgeInsets.symmetric(
+                  horizontal: 10, vertical: 10),
+              decoration: BoxDecoration(
+                  color: Colors.black12,
+                  borderRadius:
+                  BorderRadius.circular(10)),
+              child: TextField(
+                  maxLength: 20,
+                  autofocus: true,
+                  textAlign: TextAlign.start,
+                  onChanged: (String newName) {
+                    Provider.of<TaskFunction>(context).changeName(newName);
+                    },
+                  showCursor: true,
+                  maxLengthEnforced: true,
+                  decoration:
+                  InputDecoration.collapsed(
+                    hintText: 'Task Name',
+                  )
+              ),
             ),
-            TextField(
-              autofocus: true,
-              textAlign: TextAlign.start,
-              onChanged: (newDes) {description = newDes;},
+            Container(
+              height: 50,
+              alignment: Alignment.center,
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              margin: const EdgeInsets.symmetric(
+                  horizontal: 10, vertical: 10),
+              decoration: BoxDecoration(
+                  color: Colors.black12,
+                  borderRadius:
+                  BorderRadius.circular(10)),
+              child: TextField(
+                  autofocus: false, maxLines: null,
+                  textAlign: TextAlign.start,
+                  onChanged: (String newDes) {
+                    Provider.of<TaskFunction>(context).changeDes(newDes);
+                  },
+                  showCursor: true,
+                  maxLengthEnforced: true,
+                  decoration:
+                  InputDecoration.collapsed(
+                    hintText: 'Task Description',
+                  )
+              ),
             ),
             FlatButton(
               child: Text(
@@ -90,9 +110,17 @@ class AddTask extends StatelessWidget {
               ),
               color: Colors.lightBlueAccent,
               onPressed: () {
+                String name = Provider.of<TaskFunction>(context).storedName();
                 if (name != null) {
+                  DateTime setTime = Provider.of<TaskFunction>(context).storedDateTime();
+                  print("from add task" + setTime.toString());
+                  String index = getIndex(setTime);
+                  String time = DateFormat('Hm').format(setTime).toString();
+                  String description = Provider.of<TaskFunction>(context).storedDes();
+                  bool notify = Provider.of<TaskFunction>(context).storedNotify();
                   Provider.of<TaskFunction>(context).addTask(index,name,time,(description != null ? description : 'This task has no description'), notify, setTime);
                 }
+                Provider.of<TaskFunction>(context).resetAddTask();
                 Navigator.pop(context);
               },
             ),
@@ -101,18 +129,17 @@ class AddTask extends StatelessWidget {
       ),
     );
   }
-}
-
-String getDay(DateTime dt){
-  String i;
-  switch (DateFormat('EEEE').format(dt).toString()) {
-    case 'Monday': i = '1'; break;
-    case 'Tuesday': i = '2'; break;
-    case 'Wednesday': i = '3'; break;
-    case 'Thursday': i = '4'; break;
-    case 'Friday': i = '5'; break;
-    case 'Saturday': i = '6'; break;
-    case 'Sunday': i = '7'; break;
+  String getIndex(DateTime dt){
+    String i;
+    switch (DateFormat('EEEE').format(dt).toString()) {
+      case 'Monday': i = '1'; break;
+      case 'Tuesday': i = '2'; break;
+      case 'Wednesday': i = '3'; break;
+      case 'Thursday': i = '4'; break;
+      case 'Friday': i = '5'; break;
+      case 'Saturday': i = '6'; break;
+      case 'Sunday': i = '7'; break;
+    }
+    return i;
   }
-  return i;
 }

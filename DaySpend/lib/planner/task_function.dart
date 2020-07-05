@@ -17,6 +17,56 @@ class TaskFunction extends ChangeNotifier {
     return _completedTasks;
   }
 
+  void resetAddTask() {
+    tempName = null;
+    tempDes = null;
+    tempDateTime =  null;
+    tempNotify = false;
+  }
+
+  bool tempNotify = false;
+
+  void changeNotify(bool input) {
+    tempNotify = input;
+    notifyListeners();
+  }
+
+  bool storedNotify() {
+    return tempNotify;
+  }
+
+  String tempName;
+  String tempDes;
+
+  void changeName (String input) {
+    tempName = input;
+    notifyListeners();
+  }
+
+  void changeDes (String input) {
+    tempDes = input;
+    notifyListeners();
+  }
+
+  String storedName() {
+    return tempName;
+  }
+
+  String storedDes() {
+    return tempDes;
+  }
+
+  DateTime tempDateTime;
+
+  DateTime storedDateTime() {
+    return tempDateTime;
+  }
+
+  void changeDateTime (DateTime dt) {
+    tempDateTime = dt;
+    notifyListeners();
+  }
+
   void addTask(String index, String name, String time, String des, bool notify, DateTime dateTime) {
     final task = Task(index: index, name: name, time: time, description: des, notify: notify, dt: dateTime);
     _tasks.add(task);
