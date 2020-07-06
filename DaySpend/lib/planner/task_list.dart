@@ -8,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:grouped_list/grouped_list.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import 'day2index.dart';
@@ -23,17 +24,17 @@ class TaskList extends StatelessWidget {
       builder: (context, taskData, child) {
         return GroupedListView<dynamic, String>(
           order: GroupedListOrder.ASC,
-          groupBy: (task) => task.index,
+          groupBy: (task) => convertIndex(task.index), // modify index
           elements: taskData.tasks,
           groupSeparatorBuilder: (index) => Padding(
-            padding: (index == '1'
+            padding: (revertIndex(index) == getIndex(DateTime.now())
                 ? EdgeInsets.fromLTRB(15, 10, 10, 10)
                 : EdgeInsets.fromLTRB(15, 40, 10, 10)),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Header(
-                  text: switchDays(index),
+                  text: switchDays(revertIndex(index)),
                   size: 20,
                 ),
               ],

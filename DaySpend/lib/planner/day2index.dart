@@ -41,3 +41,41 @@ String getIndex(DateTime dt){
   }
   return i;
 }
+
+String dateString(DateTime dt) {
+  String min = DateFormat('m').format(dt).toString();
+  String hour = DateFormat('H').format(dt).toString();
+  String day = DateFormat('d').format(dt).toString();
+  String month = DateFormat('M').format(dt).toString();
+  String year = DateFormat('y').format(dt).toString();
+  if (day.length < 2) {
+    day = "0" + day;
+  }
+  if (month.length < 2) {
+    month = "0" + month;
+  }
+  String output = (year + month + day + hour + min);
+  return output;
+}
+
+String convertIndex(String index) {
+  int currIndex = int.parse(getIndex(DateTime.now()));
+  int n = currIndex - 1;
+  int inputIndex = int.parse(index);
+  int output = inputIndex - n;
+  if (inputIndex <= n) {
+    output += 7;
+  }
+  return output.toString();
+}
+
+String revertIndex(String index) {
+  int currIndex = int.parse(getIndex(DateTime.now()));
+  int n = currIndex - 1;
+  int inputIndex = int.parse(index);
+  int output = inputIndex + n;
+  if (output > 7) {
+    output -= 7;
+  }
+  return output.toString();
+}
