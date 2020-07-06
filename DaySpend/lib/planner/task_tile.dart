@@ -1,9 +1,14 @@
 import 'dart:async';
 
+import 'package:DaySpend/fonts/header.dart';
+import 'package:DaySpend/planner/reschedule.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:fswitch/fswitch.dart';
+import 'package:random_string/random_string.dart';
+
+import 'day2index.dart';
 
 class TaskTile extends StatelessWidget {
   final String taskName;
@@ -19,17 +24,18 @@ class TaskTile extends StatelessWidget {
   final Function overdueCallback;
   final Function removeCallback;
   final Function archiveCallback;
+  final Function rescheduleCallback;
   final SlidableController slidable;
   final Color tileColor;
 
-  TaskTile({this.tileColor, this.taskIndex,this.taskName,this.taskTime,this.taskDT, this.taskDes,this.taskNotify, this.taskComplete, this.taskOverdue, this.notifyCallback, this.completeCallback, this.overdueCallback, this.removeCallback, this.archiveCallback, this.slidable});
+  TaskTile({this.tileColor, this.taskIndex,this.taskName,this.taskTime,this.taskDT, this.taskDes,this.taskNotify, this.taskComplete, this.taskOverdue, this.notifyCallback, this.completeCallback, this.overdueCallback, this.removeCallback, this.archiveCallback, this.slidable, this.rescheduleCallback});
 
   @override
   Widget build(BuildContext context) {
     Timer.periodic(Duration(seconds: 1), (Timer t) => (taskDT.isBefore(DateTime.now()) ? overdueCallback(t) : null));
     double heightOfActions = 52;
     return Slidable(
-      key: Key(taskName + taskTime),
+      key: Key(randomNumeric(5)),
       controller: slidable,
       closeOnScroll: true,
       actionPane: SlidableDrawerActionPane(),
@@ -90,7 +96,7 @@ class TaskTile extends StatelessWidget {
             child: (taskComplete ?
             IconSlideAction(caption: 'Archive', color: Colors.teal, icon: Icons.archive, onTap: archiveCallback) :
             (taskOverdue ?
-            IconSlideAction(caption: 'Schedule', color: Colors.redAccent[100], icon: Icons.replay) :
+            RescheduleButton(updateTime: rescheduleCallback,) :
             IconSlideAction(caption: 'Archive', color: Colors.black26, icon: Icons.archive))),
         ),],
       secondaryActions: <Widget>[
@@ -120,7 +126,7 @@ class TaskTile extends StatelessWidget {
           child: IconSlideAction(
             closeOnTap: true,
             caption: 'Delete',
-            color: Colors.pinkAccent[100],
+            color: (taskOverdue ? Colors.pinkAccent[100] : (taskComplete ? Colors.lightBlue[100] : Colors.blueGrey)),
             icon: Icons.delete,
             onTap: removeCallback,
           ),
@@ -128,6 +134,8 @@ class TaskTile extends StatelessWidget {
       ],
     );
   }
+
+
 
   Future<void> getDetails(BuildContext context) {
     return showDialog<void>(
@@ -142,68 +150,75 @@ class TaskTile extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Row(
-                  textBaseline: TextBaseline.alphabetic,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          taskName.toUpperCase(),
-                          style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 0.5),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        Visibility(
-                          visible: (!taskComplete && !taskOverdue),
-                          child: FSwitch(
-                            open: (taskNotify),
-                            width: 40,
-                            height: 24,
-                            openColor: Colors.teal,
-                            onChanged: notifyCallback,
-                            closeChild: Icon(
-                              Icons.notifications_off,
-                              size: 12,
-                              color: Colors.brown,
-                            ),
-                            openChild: Icon(
-                              Icons.notifications,
-                              size: 12,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(left: 12),
-                          child: Text(
-                            taskTime,
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w300,
-                                letterSpacing: 0.5),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(0, 38, 0, 12),
-                  child: Text(
-                    taskDes,
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 0.5),
+                Container(
+                  height: 25,
+                  margin: EdgeInsets.only(bottom: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[Expanded(
+                      child: Text(
+                        taskName.toUpperCase(),
+                        style: TextStyle(
+                            fontSize: (taskName.length < 10 ? 24 : 15),
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.5),
+                      ),
+                    ),],
                   ),
+                ),
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 12),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Container(
+                        child: Text(
+                          switchDays(taskIndex) + " - " + taskTime,
+                          style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.blueGrey,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.1),
+                          ),
+                      ),
+                      (taskComplete ? Header(text: "Completed", italic: true, color: Colors.teal, weight: FontWeight.bold, size: 14,) : (taskOverdue ? Header(text: "Overdue", color: Colors.red, weight: FontWeight.bold, size: 14, italic: true,) : FSwitch(
+                        open: (taskNotify),
+                        width: 40,
+                        height: 24,
+                        openColor: Colors.teal,
+                        onChanged: notifyCallback,
+                        closeChild: Icon(
+                          Icons.notifications_off,
+                          size: 12,
+                          color: Colors.brown,
+                        ),
+                        openChild: Icon(
+                          Icons.notifications,
+                          size: 12,
+                          color: Colors.white,
+                        ),
+                      ))),
+                    ],
+                  ),
+                ),
+                (taskDes!= "" ? Container(
+                  margin: EdgeInsets.fromLTRB(0, 5, 0, 20),
+                  child: Divider(
+                    color: Colors.blueGrey,
+                  ),
+                ): Container()),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    (taskDes!= "" ? Text(
+                      taskDes,
+                      style: TextStyle(
+                          color: Colors.blueGrey,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.5),
+                    ) : Container()),
+                  ],
                 ),
               ],
             )
@@ -213,30 +228,3 @@ class TaskTile extends StatelessWidget {
   }
 }
 
-String switchDays(i) {
-  switch (i) {
-    case '1':
-      return 'Monday';
-      break;
-    case '2':
-      return 'Tuesday';
-      break;
-    case '3':
-      return 'Wednesday';
-      break;
-    case '4':
-      return 'Thursday';
-      break;
-    case '5':
-      return 'Friday';
-      break;
-    case '6':
-      return 'Saturday';
-      break;
-    case '7':
-      return 'Sunday';
-      break;
-    default:
-      return '';
-  }
-}

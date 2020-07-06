@@ -8,6 +8,8 @@ import 'package:nice_button/NiceButton.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
+import 'day2index.dart';
+
 class AddTask extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -29,77 +31,48 @@ class AddTask extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Container(
+                      margin: EdgeInsets.only(left: 12),
+                      width: MediaQuery.of(context).copyWith().size.width/2.5,
                       child: Row(
                         children: <Widget>[
-                          Container(
-                            child: Header(
-                              weight: FontWeight.bold,
-                              italic: false,
-                              text: "Add ",
-                              color: Colors.black, size: 44,
+                          Header(
+                            weight: FontWeight.bold,
+                            text: "Notification : ",
+                            color: Colors.black,
+                            size: MediaQuery.of(context).copyWith().size.width/30,
+                          ),
+                          FSwitch(
+                            open: newTask.storedNotify(),
+                            width: 48,
+                            height: 28,
+                            openColor: Colors.teal,
+                            onChanged: (v) {
+                              newTask.changeNotify(!newTask.storedNotify());
+                            },
+                            closeChild: Icon(
+                              Icons.notifications_off,
+                              size: 12,
+                              color: Colors.brown,
+                            ),
+                            openChild: Icon(
+                              Icons.notifications,
+                              size: 12,
+                              color: Colors.white,
                             ),
                           ),
-                          Container(
-                            margin: EdgeInsets.only(top: 8),
-                            child: Header(
-                              weight: FontWeight.bold,
-                              italic: false,
-                              text: "task",
-                              color: Colors.amber,
-                              size: 32,
-                            ),
-                          )
                         ],
                       ),
                     ),
-                    Column(
-                      children: <Widget>[
-                        Row(
-                          children: <Widget>[
-                            Container(
-                              margin: EdgeInsets.only(left: 10),
-                              child: Header(
-                                weight: FontWeight.bold,
-                                italic: false,
-                                text: "Notification : ",
-                                color: Colors.black, size: 15,
-                              ),
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(left: 13),
-                              child: FSwitch(
-                                open: newTask.storedNotify(),
-                                width: 48,
-                                height: 28,
-                                openColor: Colors.teal,
-                                onChanged: (v) {
-                                  newTask.changeNotify(!newTask.storedNotify());
-                                },
-                                closeChild: Icon(
-                                  Icons.notifications_off,
-                                  size: 12,
-                                  color: Colors.brown,
-                                ),
-                                openChild: Icon(
-                                  Icons.notifications,
-                                  size: 12,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Container(
-                          margin: EdgeInsets.fromLTRB(15, 10, 10, 10),
-                          child: PickerButton(
-                            initDateTime: datetime.add(Duration(minutes: 1)),
-                          ),
-                        ),
-                      ],
+                    Container(
+                      width: MediaQuery.of(context).copyWith().size.width/2.5,
+                      margin: EdgeInsets.fromLTRB(0, 10, 10, 10),
+                      child: PickerButton(
+                        initDateTime: datetime.add(Duration(minutes: 1)),
+                      ),
                     ),
                   ],
                 ),
@@ -130,7 +103,7 @@ class AddTask extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  height: 50,
+                  height: 100,
                   alignment: Alignment.center,
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   margin: const EdgeInsets.symmetric(
@@ -154,26 +127,29 @@ class AddTask extends StatelessWidget {
                   ),
                 ),
                 NiceButton(
-                  width: 100,
+                  width: 160,
                   elevation: 8.0,
                   radius: 52.0,
-                  fontSize: 16,
-                  text: "Add",
+                  fontSize: 14,
+                  text: "Add New Task",
                   textColor: Colors.white,
-                  background: Colors.teal,
+                  background: ((newTask.storedName() != null && newTask.storedName().replaceAll(' ', '').length!=0) ? Colors.teal : Colors.blueGrey[100]),
                   onPressed: () {
                     String name = newTask.storedName();
-                    if (name != null) {
+                    if (name != null && name.replaceAll(' ', '').length!=0) {
                       DateTime setTime = newTask.storedDateTime();
-                      print("from add task" + setTime.toString());
-                      if (setTime == null) {
-                        setTime = DateTime.now();
+                      print("from add task " + setTime.toString());
+                      if (setTime == null ) {
+                        setTime = DateTime.now().add(Duration(minutes: 1));
+                      }
+                      if (setTime.isBefore(DateTime.now())){
+                        setTime = DateTime.now().add(Duration(minutes: 1));
                       }
                       String index = getIndex(setTime);
                       String time = DateFormat('Hm').format(setTime).toString();
                       String description = newTask.storedDes();
                       bool notify = newTask.storedNotify();
-                      newTask.addTask(index,name,time,(description != null ? description : 'This task has no description'), notify, setTime);
+                      newTask.addTask(index,name,time,(description != null ? description : ""), notify, setTime);
                     }
                     Navigator.pop(context);
                   },
@@ -184,18 +160,5 @@ class AddTask extends StatelessWidget {
         );
       },
     );
-  }
-  String getIndex(DateTime dt){
-    String i;
-    switch (DateFormat('EEEE').format(dt).toString()) {
-      case 'Monday': i = '1'; break;
-      case 'Tuesday': i = '2'; break;
-      case 'Wednesday': i = '3'; break;
-      case 'Thursday': i = '4'; break;
-      case 'Friday': i = '5'; break;
-      case 'Saturday': i = '6'; break;
-      case 'Sunday': i = '7'; break;
-    }
-    return i;
   }
 }

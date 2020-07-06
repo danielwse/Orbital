@@ -32,7 +32,7 @@ class _HomepageState extends State<Homepage> {
                       decoration: BoxDecoration(
                         borderRadius:
                             const BorderRadius.all(Radius.circular(20)),
-                        color: Colors.tealAccent,
+                        color: Colors.blueGrey[100],
                       ),
                       child: Column(children: <Widget>[
                         Text('HAPPENING TODAY',

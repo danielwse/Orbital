@@ -1,6 +1,7 @@
 import 'package:DaySpend/fonts/header.dart';
 import 'package:DaySpend/planner/task_function.dart';
 import 'package:DaySpend/planner/task_list.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:DaySpend/planner/add_task.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -15,44 +16,86 @@ SlidableController get getSlidable {
 class TaskScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xffF7F7F7),
-      appBar: AppBar(
-        title: Header(
-          text: 'DaySpend',
-          italic: true,
-          size: 20,
-        ),
-        backgroundColor: Colors.transparent,
-        elevation: 0.0,
-        actions: <Widget>[
-          IconButton(
-            onPressed: () => {
-              Provider.of<TaskFunction>(context).resetAddTask(),
-              getSlidable.activeState?.close(),
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                builder: (context) => SingleChildScrollView(
-                  child:Container(
-                  padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-                    child: AddTask(),
-                  )
-                )
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Color(0xffF7F7F7),
+        appBar: AppBar(
+          titleSpacing: 8,
+          automaticallyImplyLeading: false,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Container(
+                child: Row(
+                  children: <Widget>[
+                    Header(
+                      text: 'Day',
+                      weight: FontWeight.bold,
+                      size: 20,
+                      color: Colors.teal,
+                      underline: true,
+                      italic: true,
+                      shadow: Shadow(
+                        blurRadius: 4.0,
+                        color: Colors.blueAccent[100],
+                        offset: Offset(1.0, 1.0),
+                      ),
+                    ),
+                    Header(
+                      text: 'Spend',
+                      size: 20,
+                      color: Colors.grey,
+                      italic: true,
+                      weight: FontWeight.bold,
+                      shadow: Shadow(
+                        blurRadius: 2.0,
+                        color: Colors.blueGrey[100],
+                        offset: Offset(1.0, 1.0),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            },
-            icon: Padding(
-              padding: const EdgeInsets.only(right: 100),
-              child: Icon(
-                Icons.add,
-                color: Colors.black,
+            ],
+          ),
+          backgroundColor: Colors.transparent,
+          elevation: 0.0,
+          actions: <Widget>[
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 15),
+              child: RawMaterialButton(
+                constraints: BoxConstraints.tight(Size(40, 40)),
+                fillColor: Colors.white,
+                shape: CircleBorder(),
+                elevation: 8,
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                onPressed: () {
+                  Provider.of<TaskFunction>(context).resetAddTask();
+                  getSlidable.activeState?.close();
+                  showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      builder: (context) => SingleChildScrollView(
+                          child:Container(
+                            padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                            child: AddTask(),
+                          )
+                      )
+                  );
+                },
+                child: Icon(
+                  Icons.add,
+                  color: Colors.black,
+                  size: 20,
+                ),
               ),
             ),
-          ),
-        ],
-      ),
-      body: TaskList(
-        slidable: getSlidable,
+          ],
+        ),
+        body: TaskList(
+          slidable: getSlidable,
+        ),
       ),
     );
   }

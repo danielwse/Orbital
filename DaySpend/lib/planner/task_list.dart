@@ -10,6 +10,8 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:provider/provider.dart';
 
+import 'day2index.dart';
+
 class TaskList extends StatelessWidget {
   final SlidableController slidable;
 
@@ -33,7 +35,6 @@ class TaskList extends StatelessWidget {
                 Header(
                   text: switchDays(index),
                   size: 20,
-                  italic: false,
                 ),
               ],
             ),
@@ -55,6 +56,8 @@ class TaskList extends StatelessWidget {
                 taskNotify: task.notify,
                 taskComplete: task.isComplete,
                 taskOverdue: task.isOverdue,
+                rescheduleCallback: (DateTime dt) {
+                  taskData.rescheduleOverdue(task, dt);},
                 notifyCallback: (bool) {
                   taskData.updateNotify(task);},
                 completeCallback: () {

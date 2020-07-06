@@ -1,43 +1,21 @@
-import 'package:DaySpend/planner/task_function.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:nice_button/NiceButton.dart';
-import 'package:provider/provider.dart';
 
-class PickerButton extends StatefulWidget {
-  final DateTime initDateTime;
-  PickerButton({this.initDateTime});
+class RescheduleButton extends StatelessWidget {
+  final Function updateTime;
 
-  @override
-  _PickerButtonState createState() => _PickerButtonState();
-}
-
-class _PickerButtonState extends State<PickerButton> {
-  DateTime newDateTime;
-  DateTime tempOldDateTime;
-  DateTime limit;
-
-  @override
-  void initState() {
-    newDateTime = widget.initDateTime;
-    tempOldDateTime = widget.initDateTime;
-    limit = widget.initDateTime;
-    return super.initState();
-  }
-
+  RescheduleButton({this.updateTime});
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).copyWith().size.width;
-    return NiceButton(
-      text: DateFormat('EEEE').format(tempOldDateTime).toString() + " - " + DateFormat('Hm').format(tempOldDateTime).toString(),
-      background: Colors.teal,
-      elevation: 6,
-      fontSize: width/40,
-      textColor: Colors.white,
-      width: width/2.7,
-      radius: 30.0,
-      onPressed: () {
+    DateTime newDateTime;
+    DateTime currentTime = DateTime.now().add(Duration(minutes: 1));
+
+    return IconSlideAction(
+      caption: 'Schedule', color: Colors.redAccent[100], icon: Icons.replay,
+      onTap: () {
+        newDateTime = currentTime;
         showModalBottomSheet(
           context: context,
           isScrollControlled: true,
@@ -65,16 +43,14 @@ class _PickerButtonState extends State<PickerButton> {
                         width: MediaQuery.of(context).copyWith().size.width / 1.5,
                         child: CupertinoDatePicker(
                           mode: CupertinoDatePickerMode.dateAndTime,
-                          initialDateTime: tempOldDateTime,
+                          initialDateTime: currentTime,
                           onDateTimeChanged: (DateTime dt) {
-                            setState(() {
-                              newDateTime = dt;
-                            });
+                            newDateTime = dt;
                           },
                           use24hFormat: true,
                           minuteInterval: 1,
-                          minimumDate: limit,
-                          maximumDate: limit.add(Duration(days: 6)),
+                          minimumDate: currentTime,
+                          maximumDate: currentTime.add(Duration(days: 6)),
                         ),
                       ),
                       Container(
@@ -88,8 +64,12 @@ class _PickerButtonState extends State<PickerButton> {
                           textColor: Colors.white,
                           background: Colors.teal,
                           onPressed: () {
-                            Provider.of<TaskFunction>(context).changeDateTime(newDateTime);
-                            tempOldDateTime = newDateTime;
+                            if (newDateTime.isBefore(DateTime.now())) {
+                              updateTime(DateTime.now().add(Duration(minutes: 1)));
+                              print("set time too close to current time");
+                            } else {
+                              updateTime(newDateTime);
+                            }
                             Navigator.pop(context);
                           },
                         ),
@@ -105,4 +85,3 @@ class _PickerButtonState extends State<PickerButton> {
     );
   }
 }
-

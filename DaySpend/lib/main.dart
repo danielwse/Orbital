@@ -30,6 +30,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   List<Widget> pages = [Expenses(),Homepage(), Planner()];
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

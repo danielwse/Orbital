@@ -1,5 +1,8 @@
 import 'package:DaySpend/planner/task.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart';
+
+import 'day2index.dart';
 
 class TaskFunction extends ChangeNotifier {
   List<Task> _tasks = [
@@ -65,6 +68,14 @@ class TaskFunction extends ChangeNotifier {
 
   void changeDateTime (DateTime dt) {
     tempDateTime = dt;
+    notifyListeners();
+  }
+
+  void rescheduleOverdue(Task task, DateTime dt) {
+    final newTask = Task(index: getIndex(dt), name: task.name, time: DateFormat('Hm').format(dt).toString(), description: task.description, notify: task.notify, dt: dt);
+    _tasks.remove(task);
+    _tasks.add(newTask);
+    print("rescheduled: "+ newTask.name + "@ " + switchDays(newTask.index) + " - " + newTask.time);
     notifyListeners();
   }
 
