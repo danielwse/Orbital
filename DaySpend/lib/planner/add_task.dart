@@ -13,172 +13,176 @@ class AddTask extends StatelessWidget {
   Widget build(BuildContext context) {
     DateTime datetime = DateTime.now();
 
-    return Container(
-      color: Color(0xff757575),
-      child: Container(
-        padding: EdgeInsets.all(20.0),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20.0),
-            topRight: Radius.circular(20.0),
-          ),
-        ),
-        child: Column(
-          children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.center,
+    return Consumer<TaskFunction>(
+      builder: (context, newTask, child) {
+        return Container(
+          color: Color(0xff757575),
+          child: Container(
+            padding: EdgeInsets.all(20.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20.0),
+                topRight: Radius.circular(20.0),
+              ),
+            ),
+            child: Column(
               children: <Widget>[
-                Container(
-                  child: Row(
-                    children: <Widget>[
-                      Container(
-                        child: Header(
-                          weight: FontWeight.bold,
-                          italic: false,
-                          text: "Add ",
-                          color: Colors.black, size: 44,
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(top: 8),
-                        child: Header(
-                          weight: FontWeight.bold,
-                          italic: false,
-                          text: "task",
-                          color: Colors.amber,
-                          size: 32,
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                Column(
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    Row(
-                      children: <Widget>[
-                        Container(
-                          margin: EdgeInsets.only(left: 10),
-                          child: Header(
-                            weight: FontWeight.bold,
-                            italic: false,
-                            text: "Notification : ",
-                            color: Colors.black, size: 15,
+                    Container(
+                      child: Row(
+                        children: <Widget>[
+                          Container(
+                            child: Header(
+                              weight: FontWeight.bold,
+                              italic: false,
+                              text: "Add ",
+                              color: Colors.black, size: 44,
+                            ),
                           ),
+                          Container(
+                            margin: EdgeInsets.only(top: 8),
+                            child: Header(
+                              weight: FontWeight.bold,
+                              italic: false,
+                              text: "task",
+                              color: Colors.amber,
+                              size: 32,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    Column(
+                      children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                            Container(
+                              margin: EdgeInsets.only(left: 10),
+                              child: Header(
+                                weight: FontWeight.bold,
+                                italic: false,
+                                text: "Notification : ",
+                                color: Colors.black, size: 15,
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(left: 13),
+                              child: FSwitch(
+                                open: newTask.storedNotify(),
+                                width: 48,
+                                height: 28,
+                                openColor: Colors.teal,
+                                onChanged: (v) {
+                                  newTask.changeNotify(!newTask.storedNotify());
+                                },
+                                closeChild: Icon(
+                                  Icons.notifications_off,
+                                  size: 12,
+                                  color: Colors.brown,
+                                ),
+                                openChild: Icon(
+                                  Icons.notifications,
+                                  size: 12,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                         Container(
-                          margin: EdgeInsets.only(left: 13),
-                          child: FSwitch(
-                            open: Provider.of<TaskFunction>(context).storedNotify(),
-                            width: 48,
-                            height: 28,
-                            openColor: Colors.teal,
-                            onChanged: (v) {
-                              Provider.of<TaskFunction>(context).changeNotify(!Provider.of<TaskFunction>(context).storedNotify());
-                            },
-                            closeChild: Icon(
-                              Icons.notifications_off,
-                              size: 12,
-                              color: Colors.brown,
-                            ),
-                            openChild: Icon(
-                              Icons.notifications,
-                              size: 12,
-                              color: Colors.white,
-                            ),
+                          margin: EdgeInsets.fromLTRB(15, 10, 10, 10),
+                          child: PickerButton(
+                            initDateTime: datetime.add(Duration(minutes: 1)),
                           ),
                         ),
                       ],
                     ),
-                    Container(
-                      margin: EdgeInsets.fromLTRB(15, 10, 10, 10),
-                      child: PickerButton(
-                        initDateTime: datetime.add(Duration(minutes: 1)),
-                      ),
-                    ),
                   ],
+                ),
+                Container(
+                  height: 50,
+                  alignment: Alignment.topCenter,
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 10, vertical: 10),
+                  margin: const EdgeInsets.symmetric(
+                      horizontal: 10, vertical: 10),
+                  decoration: BoxDecoration(
+                      color: Colors.black12,
+                      borderRadius:
+                      BorderRadius.circular(10)),
+                  child: TextField(
+                      maxLength: 20,
+                      autofocus: true,
+                      textAlign: TextAlign.start,
+                      onChanged: (String newName) {
+                        newTask.changeName(newName);
+                      },
+                      showCursor: true,
+                      maxLengthEnforced: true,
+                      decoration:
+                      InputDecoration.collapsed(
+                        hintText: 'Task Name',
+                      )
+                  ),
+                ),
+                Container(
+                  height: 50,
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  margin: const EdgeInsets.symmetric(
+                      horizontal: 10, vertical: 20),
+                  decoration: BoxDecoration(
+                      color: Colors.black12,
+                      borderRadius:
+                      BorderRadius.circular(10)),
+                  child: TextField(
+                      autofocus: false, maxLines: null,
+                      textAlign: TextAlign.start,
+                      onChanged: (String newDes) {
+                        newTask.changeDes(newDes);
+                      },
+                      showCursor: true,
+                      maxLengthEnforced: true,
+                      decoration:
+                      InputDecoration.collapsed(
+                        hintText: 'Task Description',
+                      )
+                  ),
+                ),
+                NiceButton(
+                  width: 100,
+                  elevation: 8.0,
+                  radius: 52.0,
+                  fontSize: 16,
+                  text: "Add",
+                  textColor: Colors.white,
+                  background: Colors.teal,
+                  onPressed: () {
+                    String name = newTask.storedName();
+                    if (name != null) {
+                      DateTime setTime = newTask.storedDateTime();
+                      print("from add task" + setTime.toString());
+                      if (setTime == null) {
+                        setTime = DateTime.now();
+                      }
+                      String index = getIndex(setTime);
+                      String time = DateFormat('Hm').format(setTime).toString();
+                      String description = newTask.storedDes();
+                      bool notify = newTask.storedNotify();
+                      newTask.addTask(index,name,time,(description != null ? description : 'This task has no description'), notify, setTime);
+                    }
+                    Navigator.pop(context);
+                  },
                 ),
               ],
             ),
-            Container(
-              height: 50,
-              alignment: Alignment.topCenter,
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 10, vertical: 10),
-              margin: const EdgeInsets.symmetric(
-                  horizontal: 10, vertical: 10),
-              decoration: BoxDecoration(
-                  color: Colors.black12,
-                  borderRadius:
-                  BorderRadius.circular(10)),
-              child: TextField(
-                  maxLength: 20,
-                  autofocus: true,
-                  textAlign: TextAlign.start,
-                  onChanged: (String newName) {
-                    Provider.of<TaskFunction>(context).changeName(newName);
-                    },
-                  showCursor: true,
-                  maxLengthEnforced: true,
-                  decoration:
-                  InputDecoration.collapsed(
-                    hintText: 'Task Name',
-                  )
-              ),
-            ),
-            Container(
-              height: 50,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              margin: const EdgeInsets.symmetric(
-                  horizontal: 10, vertical: 20),
-              decoration: BoxDecoration(
-                  color: Colors.black12,
-                  borderRadius:
-                  BorderRadius.circular(10)),
-              child: TextField(
-                  autofocus: false, maxLines: null,
-                  textAlign: TextAlign.start,
-                  onChanged: (String newDes) {
-                    Provider.of<TaskFunction>(context).changeDes(newDes);
-                  },
-                  showCursor: true,
-                  maxLengthEnforced: true,
-                  decoration:
-                  InputDecoration.collapsed(
-                    hintText: 'Task Description',
-                  )
-              ),
-            ),
-            NiceButton(
-              width: 100,
-              elevation: 8.0,
-              radius: 52.0,
-              fontSize: 16,
-              text: "Add",
-              textColor: Colors.white,
-              background: Colors.teal,
-              onPressed: () {
-                String name = Provider.of<TaskFunction>(context).storedName();
-                if (name != null) {
-                  DateTime setTime = Provider.of<TaskFunction>(context).storedDateTime();
-                  print("from add task" + setTime.toString());
-                  if (setTime == null) {
-                    setTime = DateTime.now();
-                  }
-                  String index = getIndex(setTime);
-                  String time = DateFormat('Hm').format(setTime).toString();
-                  String description = Provider.of<TaskFunction>(context).storedDes();
-                  bool notify = Provider.of<TaskFunction>(context).storedNotify();
-                  Provider.of<TaskFunction>(context).addTask(index,name,time,(description != null ? description : 'This task has no description'), notify, setTime);
-                }
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
   String getIndex(DateTime dt){
