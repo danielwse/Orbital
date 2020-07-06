@@ -1,8 +1,10 @@
+import 'package:DaySpend/fonts/header.dart';
 import 'package:DaySpend/planner/picker.dart';
 import 'package:DaySpend/planner/task_function.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fswitch/fswitch.dart';
+import 'package:nice_button/NiceButton.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
@@ -24,30 +26,78 @@ class AddTask extends StatelessWidget {
         ),
         child: Column(
           children: <Widget>[
-            FSwitch(
-              open: Provider.of<TaskFunction>(context).storedNotify(),
-              width: 40,
-              height: 24,
-              openColor: Colors.teal,
-              onChanged: (v) {
-                Provider.of<TaskFunction>(context).changeNotify(!Provider.of<TaskFunction>(context).storedNotify());
-              },
-              closeChild: Icon(
-                Icons.notifications_off,
-                size: 12,
-                color: Colors.brown,
-              ),
-              openChild: Icon(
-                Icons.notifications,
-                size: 12,
-                color: Colors.white,
-              ),
-            ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                PickerButton(
-                  initDateTime: datetime,
+                Container(
+                  child: Row(
+                    children: <Widget>[
+                      Container(
+                        child: Header(
+                          weight: FontWeight.bold,
+                          italic: false,
+                          text: "Add ",
+                          color: Colors.black, size: 44,
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(top: 8),
+                        child: Header(
+                          weight: FontWeight.bold,
+                          italic: false,
+                          text: "task",
+                          color: Colors.amber,
+                          size: 32,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                Column(
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        Container(
+                          margin: EdgeInsets.only(left: 10),
+                          child: Header(
+                            weight: FontWeight.bold,
+                            italic: false,
+                            text: "Notification : ",
+                            color: Colors.black, size: 15,
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(left: 13),
+                          child: FSwitch(
+                            open: Provider.of<TaskFunction>(context).storedNotify(),
+                            width: 48,
+                            height: 28,
+                            openColor: Colors.teal,
+                            onChanged: (v) {
+                              Provider.of<TaskFunction>(context).changeNotify(!Provider.of<TaskFunction>(context).storedNotify());
+                            },
+                            closeChild: Icon(
+                              Icons.notifications_off,
+                              size: 12,
+                              color: Colors.brown,
+                            ),
+                            openChild: Icon(
+                              Icons.notifications,
+                              size: 12,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Container(
+                      margin: EdgeInsets.fromLTRB(15, 10, 10, 10),
+                      child: PickerButton(
+                        initDateTime: datetime.add(Duration(minutes: 1)),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -82,7 +132,7 @@ class AddTask extends StatelessWidget {
               alignment: Alignment.center,
               padding: const EdgeInsets.symmetric(horizontal: 10),
               margin: const EdgeInsets.symmetric(
-                  horizontal: 10, vertical: 10),
+                  horizontal: 10, vertical: 20),
               decoration: BoxDecoration(
                   color: Colors.black12,
                   borderRadius:
@@ -101,26 +151,28 @@ class AddTask extends StatelessWidget {
                   )
               ),
             ),
-            FlatButton(
-              child: Text(
-                'Add',
-                style: TextStyle(
-                  color: Colors.white,
-                ),
-              ),
-              color: Colors.lightBlueAccent,
+            NiceButton(
+              width: 100,
+              elevation: 8.0,
+              radius: 52.0,
+              fontSize: 16,
+              text: "Add",
+              textColor: Colors.white,
+              background: Colors.teal,
               onPressed: () {
                 String name = Provider.of<TaskFunction>(context).storedName();
                 if (name != null) {
                   DateTime setTime = Provider.of<TaskFunction>(context).storedDateTime();
                   print("from add task" + setTime.toString());
+                  if (setTime == null) {
+                    setTime = DateTime.now();
+                  }
                   String index = getIndex(setTime);
                   String time = DateFormat('Hm').format(setTime).toString();
                   String description = Provider.of<TaskFunction>(context).storedDes();
                   bool notify = Provider.of<TaskFunction>(context).storedNotify();
                   Provider.of<TaskFunction>(context).addTask(index,name,time,(description != null ? description : 'This task has no description'), notify, setTime);
                 }
-                Provider.of<TaskFunction>(context).resetAddTask();
                 Navigator.pop(context);
               },
             ),

@@ -34,6 +34,7 @@ dependencies:
   intl: ^0.16.1
   provider: ^3.0.0+1
   animated_widgets: ^1.0.6
+  nice_button: ^0.1.7
 
 dev_dependencies:
   build_runner: ^1.7.2

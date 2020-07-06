@@ -46,6 +46,7 @@ class TaskList extends StatelessWidget {
               opacityEnabled: task.opacity,
               child: TaskTile(
                 slidable: slidable,
+                tileColor: (task.isComplete ? Colors.tealAccent[100] : (task.isOverdue ? Colors.red[100] : Colors.white)),
                 taskName: task.name,
                 taskIndex: task.index,
                 taskTime: task.time,

@@ -22,6 +22,7 @@ class TaskFunction extends ChangeNotifier {
     tempDes = null;
     tempDateTime =  null;
     tempNotify = false;
+    print("reset add task screen");
   }
 
   bool tempNotify = false;

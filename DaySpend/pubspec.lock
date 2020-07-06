@@ -484,6 +484,13 @@ packages:
       url: "git://github.com/danielwse/flutter_moneytextfieldform"
     source: git
     version: "0.3.5+1"
+  nice_button:
+    dependency: "direct main"
+    description:
+      name: nice_button
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.7"
   node_interop:
     dependency: transitive
     description:

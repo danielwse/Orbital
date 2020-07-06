@@ -20,8 +20,9 @@ class TaskTile extends StatelessWidget {
   final Function removeCallback;
   final Function archiveCallback;
   final SlidableController slidable;
+  final Color tileColor;
 
-  TaskTile({this.taskIndex,this.taskName,this.taskTime,this.taskDT, this.taskDes,this.taskNotify, this.taskComplete, this.taskOverdue, this.notifyCallback, this.completeCallback, this.overdueCallback, this.removeCallback, this.archiveCallback, this.slidable});
+  TaskTile({this.tileColor, this.taskIndex,this.taskName,this.taskTime,this.taskDT, this.taskDes,this.taskNotify, this.taskComplete, this.taskOverdue, this.notifyCallback, this.completeCallback, this.overdueCallback, this.removeCallback, this.archiveCallback, this.slidable});
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +42,7 @@ class TaskTile extends StatelessWidget {
         margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: tileColor,
             borderRadius: BorderRadius.circular(10),
           ),
           child: ListTile(
@@ -62,7 +63,7 @@ class TaskTile extends StatelessWidget {
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                (taskComplete ? Icon(Icons.check_circle, color: Colors.teal, size: 22) : (taskOverdue ? Icon(Icons.cancel, color: Colors.redAccent, size: 20) : (taskNotify ? Icon(Icons.notifications, color: Colors.orangeAccent, size: 20) : Icon(Icons.notifications, color: Colors.orangeAccent, size: 0)))),
+                (taskComplete ? Icon(Icons.check_circle, color: Colors.teal, size: 22) : (taskOverdue ? Icon(Icons.cancel, color: Colors.red, size: 20) : (taskNotify ? Icon(Icons.notifications, color: Colors.orangeAccent, size: 20) : Icon(Icons.notifications, color: Colors.orangeAccent, size: 0)))),
                 Container(
                   margin: EdgeInsets.fromLTRB(12, 0, 6, 0),
                   child: Text(
@@ -81,21 +82,27 @@ class TaskTile extends StatelessWidget {
       ),
       actions: <Widget>[
         Container(
+            decoration: BoxDecoration(
+              borderRadius:
+              BorderRadius.circular(20)),
             margin: EdgeInsets.only(left: 12),
             height: heightOfActions,
             child: (taskComplete ?
             IconSlideAction(caption: 'Archive', color: Colors.teal, icon: Icons.archive, onTap: archiveCallback) :
             (taskOverdue ?
-            IconSlideAction(caption: 'Schedule', color: Colors.redAccent, icon: Icons.replay) :
+            IconSlideAction(caption: 'Schedule', color: Colors.redAccent[100], icon: Icons.replay) :
             IconSlideAction(caption: 'Archive', color: Colors.black26, icon: Icons.archive))),
         ),],
       secondaryActions: <Widget>[
         Container(
+          decoration: BoxDecoration(
+            borderRadius:
+            BorderRadius.circular(20)),
           height: heightOfActions,
           margin: EdgeInsets.only(right:12),
           child: IconSlideAction(
             caption: 'Edit',
-            color: Colors.blueGrey,
+            color: Colors.blueGrey[100],
             icon: Icons.edit,
             onTap: () => Scaffold.of(context).showSnackBar(
               SnackBar(
@@ -105,12 +112,15 @@ class TaskTile extends StatelessWidget {
           ),
         ),
         Container(
+          decoration: BoxDecoration(
+              borderRadius:
+              BorderRadius.circular(20)),
           margin: EdgeInsets.only(right: 12),
           height: heightOfActions,
           child: IconSlideAction(
             closeOnTap: true,
             caption: 'Delete',
-            color: Colors.pinkAccent,
+            color: Colors.pinkAccent[100],
             icon: Icons.delete,
             onTap: removeCallback,
           ),
