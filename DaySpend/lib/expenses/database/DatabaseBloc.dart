@@ -56,6 +56,11 @@ class ExpensesBloc implements Bloc {
     getExpenses();
   }
 
+  changeDate(String newDate, int id) async {
+    await _expensesRepository.changeDate(newDate, id);
+    getExpenses();
+  }
+
   dispose() {
     _expensesController.close();
   }

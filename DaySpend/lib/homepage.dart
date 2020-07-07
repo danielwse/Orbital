@@ -16,6 +16,7 @@ class _HomepageState extends State<Homepage> {
         debugShowCheckedModeBanner: false,
         home: SafeArea(
             child: Scaffold(
+                resizeToAvoidBottomInset: false,
                 backgroundColor: Color(0xffF7F7F7),
                 floatingActionButton: AddExpense(),
                 floatingActionButtonLocation:

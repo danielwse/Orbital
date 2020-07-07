@@ -80,7 +80,10 @@ class _HomePageExpensesState extends State<HomePageExpenses> {
                                                     ? Icons.warning
                                                     : percentSpent >= 100
                                                         ? Icons.mood_bad
-                                                        : Icons.mood,
+                                                        : percentSpent >= 80
+                                                            ? Icons
+                                                                .sentiment_dissatisfied
+                                                            : Icons.mood,
                                                 color: percentSpent == null
                                                     ? Colors.red
                                                     : percentSpent >= 100
@@ -158,7 +161,7 @@ class _HomePageExpensesState extends State<HomePageExpenses> {
               Center(
                 heightFactor: 1,
                 child: Header(
-                  text: 'BUDGET',
+                  text: 'BUDGETS',
                   size: 20,
                   italic: false,
                 ),

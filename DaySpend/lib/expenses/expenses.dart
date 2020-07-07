@@ -46,19 +46,17 @@ class _MaxSpendState extends State<MaxSpend> {
                   child: Column(
                     children: <Widget>[
                       Padding(
-                          padding: EdgeInsets.only(
-                            left: 10,
-                            right: 10,
-                            top: 10,
-                          ),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 40, vertical: 10),
                           child: Container(
+                              alignment: Alignment.center,
+                              height: 70,
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: new BorderRadius.circular(20.0),
                               ),
                               child: Padding(
-                                  padding: EdgeInsets.only(
-                                      left: 100, right: 80, top: 5),
+                                  padding: EdgeInsets.only(left: 90, right: 20),
                                   child: TextField(
                                     textAlign: TextAlign.center,
                                     controller: _maxSpendController,
@@ -74,9 +72,10 @@ class _MaxSpendState extends State<MaxSpend> {
                                             'Max Spend: ${snapshot.data}',
                                         labelStyle: TextStyle(fontSize: 16),
                                         hintText: "Enter This Week's Max Spend",
+                                        hintStyle: TextStyle(fontSize: 12),
                                         hintMaxLines: 2),
                                     keyboardType: TextInputType.number,
-                                    onSubmitted: (value) async {
+                                    onSubmitted: (value) {
                                       FocusScope.of(context)
                                           .requestFocus(FocusNode());
                                       if (_maxSpendController.text.isEmpty) {
@@ -711,6 +710,7 @@ class _ExpensesState extends State<Expenses> {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(
+            resizeToAvoidBottomInset: false,
             floatingActionButton: SpeedDial(
                 backgroundColor: Colors.white,
                 foregroundColor: Colors.black,
