@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:DaySpend/fonts/header.dart';
-import 'package:DaySpend/planner/editTask.dart';
+import 'package:DaySpend/planner/edit_Task.dart';
 import 'package:DaySpend/planner/reschedule.dart';
 import 'package:DaySpend/planner/task.dart';
 import 'package:flutter/cupertino.dart';
