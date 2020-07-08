@@ -42,7 +42,7 @@ class TaskScreen extends StatelessWidget {
                     Header(
                       text: 'Day',
                       weight: FontWeight.bold,
-                      size: 20,
+                      size: 24,
                       color: Colors.teal,
                       underline: true,
                       italic: true,
@@ -54,7 +54,7 @@ class TaskScreen extends StatelessWidget {
                     ),
                     Header(
                       text: 'Spend',
-                      size: 20,
+                      size: 24,
                       color: Colors.grey,
                       italic: true,
                       weight: FontWeight.bold,
@@ -72,6 +72,22 @@ class TaskScreen extends StatelessWidget {
           backgroundColor: Colors.transparent,
           elevation: 0.0,
           actions: <Widget>[
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 15),
+              child: RawMaterialButton(
+                constraints: BoxConstraints.tight(Size(40, 40)),
+                fillColor: Colors.white,
+                shape: CircleBorder(),
+                elevation: 8,
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                child: Icon(
+                  Icons.reply_all,
+                  color: Colors.black,
+                  size: 20,
+                ),
+                onPressed: () {},
+              ),
+            ),
             Container(
               margin: EdgeInsets.symmetric(horizontal: 15),
               child: RawMaterialButton(
