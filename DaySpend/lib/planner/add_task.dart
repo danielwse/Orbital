@@ -7,7 +7,6 @@ import 'package:fswitch/fswitch.dart';
 import 'package:nice_button/NiceButton.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-
 import 'day2index.dart';
 
 class AddTask extends StatelessWidget {
@@ -89,7 +88,7 @@ class AddTask extends StatelessWidget {
                       BorderRadius.circular(10)),
                   child: TextField(
                       maxLength: 20,
-                      autofocus: true,
+                      cursorColor: Colors.teal,
                       textAlign: TextAlign.start,
                       onChanged: (String newName) {
                         newTask.changeName(newName);
@@ -113,8 +112,9 @@ class AddTask extends StatelessWidget {
                       borderRadius:
                       BorderRadius.circular(10)),
                   child: TextField(
-                      autofocus: false, maxLines: null,
+                      maxLines: null,
                       textAlign: TextAlign.start,
+                      cursorColor: Colors.teal,
                       onChanged: (String newDes) {
                         newTask.changeDes(newDes);
                       },

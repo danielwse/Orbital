@@ -1,7 +1,6 @@
 import 'package:DaySpend/planner/task.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
-
 import 'day2index.dart';
 
 class TaskFunction extends ChangeNotifier {
@@ -25,10 +24,13 @@ class TaskFunction extends ChangeNotifier {
     tempDes = null;
     tempDateTime =  null;
     tempNotify = false;
-    print("reset add task screen");
+    madeChanges = false;
+    print("reset temp values");
   }
 
   bool tempNotify = false;
+
+  bool madeChanges = false;
 
   void changeNotify(bool input) {
     tempNotify = input;
@@ -37,6 +39,15 @@ class TaskFunction extends ChangeNotifier {
 
   bool storedNotify() {
     return tempNotify;
+  }
+
+  void changesMade(bool input) {
+    madeChanges = input;
+    notifyListeners();
+  }
+
+  bool areChangesMade() {
+    return madeChanges;
   }
 
   String tempName;

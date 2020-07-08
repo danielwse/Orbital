@@ -8,15 +8,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:grouped_list/grouped_list.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-
 import 'day2index.dart';
 
 class TaskList extends StatelessWidget {
   final SlidableController slidable;
+  final TextEditingController nameEdit;
+  final TextEditingController descriptionEdit;
 
-  TaskList({this.slidable});
+  TaskList({this.slidable, this.nameEdit, this.descriptionEdit});
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +47,9 @@ class TaskList extends StatelessWidget {
               opacityDisabled: 1,
               opacityEnabled: task.opacity,
               child: TaskTile(
+                currentTask: task,
+                nameEditor: nameEdit,
+                desEditor: descriptionEdit,
                 slidable: slidable,
                 tileColor: (task.isComplete ? Colors.tealAccent[100] : (task.isOverdue ? Colors.red[100] : Colors.white)),
                 taskName: task.name,

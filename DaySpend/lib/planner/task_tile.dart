@@ -1,16 +1,18 @@
 import 'dart:async';
 
 import 'package:DaySpend/fonts/header.dart';
+import 'package:DaySpend/planner/editTask.dart';
 import 'package:DaySpend/planner/reschedule.dart';
+import 'package:DaySpend/planner/task.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:fswitch/fswitch.dart';
 import 'package:random_string/random_string.dart';
-
 import 'day2index.dart';
 
 class TaskTile extends StatelessWidget {
+  final Task currentTask;
   final String taskName;
   final String taskIndex;
   final String taskTime;
@@ -27,8 +29,10 @@ class TaskTile extends StatelessWidget {
   final Function rescheduleCallback;
   final SlidableController slidable;
   final Color tileColor;
+  final TextEditingController nameEditor;
+  final TextEditingController desEditor;
 
-  TaskTile({this.tileColor, this.taskIndex,this.taskName,this.taskTime,this.taskDT, this.taskDes,this.taskNotify, this.taskComplete, this.taskOverdue, this.notifyCallback, this.completeCallback, this.overdueCallback, this.removeCallback, this.archiveCallback, this.slidable, this.rescheduleCallback});
+  TaskTile({this.tileColor, this.taskIndex,this.taskName,this.taskTime,this.taskDT, this.taskDes,this.taskNotify, this.taskComplete, this.taskOverdue, this.notifyCallback, this.completeCallback, this.overdueCallback, this.removeCallback, this.archiveCallback, this.slidable, this.rescheduleCallback, this.nameEditor, this.desEditor, this.currentTask});
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +60,7 @@ class TaskTile extends StatelessWidget {
               slidable.activeState?.close(),
               getDetails(context),
             },
-            onLongPress: (taskOverdue ? null : completeCallback),
+            onLongPress: completeCallback,
             contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
             title: Text(
               taskName,
@@ -106,15 +110,19 @@ class TaskTile extends StatelessWidget {
             BorderRadius.circular(20)),
           height: heightOfActions,
           margin: EdgeInsets.only(right:12),
-          child: IconSlideAction(
-            caption: 'Edit',
-            color: Colors.blueGrey[100],
-            icon: Icons.edit,
-            onTap: () => Scaffold.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Edit'),
-              ),
-            ),
+          child: EditButton(
+            oldTask: currentTask,
+            nameEditor: nameEditor,
+            desEditor: desEditor,
+            slidableController: slidable,
+            taskName: taskName,
+            taskDes: taskDes,
+            taskOverdue: taskOverdue,
+            taskDT: taskDT,
+            taskComplete: taskComplete,
+            taskNotify: taskNotify,
+            taskTime: taskTime,
+            taskIndex: taskIndex,
           ),
         ),
         Container(

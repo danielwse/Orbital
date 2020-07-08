@@ -8,9 +8,19 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 
 final SlidableController slidable = SlidableController();
+final TextEditingController textControllerName = TextEditingController();
+final TextEditingController textControllerDes = TextEditingController();
 
 SlidableController get getSlidable {
   return slidable;
+}
+
+TextEditingController get getNameText {
+  return textControllerName;
+}
+
+TextEditingController get getDesText {
+  return textControllerDes;
 }
 
 class TaskScreen extends StatelessWidget {
@@ -95,6 +105,8 @@ class TaskScreen extends StatelessWidget {
         ),
         body: TaskList(
           slidable: getSlidable,
+          nameEdit: getNameText,
+          descriptionEdit: getDesText,
         ),
       ),
     );
