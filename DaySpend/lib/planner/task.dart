@@ -1,5 +1,6 @@
 
 class Task implements Comparable {
+  final int id;
   String name;
   String index;
   String time;
@@ -10,7 +11,7 @@ class Task implements Comparable {
   double opacity;
   DateTime dt;
 
-  Task({this.index, this.name, this.time, this.dt, this.description, this.notify = false, this.isComplete = false, this.isOverdue = false, this.opacity = 1});
+  Task({this.id, this.index, this.name, this.time, this.dt, this.description, this.notify = false, this.isComplete = false, this.isOverdue = false, this.opacity = 1});
 
   void toggleNotify() {
     notify = !notify;

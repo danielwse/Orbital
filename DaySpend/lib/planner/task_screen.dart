@@ -64,6 +64,18 @@ class TaskScreen extends StatelessWidget {
                         offset: Offset(1.0, 1.0),
                       ),
                     ),
+                    Header(
+                      text: " " + Provider.of<TaskFunction>(context).tasksLeft().toString(),
+                      size: 16,
+                      color: Colors.blueGrey,
+                      italic: true,
+                      weight: FontWeight.bold,
+                      shadow: Shadow(
+                        blurRadius: 2.0,
+                        color: Colors.blueGrey[100],
+                        offset: Offset(1.0, 1.0),
+                      ),
+                    ),
                   ],
                 ),
               ),

@@ -8,7 +8,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:fswitch/fswitch.dart';
-import 'package:random_string/random_string.dart';
 import 'day2index.dart';
 
 class TaskTile extends StatelessWidget {
@@ -31,15 +30,16 @@ class TaskTile extends StatelessWidget {
   final Color tileColor;
   final TextEditingController nameEditor;
   final TextEditingController desEditor;
+  final int taskID;
 
-  TaskTile({this.tileColor, this.taskIndex,this.taskName,this.taskTime,this.taskDT, this.taskDes,this.taskNotify, this.taskComplete, this.taskOverdue, this.notifyCallback, this.completeCallback, this.overdueCallback, this.removeCallback, this.archiveCallback, this.slidable, this.rescheduleCallback, this.nameEditor, this.desEditor, this.currentTask});
+  TaskTile({this.tileColor, this.taskIndex,this.taskName,this.taskTime,this.taskDT, this.taskDes,this.taskNotify, this.taskComplete, this.taskOverdue, this.notifyCallback, this.completeCallback, this.overdueCallback, this.removeCallback, this.archiveCallback, this.slidable, this.rescheduleCallback, this.nameEditor, this.desEditor, this.currentTask, this.taskID});
 
   @override
   Widget build(BuildContext context) {
     Timer.periodic(Duration(seconds: 1), (Timer t) => (taskDT.isBefore(DateTime.now()) ? overdueCallback(t) : null));
     double heightOfActions = 52;
     return Slidable(
-      key: Key(randomNumeric(5)),
+      key: Key(taskID.toString()),
       controller: slidable,
       closeOnScroll: true,
       actionPane: SlidableDrawerActionPane(),
@@ -111,6 +111,7 @@ class TaskTile extends StatelessWidget {
           height: heightOfActions,
           margin: EdgeInsets.only(right:12),
           child: EditButton(
+            taskID: taskID,
             oldTask: currentTask,
             nameEditor: nameEditor,
             desEditor: desEditor,

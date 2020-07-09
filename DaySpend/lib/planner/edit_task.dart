@@ -16,6 +16,7 @@ class EditButton extends StatelessWidget {
   final TextEditingController nameEditor;
   final TextEditingController desEditor;
   final SlidableController slidableController;
+  final int taskID;
   final String taskName;
   final String taskIndex;
   final String taskTime;
@@ -26,7 +27,7 @@ class EditButton extends StatelessWidget {
   final bool taskOverdue;
   final Task oldTask;
 
-  EditButton({this.slidableController, this.taskName, this.taskIndex, this.taskTime, this.taskDT, this.taskDes, this.taskNotify, this.taskComplete, this.taskOverdue, this.nameEditor, this.desEditor, this.oldTask});
+  EditButton({this.slidableController, this.taskName, this.taskIndex, this.taskTime, this.taskDT, this.taskDes, this.taskNotify, this.taskComplete, this.taskOverdue, this.nameEditor, this.desEditor, this.oldTask, this.taskID});
 
   @override
   Widget build(BuildContext context) {
@@ -173,7 +174,6 @@ class EditButton extends StatelessWidget {
                                   name = taskName;
                                 }
                                 DateTime setTime = Provider.of<TaskFunction>(context).storedDateTime();
-                                print("from edit task " + setTime.toString());
                                 if (setTime == null ) {
                                   setTime = DateTime.now().add(Duration(minutes: 1));
                                 }
@@ -187,9 +187,10 @@ class EditButton extends StatelessWidget {
                                   description = taskDes;
                                 }
                                 bool notify = Provider.of<TaskFunction>(context).storedNotify();
+                                int id = taskID;
                                 if (name != null && name.replaceAll(' ', '').length!=0) {
-                                  Provider.of<TaskFunction>(context).addTask(index,name,time,(description != null ? description : ""), notify, setTime);
                                   Provider.of<TaskFunction>(context).deleteTask(oldTask);
+                                  Provider.of<TaskFunction>(context).addTask(id,index,name,time,(description != null ? description : ""), notify, setTime);
                                 }
                                 Navigator.pop(context);
                               },

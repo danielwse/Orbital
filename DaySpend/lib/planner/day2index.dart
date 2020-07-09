@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import 'package:random_string/random_string.dart';
 
 String switchDays(i) {
   switch (i) {
@@ -42,7 +43,7 @@ String getIndex(DateTime dt){
   return i;
 }
 
-String dateString(DateTime dt) {
+int idCreator(DateTime dt) {
   String min = DateFormat('m').format(dt).toString();
   String hour = DateFormat('H').format(dt).toString();
   String day = DateFormat('d').format(dt).toString();
@@ -55,7 +56,7 @@ String dateString(DateTime dt) {
     month = "0" + month;
   }
   String output = (year + month + day + hour + min);
-  return output;
+  return int.parse(randomNumeric(5) + output);
 }
 
 String convertIndex(String index) {

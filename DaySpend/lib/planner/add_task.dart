@@ -138,7 +138,6 @@ class AddTask extends StatelessWidget {
                     String name = newTask.storedName();
                     if (name != null && name.replaceAll(' ', '').length!=0) {
                       DateTime setTime = newTask.storedDateTime();
-                      print("from add task " + setTime.toString());
                       if (setTime == null ) {
                         setTime = DateTime.now().add(Duration(minutes: 1));
                       }
@@ -148,8 +147,9 @@ class AddTask extends StatelessWidget {
                       String index = getIndex(setTime);
                       String time = DateFormat('Hm').format(setTime).toString();
                       String description = newTask.storedDes();
+                      int id = idCreator(setTime);
                       bool notify = newTask.storedNotify();
-                      newTask.addTask(index,name,time,(description != null ? description : ""), notify, setTime);
+                      newTask.addTask(id,index,name,time,(description != null ? description : ""), notify, setTime);
                     }
                     Navigator.pop(context);
                   },

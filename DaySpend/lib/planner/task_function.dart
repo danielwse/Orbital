@@ -5,7 +5,6 @@ import 'day2index.dart';
 
 class TaskFunction extends ChangeNotifier {
   List<Task> _tasks = [
-    //Task(index: '1', name: 'name', time: '14:00', description: 'des', notify: false, dt: DateTime.now())
   ]; //should fetch from database
 
   List<Task> get tasks {
@@ -19,6 +18,11 @@ class TaskFunction extends ChangeNotifier {
     return _completedTasks;
   }
 
+  int tasksLeft() {
+    print(_tasks.length);
+    return _tasks.length;
+  }
+
   void resetAddTask() {
     tempName = null;
     tempDes = null;
@@ -26,6 +30,7 @@ class TaskFunction extends ChangeNotifier {
     tempNotify = false;
     madeChanges = false;
     print("reset temp values");
+    notifyListeners();
   }
 
   bool tempNotify = false;
@@ -83,22 +88,25 @@ class TaskFunction extends ChangeNotifier {
   }
 
   void rescheduleOverdue(Task task, DateTime dt) {
-    final newTask = Task(index: getIndex(dt), name: task.name, time: DateFormat('Hm').format(dt).toString(), description: task.description, notify: task.notify, dt: dt);
+    final newTask = Task(id: task.id, index: getIndex(dt), name: task.name, time: DateFormat('Hm').format(dt).toString(), description: task.description, notify: task.notify, dt: dt);
+    print("deleted task with id "+ task.id.toString());
     _tasks.remove(task);
     _tasks.add(newTask);
-    print("rescheduled: "+ newTask.name + "@ " + switchDays(newTask.index) + " - " + newTask.time);
+    print("rescheduled: "+ newTask.name + "@ " + switchDays(newTask.index) + " - " + newTask.time + " - id: " + task.id.toString());
     notifyListeners();
   }
 
-  void addTask(String index, String name, String time, String des, bool notify, DateTime dateTime) {
-    final task = Task(index: index, name: name, time: time, description: des, notify: notify, dt: dateTime);
+  void addTask(int id, String index, String name, String time, String des, bool notify, DateTime dateTime) {
+    final task = Task(id: id, index: index, name: name, time: time, description: des, notify: notify, dt: dateTime);
     _tasks.add(task);
+    print("add task: id is " + id.toString());
     notifyListeners();
   }
 
   void archiveTask(Task task) {
-    final completed = Task(index: task.index, name: task.name, time: task.time, description: task.description, isComplete: true, dt: task.dt);
+    final completed = Task(id: task.id, index: task.index, name: task.name, time: task.time, description: task.description, isComplete: true, dt: task.dt);
     _completedTasks.add(completed);
+    print("archived task with id: " + task.id.toString() + " to completedTaskList");
     notifyListeners();
   }
 
@@ -118,6 +126,7 @@ class TaskFunction extends ChangeNotifier {
   }
 
   void deleteTask(Task task) {
+    print("deleted task with id "+ task.id.toString());
     _tasks.remove(task);
     notifyListeners();
   }

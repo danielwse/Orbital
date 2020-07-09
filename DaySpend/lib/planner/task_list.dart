@@ -47,6 +47,7 @@ class TaskList extends StatelessWidget {
               opacityDisabled: 1,
               opacityEnabled: task.opacity,
               child: TaskTile(
+                taskID: task.id,
                 currentTask: task,
                 nameEditor: nameEdit,
                 desEditor: descriptionEdit,
