@@ -147,9 +147,8 @@ class AddTask extends StatelessWidget {
                       String index = getIndex(setTime);
                       String time = DateFormat('Hm').format(setTime).toString();
                       String description = newTask.storedDes();
-                      int id = idCreator(setTime);
                       bool notify = newTask.storedNotify();
-                      newTask.addTask(id,index,name,time,(description != null ? description : ""), notify, setTime);
+                      newTask.addTask(index,name,time,(description != null ? description : ""), notify, setTime);
                     }
                     Navigator.pop(context);
                   },

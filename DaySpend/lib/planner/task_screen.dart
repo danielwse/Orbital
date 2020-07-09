@@ -1,6 +1,7 @@
 import 'package:DaySpend/fonts/header.dart';
 import 'package:DaySpend/planner/task_function.dart';
 import 'package:DaySpend/planner/task_list.dart';
+import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:DaySpend/planner/add_task.dart';
@@ -24,6 +25,22 @@ TextEditingController get getDesText {
 }
 
 class TaskScreen extends StatelessWidget {
+  final GlobalKey<FabCircularMenuState> fabKey = GlobalKey();
+  void toggleMenu({bool forceClose}) {
+    if (fabKey.currentState.isOpen) {
+      fabKey.currentState.close();
+    } else {
+      if (forceClose) {
+        fabKey.currentState.close();
+      } else {
+        fabKey.currentState.open();
+      }
+    }
+  }
+
+  GlobalKey<FabCircularMenuState> get menuKey {
+    return fabKey;
+  }
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -64,18 +81,6 @@ class TaskScreen extends StatelessWidget {
                         offset: Offset(1.0, 1.0),
                       ),
                     ),
-                    Header(
-                      text: " " + Provider.of<TaskFunction>(context).tasksLeft().toString(),
-                      size: 16,
-                      color: Colors.blueGrey,
-                      italic: true,
-                      weight: FontWeight.bold,
-                      shadow: Shadow(
-                        blurRadius: 2.0,
-                        color: Colors.blueGrey[100],
-                        offset: Offset(1.0, 1.0),
-                      ),
-                    ),
                   ],
                 ),
               ),
@@ -92,24 +97,9 @@ class TaskScreen extends StatelessWidget {
                 shape: CircleBorder(),
                 elevation: 8,
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                child: Icon(
-                  Icons.reply_all,
-                  color: Colors.black,
-                  size: 20,
-                ),
-                onPressed: () {},
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 15),
-              child: RawMaterialButton(
-                constraints: BoxConstraints.tight(Size(40, 40)),
-                fillColor: Colors.white,
-                shape: CircleBorder(),
-                elevation: 8,
-                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 onPressed: () {
                   Provider.of<TaskFunction>(context).resetAddTask();
+                  toggleMenu(forceClose: true);
                   getSlidable.activeState?.close();
                   showModalBottomSheet(
                       context: context,
@@ -131,10 +121,51 @@ class TaskScreen extends StatelessWidget {
             ),
           ],
         ),
-        body: TaskList(
-          slidable: getSlidable,
-          nameEdit: getNameText,
-          descriptionEdit: getDesText,
+        body: GestureDetector(
+          onPanDown: (v) {
+            getSlidable.activeState?.close();
+            toggleMenu(forceClose: true);
+          },
+          child: TaskList(
+            slidable: getSlidable,
+            nameEdit: getNameText,
+            descriptionEdit: getDesText,
+            fabKey: fabKey,
+          ),
+        ),
+        floatingActionButton: FabCircularMenu(
+          key: fabKey,
+          fabOpenIcon: Icon(Icons.home),
+          fabColor: Colors.white,
+          ringColor: Colors.lightBlue[100],
+          ringDiameter: MediaQuery.of(context).copyWith().size.width * 0.8,
+          ringWidth: MediaQuery.of(context).copyWith().size.width * 1.25 * 0.1,
+            children: <Widget>[
+              IconButton(icon:
+                  Stack(
+                      children: <Widget>[
+                        Icon(Icons.home),
+                        Positioned(  // draw a red marble
+                          top: 0.0,
+                          right: 0.0,
+                          child: Icon(Icons.brightness_1, size: 8.0,
+                            color: Colors.redAccent),
+                        )
+                      ]
+                  ),
+                  onPressed: () {
+                    print('Home');
+                    toggleMenu();
+                  }),
+              IconButton(icon: Icon(Icons.archive), onPressed: () {
+                print('Completed tasks');
+                toggleMenu();
+              }),
+              IconButton(icon: Icon(Icons.reply_all), onPressed: () {
+                toggleMenu();
+                print('Earlier tasks');
+              })
+            ]
         ),
       ),
     );

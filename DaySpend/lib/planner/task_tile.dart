@@ -4,6 +4,7 @@ import 'package:DaySpend/fonts/header.dart';
 import 'package:DaySpend/planner/edit_task.dart';
 import 'package:DaySpend/planner/reschedule.dart';
 import 'package:DaySpend/planner/task.dart';
+import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -11,6 +12,7 @@ import 'package:fswitch/fswitch.dart';
 import 'day2index.dart';
 
 class TaskTile extends StatelessWidget {
+  final GlobalKey<FabCircularMenuState> menu;
   final Task currentTask;
   final String taskName;
   final String taskIndex;
@@ -32,7 +34,7 @@ class TaskTile extends StatelessWidget {
   final TextEditingController desEditor;
   final int taskID;
 
-  TaskTile({this.tileColor, this.taskIndex,this.taskName,this.taskTime,this.taskDT, this.taskDes,this.taskNotify, this.taskComplete, this.taskOverdue, this.notifyCallback, this.completeCallback, this.overdueCallback, this.removeCallback, this.archiveCallback, this.slidable, this.rescheduleCallback, this.nameEditor, this.desEditor, this.currentTask, this.taskID});
+  TaskTile({this.tileColor, this.taskIndex,this.taskName,this.taskTime,this.taskDT, this.taskDes,this.taskNotify, this.taskComplete, this.taskOverdue, this.notifyCallback, this.completeCallback, this.overdueCallback, this.removeCallback, this.archiveCallback, this.slidable, this.rescheduleCallback, this.nameEditor, this.desEditor, this.currentTask, this.taskID, this.menu});
 
   @override
   Widget build(BuildContext context) {
@@ -56,9 +58,10 @@ class TaskTile extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
           ),
           child: ListTile(
-            onTap: () => {
-              slidable.activeState?.close(),
-              getDetails(context),
+            onTap: () {
+              menu.currentState.close();
+              slidable.activeState?.close();
+              getDetails(context);
             },
             onLongPress: completeCallback,
             contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
@@ -124,6 +127,7 @@ class TaskTile extends StatelessWidget {
             taskNotify: taskNotify,
             taskTime: taskTime,
             taskIndex: taskIndex,
+            menu: menu,
           ),
         ),
         Container(

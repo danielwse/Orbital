@@ -1,7 +1,9 @@
 import 'package:DaySpend/fonts/header.dart';
 import 'package:DaySpend/planner/picker.dart';
+import 'package:DaySpend/planner/planner.dart';
 import 'package:DaySpend/planner/task.dart';
 import 'package:DaySpend/planner/task_function.dart';
+import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -26,8 +28,9 @@ class EditButton extends StatelessWidget {
   final bool taskComplete;
   final bool taskOverdue;
   final Task oldTask;
+  final GlobalKey<FabCircularMenuState> menu;
 
-  EditButton({this.slidableController, this.taskName, this.taskIndex, this.taskTime, this.taskDT, this.taskDes, this.taskNotify, this.taskComplete, this.taskOverdue, this.nameEditor, this.desEditor, this.oldTask, this.taskID});
+  EditButton({this.slidableController, this.taskName, this.taskIndex, this.taskTime, this.taskDT, this.taskDes, this.taskNotify, this.taskComplete, this.taskOverdue, this.nameEditor, this.desEditor, this.oldTask, this.taskID, this.menu});
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +41,7 @@ class EditButton extends StatelessWidget {
       color: Colors.blueGrey[100],
       icon: Icons.edit,
       onTap: () {
+        menu.currentState.close();
         Provider.of<TaskFunction>(context).resetAddTask();
         Provider.of<TaskFunction>(context).changeNotify(taskNotify);
         slidableController.activeState?.close();
@@ -187,10 +191,9 @@ class EditButton extends StatelessWidget {
                                   description = taskDes;
                                 }
                                 bool notify = Provider.of<TaskFunction>(context).storedNotify();
-                                int id = taskID;
                                 if (name != null && name.replaceAll(' ', '').length!=0) {
                                   Provider.of<TaskFunction>(context).deleteTask(oldTask);
-                                  Provider.of<TaskFunction>(context).addTask(id,index,name,time,(description != null ? description : ""), notify, setTime);
+                                  Provider.of<TaskFunction>(context).addTask(index,name,time,(description != null ? description : ""), notify, setTime);
                                 }
                                 Navigator.pop(context);
                               },

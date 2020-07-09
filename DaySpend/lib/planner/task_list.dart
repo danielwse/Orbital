@@ -4,6 +4,7 @@ import 'package:DaySpend/fonts/header.dart';
 import 'package:DaySpend/planner/task_function.dart';
 import 'package:DaySpend/planner/task_tile.dart';
 import 'package:animated_widgets/animated_widgets.dart';
+import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -15,8 +16,9 @@ class TaskList extends StatelessWidget {
   final SlidableController slidable;
   final TextEditingController nameEdit;
   final TextEditingController descriptionEdit;
+  final GlobalKey<FabCircularMenuState> fabKey;
 
-  TaskList({this.slidable, this.nameEdit, this.descriptionEdit});
+  TaskList({this.slidable, this.nameEdit, this.descriptionEdit, this.fabKey});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +27,7 @@ class TaskList extends StatelessWidget {
         return GroupedListView<dynamic, String>(
           order: GroupedListOrder.ASC,
           groupBy: (task) => convertIndex(task.index), // modify index
-          elements: taskData.tasks,
+          elements: taskData.mainTasks,
           groupSeparatorBuilder: (index) => Padding(
             padding: (revertIndex(index) == getIndex(DateTime.now())
                 ? EdgeInsets.fromLTRB(15, 10, 10, 10)
@@ -52,6 +54,7 @@ class TaskList extends StatelessWidget {
                 nameEditor: nameEdit,
                 desEditor: descriptionEdit,
                 slidable: slidable,
+                menu: fabKey,
                 tileColor: (task.isComplete ? Colors.tealAccent[100] : (task.isOverdue ? Colors.red[100] : Colors.white)),
                 taskName: task.name,
                 taskIndex: task.index,
@@ -62,10 +65,12 @@ class TaskList extends StatelessWidget {
                 taskComplete: task.isComplete,
                 taskOverdue: task.isOverdue,
                 rescheduleCallback: (DateTime dt) {
+                  fabKey.currentState.close();
                   taskData.rescheduleOverdue(task, dt);},
                 notifyCallback: (bool) {
                   taskData.updateNotify(task);},
                 completeCallback: () {
+                  fabKey.currentState.close();
                   if (slidable.activeState != null) {
                     slidable.activeState?.close();
                     Future.delayed(Duration(milliseconds: 300), () {
@@ -83,11 +88,13 @@ class TaskList extends StatelessWidget {
                   }
                   },
                 removeCallback: () {
+                  fabKey.currentState.close();
                   taskData.setOpacity(task);
                   Future.delayed(Duration(milliseconds: 300), () {
                     taskData.deleteTask(task);
                   });},
                 archiveCallback: () {
+                  fabKey.currentState.close();
                   taskData.archiveTask(task);
                   taskData.setOpacity(task);
                   Scaffold.of(context).showSnackBar(
