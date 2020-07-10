@@ -205,6 +205,21 @@ class TasksBloc implements Bloc {
     return res;
   }
 
+  toggleNotification(Task task) async {
+    await _tasksRepository.toggleNotification(task);
+    getTasks();
+  }
+
+  toggleComplete(Task task) async {
+    await _tasksRepository.toggleComplete(task);
+    getTasks();
+  }
+
+  toggleOverdue(Task task) async {
+    await _tasksRepository.toggleOverdue(task);
+    getTasks();
+  }
+
   dispose() {
     _tasksController.close();
   }

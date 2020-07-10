@@ -7,6 +7,48 @@ import 'package:intl/intl.dart';
 class TasksDao {
   final dbProvider = DBProvider.db;
 
+  toggleNotify(Task task) {
+    return updateNotify(task.id, task.notify ? 0 : 1);
+  }
+
+  Future<int> updateNotify(int taskId, int value) async {
+    final db = await dbProvider.database;
+    var res = await db.rawUpdate('''
+    UPDATE Tasks 
+    SET notify = '$value'
+    WHERE id = '$taskId'
+    ''');
+    return res;
+  }
+
+  toggleComplete(Task task) {
+    return updateComplete(task.id, task.isComplete ? 0 : 1);
+  }
+
+  Future<int> updateComplete(int taskId, int value) async {
+    final db = await dbProvider.database;
+    var res = await db.rawUpdate('''
+    UPDATE Tasks 
+    SET isComplete = '$value'
+    WHERE id = '$taskId'
+    ''');
+    return res;
+  }
+
+  toggleOverdue(Task task) {
+    return updateOverdue(task.id, task.isOverdue ? 0 : 1);
+  }
+
+  Future<int> updateOverdue(int taskId, int value) async {
+    final db = await dbProvider.database;
+    var res = await db.rawUpdate('''
+    UPDATE Tasks 
+    SET isOverdue = '$value'
+    WHERE id = '$taskId'
+    ''');
+    return res;
+  }
+
   Future<int> newTask(Task task) async {
     if (task != null) {
       final db = await dbProvider.database;
@@ -44,4 +86,7 @@ class TasksRepository {
   Future getAllTasks() => tasksDao.getAllTasks();
   Future removeTask(int id) => tasksDao.removeTask(id);
   rescheduleOverdue(Task task, DateTime dt) => tasksDao.rescheduleOverdue(task, dt);
+  toggleNotification(Task task) => tasksDao.toggleNotify(task);
+  toggleComplete(Task task) => tasksDao.toggleComplete(task);
+  toggleOverdue(Task task) => tasksDao.toggleOverdue(task);
 }

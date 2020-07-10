@@ -3,23 +3,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 
 class PlannerWidgetValues extends ChangeNotifier {
-  
-  //// port these functions over
-  void updateNotify(Task task) {
-    task.toggleNotify();
-    notifyListeners();
-  }
 
-  void updateComplete(Task task) {
-    task.toggleComplete();
+  //might move this to db, but if working, leave it
+  void setOpacity(Task task) {
+    task.toggleAnimate();
     notifyListeners();
   }
-
-  void updateOverdue(Task task) {
-    task.toggleOverdue();
-    notifyListeners();
-  }
-  ////
 
   void resetAddTask() {
     tempName = null;
@@ -82,11 +71,6 @@ class PlannerWidgetValues extends ChangeNotifier {
 
   void changeDateTime (DateTime dt) {
     tempDateTime = dt;
-    notifyListeners();
-  }
-
-  void setOpacity(Task task) {
-    task.toggleAnimate();
     notifyListeners();
   }
 }

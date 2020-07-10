@@ -12,27 +12,24 @@ import 'package:intl/intl.dart';
 import 'day2index.dart';
 
 class AddTask extends StatefulWidget {
+  final TasksBloc tasksBloc;
+
+  AddTask({this.tasksBloc});
+
   @override
   _AddTaskState createState() => _AddTaskState();
 }
 
 class _AddTaskState extends State<AddTask> {
-  final TasksBloc tasksBloc = TasksBloc();
-
-  @override
-  void dispose() {
-    tasksBloc.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     DateTime datetime = DateTime.now();
 
     return StreamBuilder(
-      stream: tasksBloc.tasks,
+      stream: widget.tasksBloc.tasks,
       builder: (BuildContext context, AsyncSnapshot<List<Task>> snapshot) {
-        return snapshot.hasData ? Consumer<PlannerWidgetValues>(
+        return Consumer<PlannerWidgetValues>(
           builder: (context, newTask, child) {
             return Container(
               color: Color(0xff757575),
@@ -167,9 +164,8 @@ class _AddTaskState extends State<AddTask> {
                           String description = newTask.storedDes();
                           bool notify = newTask.storedNotify();
                           Task tempTask = Task(index: index, name: name, time: time, description: (description != null ? description : ""), notify: notify, isComplete: false, isOverdue: false, opacity: 1, dt: setTime);
-                          tasksBloc.addTaskToDatabase(tempTask);
+                          widget.tasksBloc.addTaskToDatabase(tempTask);
                         }
-//                    TaskScreenFunctions().transferTasksToDatabase();
                         Navigator.pop(context);
                       },
                     ),
@@ -178,7 +174,7 @@ class _AddTaskState extends State<AddTask> {
               ),
             );
           },
-        ): Container();
+        );
       },
     );
   }

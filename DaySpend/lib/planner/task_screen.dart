@@ -1,3 +1,4 @@
+import 'package:DaySpend/database/DatabaseBloc.dart';
 import 'package:DaySpend/fonts/header.dart';
 import 'package:DaySpend/planner/widget_values.dart';
 import 'package:DaySpend/planner/task_list.dart';
@@ -24,8 +25,14 @@ TextEditingController get getDesText {
   return textControllerDes;
 }
 
-class TaskScreen extends StatelessWidget {
+class TaskScreen extends StatefulWidget {
+  @override
+  _TaskScreenState createState() => _TaskScreenState();
+}
+
+class _TaskScreenState extends State<TaskScreen> {
   final GlobalKey<FabCircularMenuState> fabKey = GlobalKey();
+
   void toggleMenu({bool forceClose}) {
     if (fabKey.currentState.isOpen) {
       fabKey.currentState.close();
@@ -37,9 +44,19 @@ class TaskScreen extends StatelessWidget {
       }
     }
   }
+
   GlobalKey<FabCircularMenuState> get menuKey {
     return fabKey;
   }
+
+  final TasksBloc tasksBloc = TasksBloc();
+
+  @override
+  void dispose() {
+    tasksBloc.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -106,7 +123,7 @@ class TaskScreen extends StatelessWidget {
                       builder: (context) => SingleChildScrollView(
                           child:Container(
                             padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-                            child: AddTask(),
+                            child: AddTask(tasksBloc: tasksBloc),
                           )
                       )
                   );
@@ -126,6 +143,7 @@ class TaskScreen extends StatelessWidget {
             toggleMenu(forceClose: true);
           },
           child: TaskList(
+            tasksBloc: tasksBloc,
             slidable: getSlidable,
             nameEdit: getNameText,
             descriptionEdit: getDesText,

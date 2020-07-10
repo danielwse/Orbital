@@ -19,26 +19,21 @@ class TaskList extends StatefulWidget {
   final TextEditingController nameEdit;
   final TextEditingController descriptionEdit;
   final GlobalKey<FabCircularMenuState> fabKey;
+  final TasksBloc tasksBloc;
 
-  TaskList({this.slidable, this.nameEdit, this.descriptionEdit, this.fabKey});
+  TaskList({this.slidable, this.nameEdit, this.descriptionEdit, this.fabKey, this.tasksBloc});
 
   @override
   _TaskListState createState() => _TaskListState();
 }
 
 class _TaskListState extends State<TaskList> {
-  final TasksBloc tasksBloc = TasksBloc();
 
-  @override
-  void dispose() {
-    tasksBloc.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: tasksBloc.tasks,
+      stream: widget.tasksBloc.tasks,
       builder:
       (BuildContext context, AsyncSnapshot<List<Task>> snapshot) {
         return snapshot.hasData ? Consumer<PlannerWidgetValues>(
@@ -85,25 +80,25 @@ class _TaskListState extends State<TaskList> {
                       taskOverdue: task.isOverdue,
                       rescheduleCallback: (DateTime dt) {
                         widget.fabKey.currentState.close();
-                        tasksBloc.rescheduleTask(task, dt);
+                        widget.tasksBloc.rescheduleTask(task, dt);
                       },
                       notifyCallback: (bool) {
-                        widgetData.updateNotify(task);
+                        widget.tasksBloc.toggleNotification(task);
                       },
                       completeCallback: () {
                         widget.fabKey.currentState.close();
                         if (widget.slidable.activeState != null) {
                           widget.slidable.activeState?.close();
                           Future.delayed(Duration(milliseconds: 300), () {
-                            widgetData.updateComplete(task);
+                            widget.tasksBloc.toggleComplete(task);
                           });
                         } else {
-                          widgetData.updateComplete(task);
+                          widget.tasksBloc.toggleComplete(task);
                         }
                       },
                       overdueCallback: (t) {
                         if (!task.isOverdue) {
-                          widgetData.updateOverdue(task);
+                          widget.tasksBloc.toggleOverdue(task);
                           print(task.name+" overdue");
                           t.cancel();
                         }
@@ -112,7 +107,7 @@ class _TaskListState extends State<TaskList> {
                         widget.fabKey.currentState.close();
                         widgetData.setOpacity(task);
                         Future.delayed(Duration(milliseconds: 300), () {
-                          tasksBloc.removeTaskFromDatabase(task.id);
+                          widget.tasksBloc.removeTaskFromDatabase(task.id);
                         });
                       },
                       archiveCallback: () {
@@ -125,7 +120,7 @@ class _TaskListState extends State<TaskList> {
                           ),
                         );
                         Future.delayed(Duration(milliseconds: 300), () {
-                          tasksBloc.removeTaskFromDatabase(task.id);
+                          widget.tasksBloc.removeTaskFromDatabase(task.id);
                         });
                       },
                     ),
