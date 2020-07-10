@@ -220,6 +220,11 @@ class TasksBloc implements Bloc {
     getTasks();
   }
 
+  toggleArchived(Task task) async {
+    await _tasksRepository.toggleArchived(task);
+    getTasks();
+  }
+
   dispose() {
     _tasksController.close();
   }

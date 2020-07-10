@@ -3,8 +3,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:DaySpend/planner/day2index.dart';
-import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -59,6 +57,7 @@ class DBProvider {
           "notify INTEGER,"
           "isComplete INTEGER,"
           "isOverdue INTEGER,"
+      "isArchived INTEGER,"
           "opacity DOUBLE,"
           "dt TEXT"
           ")");

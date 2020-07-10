@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:DaySpend/planner/add_task.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 final SlidableController slidable = SlidableController();
@@ -59,6 +60,7 @@ class _TaskScreenState extends State<TaskScreen> {
 
   @override
   Widget build(BuildContext context) {
+    String headerText = DateFormat('MEd').format(DateTime.now()).toString() + " - " + DateFormat('MEd').format(DateTime.now().add(Duration(days: 6))).toString();
     return SafeArea(
       child: Scaffold(
         backgroundColor: Color(0xffF7F7F7),
@@ -70,35 +72,11 @@ class _TaskScreenState extends State<TaskScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Container(
-                child: Row(
-                  children: <Widget>[
-                    Header(
-                      text: 'Day',
-                      weight: FontWeight.bold,
-                      size: 24,
-                      color: Colors.teal,
-                      underline: true,
-                      italic: true,
-                      shadow: Shadow(
-                        blurRadius: 4.0,
-                        color: Colors.blueAccent[100],
-                        offset: Offset(1.0, 1.0),
-                      ),
-                    ),
-                    Header(
-                      text: 'Spend',
-                      size: 24,
-                      color: Colors.grey,
-                      italic: true,
-                      weight: FontWeight.bold,
-                      shadow: Shadow(
-                        blurRadius: 2.0,
-                        color: Colors.blueGrey[100],
-                        offset: Offset(1.0, 1.0),
-                      ),
-                    ),
-                  ],
-                ),
+                margin: const EdgeInsets.only(left: 8),
+                child: Header(
+                  text: headerText, shadow: Shadow(blurRadius: 2.5, color: Colors.black26, offset: Offset(0,1)),
+                  weight: FontWeight.w600, color: Colors.black54, size: 20,
+                )
               ),
             ],
           ),
@@ -106,12 +84,12 @@ class _TaskScreenState extends State<TaskScreen> {
           elevation: 0.0,
           actions: <Widget>[
             Container(
-              margin: EdgeInsets.symmetric(horizontal: 15),
+              margin: EdgeInsets.only(right: 25),
               child: RawMaterialButton(
                 constraints: BoxConstraints.tight(Size(40, 40)),
                 fillColor: Colors.white,
                 shape: CircleBorder(),
-                elevation: 8,
+                elevation: 7,
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 onPressed: () {
                   Provider.of<PlannerWidgetValues>(context).resetAddTask();

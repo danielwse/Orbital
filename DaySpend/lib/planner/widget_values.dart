@@ -10,6 +10,18 @@ class PlannerWidgetValues extends ChangeNotifier {
     notifyListeners();
   }
 
+  List<Task> filterArchived(List<Task> input) {
+    List<Task> output = [];
+    for (Task task in input) {
+      if (task.isArchived) {
+        continue;
+      } else {
+        output.add(task);
+      }
+    }
+    return output;
+  }
+
   void resetAddTask() {
     tempName = null;
     tempDes = null;

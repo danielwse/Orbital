@@ -41,17 +41,18 @@ class _TaskListState extends State<TaskList> {
               return GroupedListView<dynamic, String>(
                 order: GroupedListOrder.ASC,
                 groupBy: (task) => convertIndex(task.index), // modify index
-                elements: snapshot.data,
+                elements: widgetData.filterArchived(snapshot.data),
                 groupSeparatorBuilder: (index) => Padding(
                   padding: (revertIndex(index) == getIndex(DateTime.now())
-                      ? EdgeInsets.fromLTRB(15, 10, 10, 10)
-                      : EdgeInsets.fromLTRB(15, 40, 10, 10)),
+                      ? EdgeInsets.fromLTRB(15, 20, 10, 10)
+                      : EdgeInsets.fromLTRB(15, 30, 10, 10)),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Header(
                         text: switchDays(revertIndex(index)),
-                        size: 20,
+                        shadow: Shadow(blurRadius: 2.5, color: Colors.black26, offset: Offset(0,1)),
+                        weight: FontWeight.w600, color: Colors.black54, size: 20,
                       ),
                     ],
                   ),
@@ -63,6 +64,7 @@ class _TaskListState extends State<TaskList> {
                     opacityDisabled: 1,
                     opacityEnabled: task.opacity,
                     child: TaskTile(
+                      tasksBloc: widget.tasksBloc,
                       taskID: task.id,
                       currentTask: task,
                       nameEditor: widget.nameEdit,
@@ -112,16 +114,13 @@ class _TaskListState extends State<TaskList> {
                       },
                       archiveCallback: () {
                         widget.fabKey.currentState.close();
-                        //TODO : send task to another table, no need to delete
+                        widget.tasksBloc.toggleArchived(task);
                         widgetData.setOpacity(task);
                         Scaffold.of(context).showSnackBar(
                           SnackBar(
                             content: Text('Archived Task'),
                           ),
                         );
-                        Future.delayed(Duration(milliseconds: 300), () {
-                          widget.tasksBloc.removeTaskFromDatabase(task.id);
-                        });
                       },
                     ),
                   );

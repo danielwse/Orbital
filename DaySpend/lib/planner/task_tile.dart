@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:DaySpend/database/DatabaseBloc.dart';
 import 'package:DaySpend/fonts/header.dart';
 import 'package:DaySpend/planner/edit_task.dart';
 import 'package:DaySpend/planner/reschedule.dart';
@@ -11,7 +12,8 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:fswitch/fswitch.dart';
 import 'day2index.dart';
 
-class TaskTile extends StatelessWidget {
+class TaskTile extends StatefulWidget {
+  final TasksBloc tasksBloc;
   final GlobalKey<FabCircularMenuState> menu;
   final Task currentTask;
   final String taskName;
@@ -34,15 +36,20 @@ class TaskTile extends StatelessWidget {
   final TextEditingController desEditor;
   final int taskID;
 
-  TaskTile({this.tileColor, this.taskIndex,this.taskName,this.taskTime,this.taskDT, this.taskDes,this.taskNotify, this.taskComplete, this.taskOverdue, this.notifyCallback, this.completeCallback, this.overdueCallback, this.removeCallback, this.archiveCallback, this.slidable, this.rescheduleCallback, this.nameEditor, this.desEditor, this.currentTask, this.taskID, this.menu});
+  TaskTile({this.tileColor, this.taskIndex,this.taskName,this.taskTime,this.taskDT, this.taskDes,this.taskNotify, this.taskComplete, this.taskOverdue, this.notifyCallback, this.completeCallback, this.overdueCallback, this.removeCallback, this.archiveCallback, this.slidable, this.rescheduleCallback, this.nameEditor, this.desEditor, this.currentTask, this.taskID, this.menu, this.tasksBloc});
 
   @override
+  _TaskTileState createState() => _TaskTileState();
+}
+
+class _TaskTileState extends State<TaskTile> {
+  @override
   Widget build(BuildContext context) {
-    Timer.periodic(Duration(seconds: 1), (Timer t) => (taskDT.isBefore(DateTime.now()) ? overdueCallback(t) : null));
+    Timer.periodic(Duration(seconds: 1), (Timer t) => (widget.taskDT.isBefore(DateTime.now()) ? widget.overdueCallback(t) : null));
     double heightOfActions = 52;
     return Slidable(
-      key: Key(taskID.toString()),
-      controller: slidable,
+      key: Key(widget.taskID.toString()),
+      controller: widget.slidable,
       closeOnScroll: true,
       actionPane: SlidableDrawerActionPane(),
       actionExtentRatio: 0.2,
@@ -54,33 +61,34 @@ class TaskTile extends StatelessWidget {
         margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
         child: Container(
           decoration: BoxDecoration(
-            color: tileColor,
+            color: widget.tileColor,
             borderRadius: BorderRadius.circular(10),
           ),
           child: ListTile(
             onTap: () {
-              menu.currentState.close();
-              slidable.activeState?.close();
+              widget.menu.currentState.close();
+              widget.slidable.activeState?.close();
               getDetails(context);
             },
-            onLongPress: completeCallback,
+            onLongPress: widget.completeCallback,
             contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
             title: Text(
-              taskName,
+              widget.taskName,
               style: TextStyle(
-                  decoration: taskComplete ? TextDecoration.lineThrough : null,
+                  decoration: widget.taskComplete ? TextDecoration.lineThrough : null,
                   fontSize: 16,
+                  color: Colors.black87,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.5),
             ),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                (taskComplete ? Icon(Icons.check_circle, color: Colors.teal, size: 22) : (taskOverdue ? Icon(Icons.cancel, color: Colors.red, size: 20) : (taskNotify ? Icon(Icons.notifications, color: Colors.orangeAccent, size: 20) : Icon(Icons.notifications, color: Colors.orangeAccent, size: 0)))),
+                (widget.taskComplete ? Icon(Icons.check_circle, color: Colors.teal, size: 22) : (widget.taskOverdue ? Icon(Icons.cancel, color: Colors.red, size: 20) : (widget.taskNotify ? Icon(Icons.notifications, color: Colors.orangeAccent, size: 20) : Icon(Icons.notifications, color: Colors.orangeAccent, size: 0)))),
                 Container(
                   margin: EdgeInsets.fromLTRB(12, 0, 6, 0),
                   child: Text(
-                    taskTime,
+                    widget.taskTime,
                     style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -100,10 +108,10 @@ class TaskTile extends StatelessWidget {
               BorderRadius.circular(20)),
             margin: EdgeInsets.only(left: 12),
             height: heightOfActions,
-            child: (taskComplete ?
-            IconSlideAction(caption: 'Archive', color: Colors.teal, icon: Icons.archive, onTap: archiveCallback) :
-            (taskOverdue ?
-            RescheduleButton(updateTime: rescheduleCallback,) :
+            child: (widget.taskComplete ?
+            IconSlideAction(caption: 'Archive', color: Colors.teal, icon: Icons.archive, onTap: widget.archiveCallback) :
+            (widget.taskOverdue ?
+            RescheduleButton(updateTime: widget.rescheduleCallback,) :
             IconSlideAction(caption: 'Archive', color: Colors.black26, icon: Icons.archive))),
         ),],
       secondaryActions: <Widget>[
@@ -114,20 +122,21 @@ class TaskTile extends StatelessWidget {
           height: heightOfActions,
           margin: EdgeInsets.only(right:12),
           child: EditButton(
-            taskID: taskID,
-            oldTask: currentTask,
-            nameEditor: nameEditor,
-            desEditor: desEditor,
-            slidableController: slidable,
-            taskName: taskName,
-            taskDes: taskDes,
-            taskOverdue: taskOverdue,
-            taskDT: taskDT,
-            taskComplete: taskComplete,
-            taskNotify: taskNotify,
-            taskTime: taskTime,
-            taskIndex: taskIndex,
-            menu: menu,
+            taskID: widget.taskID,
+            oldTask: widget.currentTask,
+            nameEditor: widget.nameEditor,
+            desEditor: widget.desEditor,
+            slidableController: widget.slidable,
+            taskName: widget.taskName,
+            taskDes: widget.taskDes,
+            taskOverdue: widget.taskOverdue,
+            taskDT: widget.taskDT,
+            taskComplete: widget.taskComplete,
+            taskNotify: widget.taskNotify,
+            taskTime: widget.taskTime,
+            taskIndex: widget.taskIndex,
+            menu: widget.menu,
+            tasksBloc: widget.tasksBloc,
           ),
         ),
         Container(
@@ -139,16 +148,14 @@ class TaskTile extends StatelessWidget {
           child: IconSlideAction(
             closeOnTap: true,
             caption: 'Delete',
-            color: (taskOverdue ? Colors.pinkAccent[100] : (taskComplete ? Colors.lightBlue[100] : Colors.blueGrey)),
+            color: (widget.taskOverdue ? Colors.pinkAccent[100] : (widget.taskComplete ? Colors.lightBlue[100] : Colors.blueGrey)),
             icon: Icons.delete,
-            onTap: removeCallback,
+            onTap: widget.removeCallback,
           ),
         ),
       ],
     );
   }
-
-
 
   Future<void> getDetails(BuildContext context) {
     return showDialog<void>(
@@ -170,9 +177,9 @@ class TaskTile extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[Expanded(
                       child: Text(
-                        taskName.toUpperCase(),
+                        widget.taskName.toUpperCase(),
                         style: TextStyle(
-                            fontSize: (taskName.length < 10 ? 24 : 15),
+                            fontSize: (widget.taskName.length < 10 ? 24 : 15),
                             fontWeight: FontWeight.w700,
                             letterSpacing: 0.5),
                       ),
@@ -186,7 +193,7 @@ class TaskTile extends StatelessWidget {
                     children: <Widget>[
                       Container(
                         child: Text(
-                          switchDays(taskIndex) + " - " + taskTime,
+                          switchDays(widget.taskIndex) + " - " + widget.taskTime,
                           style: TextStyle(
                           fontSize: 14,
                           color: Colors.blueGrey,
@@ -194,12 +201,12 @@ class TaskTile extends StatelessWidget {
                           letterSpacing: 0.1),
                           ),
                       ),
-                      (taskComplete ? Header(text: "Completed", italic: true, color: Colors.teal, weight: FontWeight.bold, size: 14,) : (taskOverdue ? Header(text: "Overdue", color: Colors.red, weight: FontWeight.bold, size: 14, italic: true,) : FSwitch(
-                        open: (taskNotify),
+                      (widget.taskComplete ? Header(text: "Completed", italic: true, color: Colors.teal, weight: FontWeight.bold, size: 14,) : (widget.taskOverdue ? Header(text: "Overdue", color: Colors.red, weight: FontWeight.bold, size: 14, italic: true,) : FSwitch(
+                        open: (widget.taskNotify),
                         width: 40,
                         height: 24,
                         openColor: Colors.teal,
-                        onChanged: notifyCallback,
+                        onChanged: widget.notifyCallback,
                         closeChild: Icon(
                           Icons.notifications_off,
                           size: 12,
@@ -214,7 +221,7 @@ class TaskTile extends StatelessWidget {
                     ],
                   ),
                 ),
-                (taskDes!= "" ? Container(
+                (widget.taskDes!= "" ? Container(
                   margin: EdgeInsets.fromLTRB(0, 5, 0, 20),
                   child: Divider(
                     color: Colors.blueGrey,
@@ -223,8 +230,8 @@ class TaskTile extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    (taskDes!= "" ? Text(
-                      taskDes,
+                    (widget.taskDes!= "" ? Text(
+                      widget.taskDes,
                       style: TextStyle(
                           color: Colors.blueGrey,
                           fontSize: 16,

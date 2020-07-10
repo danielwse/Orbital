@@ -163,7 +163,7 @@ class _AddTaskState extends State<AddTask> {
                           String time = DateFormat('Hm').format(setTime).toString();
                           String description = newTask.storedDes();
                           bool notify = newTask.storedNotify();
-                          Task tempTask = Task(index: index, name: name, time: time, description: (description != null ? description : ""), notify: notify, isComplete: false, isOverdue: false, opacity: 1, dt: setTime);
+                          Task tempTask = Task(index: index, name: name, time: time, description: (description != null ? description : ""), notify: notify, isComplete: false, isOverdue: false, isArchived: false, opacity: 1, dt: setTime);
                           widget.tasksBloc.addTaskToDatabase(tempTask);
                         }
                         Navigator.pop(context);

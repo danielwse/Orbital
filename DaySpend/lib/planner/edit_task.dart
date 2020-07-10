@@ -29,21 +29,16 @@ class EditButton extends StatefulWidget {
   final bool taskOverdue;
   final Task oldTask;
   final GlobalKey<FabCircularMenuState> menu;
+  final TasksBloc tasksBloc;
 
-  EditButton({this.slidableController, this.taskName, this.taskIndex, this.taskTime, this.taskDT, this.taskDes, this.taskNotify, this.taskComplete, this.taskOverdue, this.nameEditor, this.desEditor, this.oldTask, this.taskID, this.menu});
+  EditButton({this.slidableController, this.taskName, this.taskIndex, this.taskTime, this.taskDT, this.taskDes, this.taskNotify, this.taskComplete, this.taskOverdue, this.nameEditor, this.desEditor, this.oldTask, this.taskID, this.menu, this.tasksBloc});
 
   @override
   _EditButtonState createState() => _EditButtonState();
 }
 
 class _EditButtonState extends State<EditButton> {
-  final TasksBloc tasksBloc = TasksBloc();
 
-  @override
-  void dispose() {
-    tasksBloc.dispose();
-    super.dispose();
-  }
   @override
   Widget build(BuildContext context) {
     widget.nameEditor.text = widget.taskName;
@@ -204,9 +199,9 @@ class _EditButtonState extends State<EditButton> {
                                 }
                                 bool notify = Provider.of<PlannerWidgetValues>(context).storedNotify();
                                 if (name != null && name.replaceAll(' ', '').length!=0) {
-                                  tasksBloc.removeTaskFromDatabase(widget.oldTask.id);
-                                  Task tempTask = Task(index: index, name: name, time: time, description: (description != null ? description : ""), notify: notify, isComplete: false, isOverdue: false, opacity: 1, dt: setTime);
-                                  tasksBloc.addTaskToDatabase(tempTask);
+                                  widget.tasksBloc.removeTaskFromDatabase(widget.oldTask.id);
+                                  Task tempTask = Task(index: index, name: name, time: time, description: (description != null ? description : ""), notify: notify, isComplete: false, isOverdue: false, isArchived: false, opacity: 1, dt: setTime);
+                                  widget.tasksBloc.addTaskToDatabase(tempTask);
                                 }
                                 Navigator.pop(context);
                               },

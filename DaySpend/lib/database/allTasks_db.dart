@@ -7,6 +7,20 @@ import 'package:intl/intl.dart';
 class TasksDao {
   final dbProvider = DBProvider.db;
 
+  toggleArchived(Task task) {
+    return updateArchived(task.id, task.isArchived ? 0 : 1);
+  }
+
+  Future<int> updateArchived(int taskId, int value) async {
+    final db = await dbProvider.database;
+    var res = await db.rawUpdate('''
+    UPDATE Tasks 
+    SET isArchived = '$value'
+    WHERE id = '$taskId'
+    ''');
+    return res;
+  }
+
   toggleNotify(Task task) {
     return updateNotify(task.id, task.notify ? 0 : 1);
   }
@@ -72,7 +86,7 @@ class TasksDao {
   }
 
   void rescheduleOverdue(Task task, DateTime dt) {
-    final tempTask = Task(id: task.id, index: getIndex(dt), name: task.name, time: DateFormat('Hm').format(dt).toString(), description: task.description, notify: task.notify, dt: dt);
+    final tempTask = Task(id: task.id, index: getIndex(dt), name: task.name, time: DateFormat('Hm').format(dt).toString(), description: task.description, notify: task.notify, isComplete: task.isComplete, isOverdue: false, isArchived: task.isArchived, dt: dt);
     print("deleted task with id "+ task.id.toString());
     removeTask(task.id);
     newTask(tempTask);
@@ -89,4 +103,5 @@ class TasksRepository {
   toggleNotification(Task task) => tasksDao.toggleNotify(task);
   toggleComplete(Task task) => tasksDao.toggleComplete(task);
   toggleOverdue(Task task) => tasksDao.toggleOverdue(task);
+  toggleArchived(Task task) => tasksDao.toggleArchived(task);
 }

@@ -36,6 +36,7 @@ class Header extends StatelessWidget {
           shadows: [
             shadow,
           ],
+          letterSpacing: 0.8,
           decoration: dec,
           decorationColor: color,
           fontSize: size,

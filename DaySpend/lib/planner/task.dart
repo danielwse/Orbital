@@ -8,22 +8,11 @@ class Task implements Comparable {
   bool notify;
   bool isComplete;
   bool isOverdue;
+  bool isArchived;
   double opacity;
   DateTime dt;
 
-  Task({this.id, this.index, this.name, this.time, this.dt, this.description, this.notify = false, this.isComplete = false, this.isOverdue = false, this.opacity = 1});
-
-  void toggleNotify() {
-    notify = !notify;
-  }
-
-  void toggleComplete() {
-    isComplete = !isComplete;
-  }
-
-  void toggleOverdue() {
-    isOverdue = true;
-  }
+  Task({this.id, this.index, this.name, this.time, this.dt, this.isArchived, this.description, this.notify = false, this.isComplete = false, this.isOverdue = false, this.opacity = 1});
 
   void toggleAnimate() {
     opacity = 0;
@@ -43,6 +32,7 @@ class Task implements Comparable {
       notify: data["notify"] == 0 ? false : true,
       isComplete: data["isComplete"] == 0 ? false : true,
       isOverdue: data["isOverdue"] == 0 ? false : true,
+      isArchived: data["isArchived"] == 0 ? false : true,
       opacity: data["opacity"],
       dt: DateTime.parse(data["dt"])
   );
@@ -57,6 +47,7 @@ class Task implements Comparable {
       "notify": notify == false ? 0 : 1,
       "isComplete": isComplete == false ? 0 : 1,
       "isOverdue": isOverdue == false ? 0 : 1,
+      "isArchived": isArchived == false ? 0 : 1,
       "opacity": opacity,
       "dt": dt.toIso8601String()
     };
