@@ -10,44 +10,30 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-final SlidableController slidable = SlidableController();
-final TextEditingController textControllerName = TextEditingController();
-final TextEditingController textControllerDes = TextEditingController();
-
-SlidableController get getSlidable {
-  return slidable;
-}
-
-TextEditingController get getNameText {
-  return textControllerName;
-}
-
-TextEditingController get getDesText {
-  return textControllerDes;
-}
-
 class TaskScreen extends StatefulWidget {
+  final SlidableController slidable;
+  final TextEditingController nameTextControl;
+  final TextEditingController desTextControl;
+  final GlobalKey<FabCircularMenuState> fabKey;
+
+  TaskScreen({this.slidable, this.desTextControl, this.nameTextControl, this.fabKey});
+
   @override
   _TaskScreenState createState() => _TaskScreenState();
 }
 
 class _TaskScreenState extends State<TaskScreen> {
-  final GlobalKey<FabCircularMenuState> fabKey = GlobalKey();
 
   void toggleMenu({bool forceClose}) {
-    if (fabKey.currentState.isOpen) {
-      fabKey.currentState.close();
+    if (widget.fabKey.currentState.isOpen) {
+      widget.fabKey.currentState.close();
     } else {
       if (forceClose) {
-        fabKey.currentState.close();
+        widget.fabKey.currentState.close();
       } else {
-        fabKey.currentState.open();
+        widget.fabKey.currentState.open();
       }
     }
-  }
-
-  GlobalKey<FabCircularMenuState> get menuKey {
-    return fabKey;
   }
 
   final TasksBloc tasksBloc = TasksBloc();
@@ -94,7 +80,7 @@ class _TaskScreenState extends State<TaskScreen> {
                 onPressed: () {
                   Provider.of<PlannerWidgetValues>(context).resetAddTask();
                   toggleMenu(forceClose: true);
-                  getSlidable.activeState?.close();
+                  widget.slidable.activeState?.close();
                   showModalBottomSheet(
                       context: context,
                       isScrollControlled: true,
@@ -117,19 +103,19 @@ class _TaskScreenState extends State<TaskScreen> {
         ),
         body: GestureDetector(
           onPanDown: (v) {
-            getSlidable.activeState?.close();
+            widget.slidable.activeState?.close();
             toggleMenu(forceClose: true);
           },
           child: TaskList(
             tasksBloc: tasksBloc,
-            slidable: getSlidable,
-            nameEdit: getNameText,
-            descriptionEdit: getDesText,
-            fabKey: fabKey,
+            slidable: widget.slidable,
+            nameEdit: widget.nameTextControl,
+            descriptionEdit: widget.desTextControl,
+            fabKey: widget.fabKey,
           ),
         ),
         floatingActionButton: FabCircularMenu(
-          key: fabKey,
+          key: widget.fabKey,
           fabOpenIcon: Icon(Icons.home),
           fabColor: Colors.white,
           ringColor: Colors.lightBlue[100],

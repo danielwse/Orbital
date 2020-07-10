@@ -10,13 +10,25 @@ class PlannerWidgetValues extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<Task> filterArchived(List<Task> input) {
+  List<Task> filterArchived(List<Task> input) { //in future filter Expired
     List<Task> output = [];
     for (Task task in input) {
       if (task.isArchived) {
         continue;
       } else {
         output.add(task);
+      }
+    }
+    return output;
+  }
+
+  List<Task> getArchived(List<Task> input) {
+    List<Task> output = [];
+    for (Task task in input) {
+      if (task.isArchived) {
+        output.add(task);
+      } else {
+        continue;
       }
     }
     return output;
