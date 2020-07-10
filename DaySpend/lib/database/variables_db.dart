@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'package:DaySpend/expenses/database/DatabaseHelper.dart';
-import 'package:DaySpend/expenses/database/db_models.dart';
+import 'package:DaySpend/database/DatabaseHelper.dart';
+import 'package:DaySpend/database/db_models.dart';
 
 class VariablesDao {
   final dbProvider = DBProvider.db;

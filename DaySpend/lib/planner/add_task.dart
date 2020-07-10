@@ -150,6 +150,7 @@ class AddTask extends StatelessWidget {
                       bool notify = newTask.storedNotify();
                       newTask.addTask(index,name,time,(description != null ? description : ""), notify, setTime);
                     }
+//                    TaskScreenFunctions().transferTasksToDatabase();
                     Navigator.pop(context);
                   },
                 ),

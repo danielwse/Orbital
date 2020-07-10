@@ -66,9 +66,13 @@ class TaskList extends StatelessWidget {
                 taskOverdue: task.isOverdue,
                 rescheduleCallback: (DateTime dt) {
                   fabKey.currentState.close();
-                  taskData.rescheduleOverdue(task, dt);},
+                  taskData.rescheduleOverdue(task, dt);
+//                  TaskScreenFunctions().transferTasksToDatabase();
+                  },
                 notifyCallback: (bool) {
-                  taskData.updateNotify(task);},
+                  taskData.updateNotify(task);
+//                  TaskScreenFunctions().transferTasksToDatabase();
+                  },
                 completeCallback: () {
                   fabKey.currentState.close();
                   if (slidable.activeState != null) {
@@ -79,6 +83,7 @@ class TaskList extends StatelessWidget {
                   } else {
                     taskData.updateComplete(task);
                   }
+//                  TaskScreenFunctions().transferTasksToDatabase();
                   },
                 overdueCallback: (t) {
                   if (!task.isOverdue) {
@@ -86,13 +91,16 @@ class TaskList extends StatelessWidget {
                     print(task.name+" overdue");
                     t.cancel();
                   }
+//                  TaskScreenFunctions().transferTasksToDatabase();
                   },
                 removeCallback: () {
                   fabKey.currentState.close();
                   taskData.setOpacity(task);
                   Future.delayed(Duration(milliseconds: 300), () {
                     taskData.deleteTask(task);
-                  });},
+                  });
+//                  TaskScreenFunctions().transferTasksToDatabase();
+                  },
                 archiveCallback: () {
                   fabKey.currentState.close();
                   taskData.archiveTask(task);
@@ -104,7 +112,9 @@ class TaskList extends StatelessWidget {
                   );
                   Future.delayed(Duration(milliseconds: 300), () {
                   taskData.deleteTask(task);
-                  });},
+                  });
+//                  TaskScreenFunctions().transferTasksToDatabase();
+                  },
                 ),
             );
           },

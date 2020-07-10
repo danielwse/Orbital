@@ -1,8 +1,8 @@
-import 'package:DaySpend/expenses/database/DatabaseBloc.dart';
+import 'package:DaySpend/database/DatabaseBloc.dart';
 import 'package:flutter/material.dart';
 import 'package:moneytextformfield/moneytextformfield.dart';
 import 'package:wc_form_validators/wc_form_validators.dart';
-import 'package:DaySpend/expenses/database/db_models.dart';
+import 'package:DaySpend/database/db_models.dart';
 
 class EditCategory extends StatefulWidget {
   final ExpensesBloc expensesBloc;

@@ -58,7 +58,7 @@ class Task implements Comparable {
       "isComplete": this.isComplete == false ? 0 : 1,
       "isOverdue": this.isOverdue == false ? 0 : 1,
       "opacity": this.opacity,
-      "dt": this.dt.toString().substring(0,19)
+      "dt": this.dt.toIso8601String()
     };
   }
 }

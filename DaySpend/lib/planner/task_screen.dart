@@ -37,7 +37,6 @@ class TaskScreen extends StatelessWidget {
       }
     }
   }
-
   GlobalKey<FabCircularMenuState> get menuKey {
     return fabKey;
   }
