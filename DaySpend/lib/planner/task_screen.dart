@@ -15,8 +15,10 @@ class TaskScreen extends StatefulWidget {
   final TextEditingController nameTextControl;
   final TextEditingController desTextControl;
   final GlobalKey<FabCircularMenuState> fabKey;
+  final Function notificationCallback;
+  final Function disableNotificationCallback;
 
-  TaskScreen({this.slidable, this.desTextControl, this.nameTextControl, this.fabKey});
+  TaskScreen({this.slidable, this.desTextControl, this.nameTextControl, this.fabKey, this.notificationCallback, this.disableNotificationCallback});
 
   @override
   _TaskScreenState createState() => _TaskScreenState();
@@ -87,7 +89,7 @@ class _TaskScreenState extends State<TaskScreen> {
                       builder: (context) => SingleChildScrollView(
                           child:Container(
                             padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-                            child: AddTask(tasksBloc: tasksBloc),
+                            child: AddTask(tasksBloc: tasksBloc, enableNotification: widget.notificationCallback),
                           )
                       )
                   );
@@ -107,6 +109,8 @@ class _TaskScreenState extends State<TaskScreen> {
             toggleMenu(forceClose: true);
           },
           child: TaskList(
+            notificationFn: widget.notificationCallback,
+            disableNotificationFn: widget.disableNotificationCallback,
             tasksBloc: tasksBloc,
             slidable: widget.slidable,
             nameEdit: widget.nameTextControl,

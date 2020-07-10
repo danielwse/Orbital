@@ -30,8 +30,10 @@ class EditButton extends StatefulWidget {
   final Task oldTask;
   final GlobalKey<FabCircularMenuState> menu;
   final TasksBloc tasksBloc;
+  final Function enableNotification;
+  final Function disableNotification;
 
-  EditButton({this.slidableController, this.taskName, this.taskIndex, this.taskTime, this.taskDT, this.taskDes, this.taskNotify, this.taskComplete, this.taskOverdue, this.nameEditor, this.desEditor, this.oldTask, this.taskID, this.menu, this.tasksBloc});
+  EditButton({this.slidableController, this.taskName, this.taskIndex, this.taskTime, this.taskDT, this.taskDes, this.taskNotify, this.taskComplete, this.taskOverdue, this.nameEditor, this.desEditor, this.oldTask, this.taskID, this.menu, this.tasksBloc, this.enableNotification, this.disableNotification});
 
   @override
   _EditButtonState createState() => _EditButtonState();
@@ -179,7 +181,7 @@ class _EditButtonState extends State<EditButton> {
                               text: "Save Changes",
                               textColor: Colors.white,
                               background: (widget.nameEditor.text != null && widget.nameEditor.text.replaceAll(' ', '').length!=0 ? Colors.teal : Colors.blueGrey[100]),
-                              onPressed: () {
+                              onPressed: () async {
                                 String name = Provider.of<PlannerWidgetValues>(context).storedName();
                                 if (name == null) {
                                   name = widget.taskName;
@@ -200,8 +202,13 @@ class _EditButtonState extends State<EditButton> {
                                 bool notify = Provider.of<PlannerWidgetValues>(context).storedNotify();
                                 if (name != null && name.replaceAll(' ', '').length!=0) {
                                   widget.tasksBloc.removeTaskFromDatabase(widget.oldTask.id);
+                                  widget.disableNotification(widget.oldTask.id);
                                   Task tempTask = Task(index: index, name: name, time: time, description: (description != null ? description : ""), notify: notify, isComplete: false, isOverdue: false, isArchived: false, opacity: 1, dt: setTime);
-                                  widget.tasksBloc.addTaskToDatabase(tempTask);
+                                  int id = await widget.tasksBloc.addTaskToDatabase(tempTask);
+                                  print(id);
+                                  if (tempTask.notify) {
+                                    widget.enableNotification(id, tempTask.name, tempTask.dt);
+                                  }
                                 }
                                 Navigator.pop(context);
                               },

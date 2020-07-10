@@ -13,8 +13,9 @@ import 'day2index.dart';
 
 class AddTask extends StatefulWidget {
   final TasksBloc tasksBloc;
+  final Function enableNotification;
 
-  AddTask({this.tasksBloc});
+  AddTask({this.tasksBloc, this.enableNotification});
 
   @override
   _AddTaskState createState() => _AddTaskState();
@@ -149,7 +150,7 @@ class _AddTaskState extends State<AddTask> {
                       text: "Add New Task",
                       textColor: Colors.white,
                       background: ((newTask.storedName() != null && newTask.storedName().replaceAll(' ', '').length!=0) ? Colors.teal : Colors.blueGrey[100]),
-                      onPressed: () {
+                      onPressed: () async {
                         String name = newTask.storedName();
                         if (name != null && name.replaceAll(' ', '').length!=0) {
                           DateTime setTime = newTask.storedDateTime();
@@ -164,7 +165,10 @@ class _AddTaskState extends State<AddTask> {
                           String description = newTask.storedDes();
                           bool notify = newTask.storedNotify();
                           Task tempTask = Task(index: index, name: name, time: time, description: (description != null ? description : ""), notify: notify, isComplete: false, isOverdue: false, isArchived: false, opacity: 1, dt: setTime);
-                          widget.tasksBloc.addTaskToDatabase(tempTask);
+                          int id = await widget.tasksBloc.addTaskToDatabase(tempTask);
+                          if (tempTask.notify) {
+                            widget.enableNotification(id, tempTask.name, tempTask.dt);
+                          }
                         }
                         Navigator.pop(context);
                       },

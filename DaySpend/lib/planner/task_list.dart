@@ -20,8 +20,10 @@ class TaskList extends StatefulWidget {
   final TextEditingController descriptionEdit;
   final GlobalKey<FabCircularMenuState> fabKey;
   final TasksBloc tasksBloc;
+  final Function notificationFn;
+  final Function disableNotificationFn;
 
-  TaskList({this.slidable, this.nameEdit, this.descriptionEdit, this.fabKey, this.tasksBloc});
+  TaskList({this.slidable, this.nameEdit, this.descriptionEdit, this.fabKey, this.tasksBloc, this.notificationFn, this.disableNotificationFn});
 
   @override
   _TaskListState createState() => _TaskListState();
@@ -64,6 +66,7 @@ class _TaskListState extends State<TaskList> {
                     opacityDisabled: 1,
                     opacityEnabled: task.opacity,
                     child: TaskTile(
+                      enableNotification: widget.notificationFn,
                       tasksBloc: widget.tasksBloc,
                       taskID: task.id,
                       currentTask: task,
@@ -71,7 +74,7 @@ class _TaskListState extends State<TaskList> {
                       desEditor: widget.descriptionEdit,
                       slidable: widget.slidable,
                       menu: widget.fabKey,
-                      tileColor: (task.isComplete ? Colors.tealAccent[100] : (task.isOverdue ? Colors.red[100] : Colors.white)),
+                      tileColor: (task.isComplete ? Colors.tealAccent[100] : (task.isOverdue ? Colors.red[100] : (task.dt.isBefore(DateTime.now()) ? Colors.amber[100] : Colors.white))),
                       taskName: task.name,
                       taskIndex: task.index,
                       taskTime: task.time,
@@ -84,8 +87,15 @@ class _TaskListState extends State<TaskList> {
                         widget.fabKey.currentState.close();
                         widget.tasksBloc.rescheduleTask(task, dt);
                       },
-                      notifyCallback: (bool) {
-                        widget.tasksBloc.toggleNotification(task);
+                      notifyCallback: () {
+                        if (widgetData.storedNotify() != task.notify) {
+                          widget.tasksBloc.toggleNotification(task);
+                        }
+                        if (widgetData.storedNotify()) {
+                          widget.notificationFn(task.id, task.name, task.dt);
+                        } else {
+                          widget.disableNotificationFn(task.id);
+                        }
                       },
                       completeCallback: () {
                         widget.fabKey.currentState.close();
@@ -97,10 +107,18 @@ class _TaskListState extends State<TaskList> {
                         } else {
                           widget.tasksBloc.toggleComplete(task);
                         }
+                        if (task.isComplete && task.notify) {
+                          widget.tasksBloc.toggleNotification(task);
+                          widget.disableNotificationFn(task.id);
+                        }
                       },
                       overdueCallback: (t) {
                         if (!task.isOverdue) {
                           widget.tasksBloc.toggleOverdue(task);
+                          if (task.notify) {
+                            widget.tasksBloc.toggleNotification(task);
+                            widget.disableNotificationFn(task.id);
+                          }
                           print(task.name+" overdue");
                           t.cancel();
                         }
@@ -108,6 +126,10 @@ class _TaskListState extends State<TaskList> {
                       removeCallback: () {
                         widget.fabKey.currentState.close();
                         widgetData.setOpacity(task);
+                        if (task.notify) {
+                          widget.tasksBloc.toggleNotification(task);
+                          widget.disableNotificationFn(task.id);
+                        }
                         Future.delayed(Duration(milliseconds: 300), () {
                           widget.tasksBloc.removeTaskFromDatabase(task.id);
                         });
@@ -115,12 +137,25 @@ class _TaskListState extends State<TaskList> {
                       archiveCallback: () {
                         widget.fabKey.currentState.close();
                         widget.tasksBloc.toggleArchived(task);
+                        if (task.notify) {
+                          widget.tasksBloc.toggleNotification(task);
+                          widget.disableNotificationFn(task.id);
+                        }
                         widgetData.setOpacity(task);
                         Scaffold.of(context).showSnackBar(
                           SnackBar(
                             content: Text('Archived Task'),
                           ),
                         );
+                      },
+                      taskWidgetResetAllTask: () {
+                        widgetData.resetAddTask();
+                      },
+                      taskWidgetChangeNotify: (bool b) {
+                        widgetData.changeNotify(b);
+                      },
+                      taskWidgetStoredNotify: () {
+                        return widgetData.storedNotify();
                       },
                     ),
                   );

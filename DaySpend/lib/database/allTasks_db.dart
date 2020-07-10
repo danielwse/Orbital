@@ -3,6 +3,7 @@ import 'package:DaySpend/database/DatabaseHelper.dart';
 import 'package:DaySpend/planner/day2index.dart';
 import 'package:DaySpend/planner/task.dart';
 import 'package:intl/intl.dart';
+import 'package:sqflite/sqflite.dart';
 
 class TasksDao {
   final dbProvider = DBProvider.db;
@@ -26,6 +27,7 @@ class TasksDao {
   }
 
   Future<int> updateNotify(int taskId, int value) async {
+    print(value == 0  ? "toggle off (notify)" : "toggle on (notify)");
     final db = await dbProvider.database;
     var res = await db.rawUpdate('''
     UPDATE Tasks 
@@ -66,7 +68,8 @@ class TasksDao {
   Future<int> newTask(Task task) async {
     if (task != null) {
       final db = await dbProvider.database;
-      var res = await db.insert("Tasks", task.toJson());
+      int res = await db.insert("Tasks", task.toJson(), conflictAlgorithm: ConflictAlgorithm.replace);
+      print("added task with id: " +res.toString());
       return res;
     }
     return null;
@@ -96,7 +99,7 @@ class TasksDao {
 
 class TasksRepository {
   final tasksDao = TasksDao();
-  Future newTask(Task task) => tasksDao.newTask(task);
+  Future<int> newTask(Task task) => tasksDao.newTask(task);
   Future getAllTasks() => tasksDao.getAllTasks();
   Future removeTask(int id) => tasksDao.removeTask(id);
   rescheduleOverdue(Task task, DateTime dt) => tasksDao.rescheduleOverdue(task, dt);

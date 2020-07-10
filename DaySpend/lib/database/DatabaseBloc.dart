@@ -184,9 +184,10 @@ class TasksBloc implements Bloc {
     _tasksController.sink.add(await _tasksRepository.getAllTasks());
   }
 
-  addTaskToDatabase(Task task) async {
-    await _tasksRepository.newTask(task);
+  Future<int> addTaskToDatabase(Task task) async {
+    var k = await _tasksRepository.newTask(task);
     getTasks();
+    return k;
   }
 
   removeTaskFromDatabase(int id) async {

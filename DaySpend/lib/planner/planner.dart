@@ -23,6 +23,9 @@ TextEditingController get getDesText {
 }
 
 class Planner extends StatefulWidget {
+  final Function notificationFn;
+  final Function disableNotificationFn;
+  Planner({this.notificationFn, this.disableNotificationFn});
   @override
   _PlannerState createState() => _PlannerState();
 }
@@ -37,7 +40,7 @@ class _PlannerState extends State<Planner> {
       builder: (context) => PlannerWidgetValues(),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: TaskScreen(slidable: getSlidable, nameTextControl: textControllerName, desTextControl: textControllerDes, fabKey: plannerFabKey),
+        home: TaskScreen(disableNotificationCallback: widget.disableNotificationFn, notificationCallback: widget.notificationFn, slidable: getSlidable, nameTextControl: textControllerName, desTextControl: textControllerDes, fabKey: plannerFabKey),
       ),
     );
   }

@@ -30,13 +30,18 @@ class TaskTile extends StatefulWidget {
   final Function removeCallback;
   final Function archiveCallback;
   final Function rescheduleCallback;
+  final Function enableNotification;
+  final Function disableNotification;
   final SlidableController slidable;
   final Color tileColor;
   final TextEditingController nameEditor;
   final TextEditingController desEditor;
   final int taskID;
+  final Function taskWidgetResetAllTask;
+  final Function taskWidgetChangeNotify;
+  final Function taskWidgetStoredNotify;
 
-  TaskTile({this.tileColor, this.taskIndex,this.taskName,this.taskTime,this.taskDT, this.taskDes,this.taskNotify, this.taskComplete, this.taskOverdue, this.notifyCallback, this.completeCallback, this.overdueCallback, this.removeCallback, this.archiveCallback, this.slidable, this.rescheduleCallback, this.nameEditor, this.desEditor, this.currentTask, this.taskID, this.menu, this.tasksBloc});
+  TaskTile({this.tileColor, this.taskIndex,this.taskName,this.taskTime,this.taskDT, this.taskDes,this.taskNotify, this.taskComplete, this.taskOverdue, this.notifyCallback, this.completeCallback, this.overdueCallback, this.removeCallback, this.archiveCallback, this.slidable, this.rescheduleCallback, this.nameEditor, this.desEditor, this.currentTask, this.taskID, this.menu, this.tasksBloc, this.enableNotification, this.disableNotification, this.taskWidgetResetAllTask, this.taskWidgetChangeNotify, this.taskWidgetStoredNotify});
 
   @override
   _TaskTileState createState() => _TaskTileState();
@@ -45,7 +50,16 @@ class TaskTile extends StatefulWidget {
 class _TaskTileState extends State<TaskTile> {
   @override
   Widget build(BuildContext context) {
-    Timer.periodic(Duration(seconds: 1), (Timer t) => (widget.taskDT.isBefore(DateTime.now()) ? widget.overdueCallback(t) : null));
+    Timer.periodic(Duration(seconds: 1), (Timer t) {
+      if (widget.taskDT.add(Duration(hours: 1)).isBefore(DateTime.now())) {
+        widget.overdueCallback(t);
+      }
+      if (widget.taskDT.isBefore(DateTime.now()) && widget.taskNotify) {
+        widget.tasksBloc.toggleNotification(widget.currentTask);
+        print(widget.taskID + widget.currentTask.id);
+        t.cancel();
+      }
+    });
     double heightOfActions = 52;
     return Slidable(
       key: Key(widget.taskID.toString()),
@@ -84,7 +98,8 @@ class _TaskTileState extends State<TaskTile> {
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                (widget.taskComplete ? Icon(Icons.check_circle, color: Colors.teal, size: 22) : (widget.taskOverdue ? Icon(Icons.cancel, color: Colors.red, size: 20) : (widget.taskNotify ? Icon(Icons.notifications, color: Colors.orangeAccent, size: 20) : Icon(Icons.notifications, color: Colors.orangeAccent, size: 0)))),
+                (widget.taskComplete ? Icon(Icons.check_circle, color: Colors.teal, size: 22) : (widget.taskOverdue ? Icon(Icons.cancel, color: Colors.red, size: 20) : (widget.taskNotify ? Icon(Icons.notifications, color: Colors.orangeAccent, size: 20) :
+                (!widget.taskOverdue && !widget.taskComplete && widget.taskDT.isBefore(DateTime.now()) ? Icon(Icons.timer, color: Colors.black, size: 22) : Icon(Icons.notifications, color: Colors.orangeAccent, size: 0))))),
                 Container(
                   margin: EdgeInsets.fromLTRB(12, 0, 6, 0),
                   child: Text(
@@ -121,23 +136,7 @@ class _TaskTileState extends State<TaskTile> {
             BorderRadius.circular(20)),
           height: heightOfActions,
           margin: EdgeInsets.only(right:12),
-          child: EditButton(
-            taskID: widget.taskID,
-            oldTask: widget.currentTask,
-            nameEditor: widget.nameEditor,
-            desEditor: widget.desEditor,
-            slidableController: widget.slidable,
-            taskName: widget.taskName,
-            taskDes: widget.taskDes,
-            taskOverdue: widget.taskOverdue,
-            taskDT: widget.taskDT,
-            taskComplete: widget.taskComplete,
-            taskNotify: widget.taskNotify,
-            taskTime: widget.taskTime,
-            taskIndex: widget.taskIndex,
-            menu: widget.menu,
-            tasksBloc: widget.tasksBloc,
-          ),
+          child: pickSlideAction(),
         ),
         Container(
           decoration: BoxDecoration(
@@ -148,7 +147,7 @@ class _TaskTileState extends State<TaskTile> {
           child: IconSlideAction(
             closeOnTap: true,
             caption: 'Delete',
-            color: (widget.taskOverdue ? Colors.pinkAccent[100] : (widget.taskComplete ? Colors.lightBlue[100] : Colors.blueGrey)),
+            color: (widget.taskOverdue ? Colors.redAccent[100] : (widget.taskComplete ? Colors.teal[100] : Colors.blueGrey)),
             icon: Icons.delete,
             onTap: widget.removeCallback,
           ),
@@ -157,7 +156,39 @@ class _TaskTileState extends State<TaskTile> {
     );
   }
 
+  pickSlideAction() {
+    if (!widget.taskOverdue && !widget.taskComplete && widget.taskDT.isBefore(DateTime.now())) {
+      return IconSlideAction(caption: 'Due', color: Colors.amber, icon: Icons.access_time);
+    } else if (widget.taskOverdue) {
+      return IconSlideAction(caption: 'Overdue', color: Colors.redAccent[100], icon: Icons.cancel);
+    } else if (widget.taskComplete) {
+      return IconSlideAction(caption: 'Done', color: Colors.teal[100], icon: Icons.check_circle);
+    } else {
+      return EditButton(
+        enableNotification: widget.enableNotification,
+        disableNotification: widget.disableNotification,
+        taskID: widget.taskID,
+        oldTask: widget.currentTask,
+        nameEditor: widget.nameEditor,
+        desEditor: widget.desEditor,
+        slidableController: widget.slidable,
+        taskName: widget.taskName,
+        taskDes: widget.taskDes,
+        taskOverdue: widget.taskOverdue,
+        taskDT: widget.taskDT,
+        taskComplete: widget.taskComplete,
+        taskNotify: widget.taskNotify,
+        taskTime: widget.taskTime,
+        taskIndex: widget.taskIndex,
+        menu: widget.menu,
+        tasksBloc: widget.tasksBloc,
+      );
+    }
+  }
+
   Future<void> getDetails(BuildContext context) {
+    widget.taskWidgetResetAllTask();
+    widget.taskWidgetChangeNotify(widget.taskNotify);
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
@@ -195,18 +226,22 @@ class _TaskTileState extends State<TaskTile> {
                         child: Text(
                           switchDays(widget.taskIndex) + " - " + widget.taskTime,
                           style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.blueGrey,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.1),
-                          ),
+                              fontSize: 14,
+                              color: Colors.blueGrey,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 0.1),
+                        ),
                       ),
-                      (widget.taskComplete ? Header(text: "Completed", italic: true, color: Colors.teal, weight: FontWeight.bold, size: 14,) : (widget.taskOverdue ? Header(text: "Overdue", color: Colors.red, weight: FontWeight.bold, size: 14, italic: true,) : FSwitch(
-                        open: (widget.taskNotify),
+                      (widget.taskComplete ? Header(text: "Completed", italic: true, color: Colors.teal, weight: FontWeight.bold, size: 14,) : (widget.taskOverdue ? Header(text: "Overdue", color: Colors.red, weight: FontWeight.bold, size: 14, italic: true,) :
+                      (widget.taskDT.isBefore(DateTime.now()) ? Header(text: "Task due", italic: true, color: Colors.amber, weight: FontWeight.bold, size: 14,) :
+                      FSwitch(
+                        open: widget.taskWidgetStoredNotify(),
                         width: 40,
                         height: 24,
                         openColor: Colors.teal,
-                        onChanged: widget.notifyCallback,
+                        onChanged: (v) {
+                          widget.taskWidgetChangeNotify(!widget.taskWidgetStoredNotify());
+                        },
                         closeChild: Icon(
                           Icons.notifications_off,
                           size: 12,
@@ -217,6 +252,7 @@ class _TaskTileState extends State<TaskTile> {
                           size: 12,
                           color: Colors.white,
                         ),
+                      )
                       ))),
                     ],
                   ),
@@ -244,7 +280,7 @@ class _TaskTileState extends State<TaskTile> {
             )
         );
       },
-    );
+    ).then((value) => widget.notifyCallback());
   }
 }
 
