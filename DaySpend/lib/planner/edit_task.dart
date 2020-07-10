@@ -1,8 +1,8 @@
+import 'package:DaySpend/database/DatabaseBloc.dart';
 import 'package:DaySpend/fonts/header.dart';
 import 'package:DaySpend/planner/picker.dart';
-import 'package:DaySpend/planner/planner.dart';
 import 'package:DaySpend/planner/task.dart';
-import 'package:DaySpend/planner/task_function.dart';
+import 'package:DaySpend/planner/widget_values.dart';
 import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +14,7 @@ import 'package:provider/provider.dart';
 
 import 'day2index.dart';
 
-class EditButton extends StatelessWidget {
+class EditButton extends StatefulWidget {
   final TextEditingController nameEditor;
   final TextEditingController desEditor;
   final SlidableController slidableController;
@@ -33,18 +33,30 @@ class EditButton extends StatelessWidget {
   EditButton({this.slidableController, this.taskName, this.taskIndex, this.taskTime, this.taskDT, this.taskDes, this.taskNotify, this.taskComplete, this.taskOverdue, this.nameEditor, this.desEditor, this.oldTask, this.taskID, this.menu});
 
   @override
+  _EditButtonState createState() => _EditButtonState();
+}
+
+class _EditButtonState extends State<EditButton> {
+  final TasksBloc tasksBloc = TasksBloc();
+
+  @override
+  void dispose() {
+    tasksBloc.dispose();
+    super.dispose();
+  }
+  @override
   Widget build(BuildContext context) {
-    nameEditor.text = taskName;
-    desEditor.text = taskDes;
+    widget.nameEditor.text = widget.taskName;
+    widget.desEditor.text = widget.taskDes;
     return IconSlideAction(
       caption: 'Edit',
       color: Colors.blueGrey[100],
       icon: Icons.edit,
       onTap: () {
-        menu.currentState.close();
-        Provider.of<TaskFunction>(context).resetAddTask();
-        Provider.of<TaskFunction>(context).changeNotify(taskNotify);
-        slidableController.activeState?.close();
+        widget.menu.currentState.close();
+        Provider.of<PlannerWidgetValues>(context).resetAddTask();
+        Provider.of<PlannerWidgetValues>(context).changeNotify(widget.taskNotify);
+        widget.slidableController.activeState?.close();
         showModalBottomSheet(
           context: context,
           isScrollControlled: true,
@@ -81,12 +93,12 @@ class EditButton extends StatelessWidget {
                                         size: MediaQuery.of(context).copyWith().size.width/30,
                                       ),
                                       FSwitch(
-                                        open: Provider.of<TaskFunction>(context).storedNotify(),
+                                        open: Provider.of<PlannerWidgetValues>(context).storedNotify(),
                                         width: 48,
                                         height: 28,
                                         openColor: Colors.teal,
                                         onChanged: (v) {
-                                          Provider.of<TaskFunction>(context).changeNotify(!Provider.of<TaskFunction>(context).storedNotify());
+                                          Provider.of<PlannerWidgetValues>(context).changeNotify(!Provider.of<PlannerWidgetValues>(context).storedNotify());
                                         },
                                         closeChild: Icon(
                                           Icons.notifications_off,
@@ -106,7 +118,7 @@ class EditButton extends StatelessWidget {
                                   width: MediaQuery.of(context).copyWith().size.width/2.5,
                                   margin: EdgeInsets.fromLTRB(0, 10, 10, 10),
                                   child: PickerButton(
-                                    initDateTime: (!taskOverdue ? taskDT : DateTime.now().add(Duration(minutes: 1))),
+                                    initDateTime: (!widget.taskOverdue ? widget.taskDT : DateTime.now().add(Duration(minutes: 1))),
                                   ),
                                 ),
                               ],
@@ -123,18 +135,18 @@ class EditButton extends StatelessWidget {
                                   borderRadius:
                                   BorderRadius.circular(10)),
                               child: TextField(
-                                  controller: nameEditor,
+                                  controller: widget.nameEditor,
                                   maxLength: 20,
                                   cursorColor: Colors.teal,
                                   textAlign: TextAlign.start,
                                   onChanged: (String newName) {
-                                    Provider.of<TaskFunction>(context).changeName(newName);
+                                    Provider.of<PlannerWidgetValues>(context).changeName(newName);
                                   },
                                   showCursor: true,
                                   maxLengthEnforced: true,
                                   decoration:
                                   InputDecoration.collapsed(
-                                    hintText: (nameEditor.text == "" ? "A task must have a name" : ''),
+                                    hintText: (widget.nameEditor.text == "" ? "A task must have a name" : ''),
                                   )
                               ),
                             ),
@@ -149,12 +161,12 @@ class EditButton extends StatelessWidget {
                                   borderRadius:
                                   BorderRadius.circular(10)),
                               child: TextField(
-                                  controller: desEditor,
+                                  controller: widget.desEditor,
                                   maxLines: null,
                                   textAlign: TextAlign.start,
                                   cursorColor: Colors.teal,
                                   onChanged: (String newDes) {
-                                    Provider.of<TaskFunction>(context).changeDes(newDes);
+                                    Provider.of<PlannerWidgetValues>(context).changeDes(newDes);
                                   },
                                   showCursor: true,
                                   maxLengthEnforced: true,
@@ -171,13 +183,13 @@ class EditButton extends StatelessWidget {
                               fontSize: 14,
                               text: "Save Changes",
                               textColor: Colors.white,
-                              background: (nameEditor.text != null && nameEditor.text.replaceAll(' ', '').length!=0 ? Colors.teal : Colors.blueGrey[100]),
+                              background: (widget.nameEditor.text != null && widget.nameEditor.text.replaceAll(' ', '').length!=0 ? Colors.teal : Colors.blueGrey[100]),
                               onPressed: () {
-                                String name = Provider.of<TaskFunction>(context).storedName();
+                                String name = Provider.of<PlannerWidgetValues>(context).storedName();
                                 if (name == null) {
-                                  name = taskName;
+                                  name = widget.taskName;
                                 }
-                                DateTime setTime = Provider.of<TaskFunction>(context).storedDateTime();
+                                DateTime setTime = Provider.of<PlannerWidgetValues>(context).storedDateTime();
                                 if (setTime == null ) {
                                   setTime = DateTime.now().add(Duration(minutes: 1));
                                 }
@@ -186,14 +198,15 @@ class EditButton extends StatelessWidget {
                                 }
                                 String index = getIndex(setTime);
                                 String time = DateFormat('Hm').format(setTime).toString();
-                                String description = Provider.of<TaskFunction>(context).storedDes();
+                                String description = Provider.of<PlannerWidgetValues>(context).storedDes();
                                 if (description == null) {
-                                  description = taskDes;
+                                  description = widget.taskDes;
                                 }
-                                bool notify = Provider.of<TaskFunction>(context).storedNotify();
+                                bool notify = Provider.of<PlannerWidgetValues>(context).storedNotify();
                                 if (name != null && name.replaceAll(' ', '').length!=0) {
-                                  Provider.of<TaskFunction>(context).deleteTask(oldTask);
-                                  Provider.of<TaskFunction>(context).addTask(index,name,time,(description != null ? description : ""), notify, setTime);
+                                  tasksBloc.removeTaskFromDatabase(widget.oldTask.id);
+                                  Task tempTask = Task(index: index, name: name, time: time, description: (description != null ? description : ""), notify: notify, isComplete: false, isOverdue: false, opacity: 1, dt: setTime);
+                                  tasksBloc.addTaskToDatabase(tempTask);
                                 }
                                 Navigator.pop(context);
                               },

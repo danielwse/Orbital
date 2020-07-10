@@ -35,30 +35,30 @@ class Task implements Comparable {
   }
 
   factory Task.fromJson(Map<String, dynamic> data) => Task(
-      id: data['id'],
-      index: data['index'],
-      name: data['name'],
-      time: data['time'],
-      description: data['description'],
-      notify: data['notify'] == 0 ? false : true,
-      isComplete: data['isComplete'] == 0 ? false : true,
-      isOverdue: data['isOverdue'] == 0 ? false : true,
-      opacity: data['isOverdue'],
-      dt: DateTime.parse(data['dt'])
+      id: data["id"],
+      index: data["converted_index"],
+      name: data["name"],
+      time: data["time"],
+      description: data["description"],
+      notify: data["notify"] == 0 ? false : true,
+      isComplete: data["isComplete"] == 0 ? false : true,
+      isOverdue: data["isOverdue"] == 0 ? false : true,
+      opacity: data["opacity"],
+      dt: DateTime.parse(data["dt"])
   );
 
   Map<String, dynamic> toJson() {
     return {
-      "id": this.id,
-      "index": this.index,
-      "name": this.name,
-      "time": this.time,
-      "description": this.description,
-      "notify": this.notify == false ? 0 : 1,
-      "isComplete": this.isComplete == false ? 0 : 1,
-      "isOverdue": this.isOverdue == false ? 0 : 1,
-      "opacity": this.opacity,
-      "dt": this.dt.toIso8601String()
+      "id": id,
+      "converted_index": index,
+      "name": name,
+      "time": time,
+      "description": description,
+      "notify": notify == false ? 0 : 1,
+      "isComplete": isComplete == false ? 0 : 1,
+      "isOverdue": isOverdue == false ? 0 : 1,
+      "opacity": opacity,
+      "dt": dt.toIso8601String()
     };
   }
 }

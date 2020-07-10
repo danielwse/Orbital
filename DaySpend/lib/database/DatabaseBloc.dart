@@ -4,6 +4,9 @@ import 'package:DaySpend/database/db_models.dart';
 import 'package:DaySpend/database/categories_db.dart';
 import 'package:DaySpend/database/variables_db.dart';
 import 'package:DaySpend/database/expenses_db.dart';
+import 'package:DaySpend/planner/task.dart';
+
+import 'allTasks_db.dart';
 
 abstract class Bloc {
   void dispose();
@@ -164,5 +167,45 @@ class CategoryBloc implements Bloc {
 
   dispose() {
     _categoryController.close();
+  }
+}
+
+class TasksBloc implements Bloc {
+  final _tasksRepository = TasksRepository();
+  final _tasksController = StreamController<List<Task>>.broadcast();
+
+  get tasks => _tasksController.stream;
+
+  TasksBloc() {
+    getTasks();
+  }
+
+  getTasks() async {
+    _tasksController.sink.add(await _tasksRepository.getAllTasks());
+  }
+
+  addTaskToDatabase(Task task) async {
+    await _tasksRepository.newTask(task);
+    getTasks();
+  }
+
+  removeTaskFromDatabase(int id) async {
+    await _tasksRepository.removeTask(id);
+    getTasks();
+  }
+
+  rescheduleTask(Task task, DateTime dt) async {
+    await _tasksRepository.rescheduleOverdue(task, dt);
+    getTasks();
+  }
+
+  Future<List<Task>> getAllTasks() async {
+    var res = await _tasksRepository.getAllTasks();
+    getTasks();
+    return res;
+  }
+
+  dispose() {
+    _tasksController.close();
   }
 }

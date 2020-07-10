@@ -1,5 +1,5 @@
 import 'package:DaySpend/fonts/header.dart';
-import 'package:DaySpend/planner/task_function.dart';
+import 'package:DaySpend/planner/widget_values.dart';
 import 'package:DaySpend/planner/task_list.dart';
 import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:flutter/cupertino.dart';
@@ -97,7 +97,7 @@ class TaskScreen extends StatelessWidget {
                 elevation: 8,
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 onPressed: () {
-                  Provider.of<TaskFunction>(context).resetAddTask();
+                  Provider.of<PlannerWidgetValues>(context).resetAddTask();
                   toggleMenu(forceClose: true);
                   getSlidable.activeState?.close();
                   showModalBottomSheet(

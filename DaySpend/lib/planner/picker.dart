@@ -1,4 +1,4 @@
-import 'package:DaySpend/planner/task_function.dart';
+import 'package:DaySpend/planner/widget_values.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -88,7 +88,7 @@ class _PickerButtonState extends State<PickerButton> {
                           textColor: Colors.white,
                           background: Colors.teal,
                           onPressed: () {
-                            Provider.of<TaskFunction>(context).changeDateTime(newDateTime);
+                            Provider.of<PlannerWidgetValues>(context).changeDateTime(newDateTime);
                             tempOldDateTime = newDateTime;
                             Navigator.pop(context);
                           },
