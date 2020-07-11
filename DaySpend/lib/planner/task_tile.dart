@@ -13,6 +13,7 @@ import 'package:fswitch/fswitch.dart';
 import 'day2index.dart';
 
 class TaskTile extends StatefulWidget {
+  final int mode;
   final TasksBloc tasksBloc;
   final GlobalKey<FabCircularMenuState> menu;
   final Task currentTask;
@@ -41,7 +42,7 @@ class TaskTile extends StatefulWidget {
   final Function taskWidgetChangeNotify;
   final Function taskWidgetStoredNotify;
 
-  TaskTile({this.tileColor, this.taskIndex,this.taskName,this.taskTime,this.taskDT, this.taskDes,this.taskNotify, this.taskComplete, this.taskOverdue, this.notifyCallback, this.completeCallback, this.overdueCallback, this.removeCallback, this.archiveCallback, this.slidable, this.rescheduleCallback, this.nameEditor, this.desEditor, this.currentTask, this.taskID, this.menu, this.tasksBloc, this.enableNotification, this.disableNotification, this.taskWidgetResetAllTask, this.taskWidgetChangeNotify, this.taskWidgetStoredNotify});
+  TaskTile({this.tileColor, this.taskIndex,this.taskName,this.taskTime,this.taskDT, this.taskDes,this.taskNotify, this.taskComplete, this.taskOverdue, this.notifyCallback, this.completeCallback, this.overdueCallback, this.removeCallback, this.archiveCallback, this.slidable, this.rescheduleCallback, this.nameEditor, this.desEditor, this.currentTask, this.taskID, this.menu, this.tasksBloc, this.enableNotification, this.disableNotification, this.taskWidgetResetAllTask, this.taskWidgetChangeNotify, this.taskWidgetStoredNotify, this.mode});
 
   @override
   _TaskTileState createState() => _TaskTileState();
@@ -123,11 +124,7 @@ class _TaskTileState extends State<TaskTile> {
               BorderRadius.circular(20)),
             margin: EdgeInsets.only(left: 12),
             height: heightOfActions,
-            child: (widget.taskComplete ?
-            IconSlideAction(caption: 'Archive', color: Colors.teal, icon: Icons.archive, onTap: widget.archiveCallback) :
-            (widget.taskOverdue ?
-            RescheduleButton(updateTime: widget.rescheduleCallback,) :
-            IconSlideAction(caption: 'Archive', color: Colors.black26, icon: Icons.archive))),
+            child: pickSlideMainAction(),
         ),],
       secondaryActions: <Widget>[
         Container(
@@ -136,7 +133,7 @@ class _TaskTileState extends State<TaskTile> {
             BorderRadius.circular(20)),
           height: heightOfActions,
           margin: EdgeInsets.only(right:12),
-          child: pickSlideAction(),
+          child: pickSlideSecondaryAction(),
         ),
         Container(
           decoration: BoxDecoration(
@@ -156,7 +153,25 @@ class _TaskTileState extends State<TaskTile> {
     );
   }
 
-  pickSlideAction() {
+  pickSlideMainAction() {
+    if (widget.taskComplete && widget.mode == 1) {
+      return IconSlideAction(caption: 'Archive',
+          color: Colors.teal,
+          icon: Icons.archive,
+          onTap: widget.archiveCallback);
+    } else if (widget.taskComplete && widget.mode == 2) {
+      return IconSlideAction(caption: 'Unarchive',
+          color: Colors.teal,
+          icon: Icons.threesixty,
+          onTap: widget.archiveCallback);
+    } else if (widget.taskOverdue) {
+      return RescheduleButton(updateTime: widget.rescheduleCallback);
+    } else {
+      return IconSlideAction(caption: 'Pending', color: Colors.black26, icon: Icons.access_time);
+    }
+  }
+
+  pickSlideSecondaryAction() {
     if (!widget.taskOverdue && !widget.taskComplete && widget.taskDT.isBefore(DateTime.now())) {
       return IconSlideAction(caption: 'Due', color: Colors.amber, icon: Icons.access_time);
     } else if (widget.taskOverdue) {

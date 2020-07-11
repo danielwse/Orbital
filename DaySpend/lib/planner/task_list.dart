@@ -69,6 +69,7 @@ class _TaskListState extends State<TaskList> {
                     opacityDisabled: 1,
                     opacityEnabled: task.opacity,
                     child: TaskTile(
+                      mode: widget.mode,
                       enableNotification: widget.notificationFn,
                       tasksBloc: widget.tasksBloc,
                       taskID: task.id,

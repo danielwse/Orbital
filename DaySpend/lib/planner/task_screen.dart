@@ -46,6 +46,8 @@ class _TaskScreenState extends State<TaskScreen> {
     super.dispose();
   }
 
+  int mode = 1;
+
   @override
   Widget build(BuildContext context) {
     String headerText = DateFormat('MEd').format(DateTime.now()).toString() + " - " + DateFormat('MEd').format(DateTime.now().add(Duration(days: 6))).toString();
@@ -109,7 +111,7 @@ class _TaskScreenState extends State<TaskScreen> {
             toggleMenu(forceClose: true);
           },
           child: TaskList(
-            mode: 1, // 0 = allTask, 1 = filteredArchive, 2 = getArchived, 3 = getExpired
+            mode: mode, // 0 = allTask, 1 = filteredArchive, 2 = getArchived, 3 = getExpired
             notificationFn: widget.notificationCallback,
             disableNotificationFn: widget.disableNotificationCallback,
             tasksBloc: tasksBloc,
@@ -140,11 +142,16 @@ class _TaskScreenState extends State<TaskScreen> {
                       ]
                   ),
                   onPressed: () {
-                    print('Home');
                     toggleMenu();
+                    setState(() {
+                      mode = 1;
+                    });
                   }),
               IconButton(icon: Icon(Icons.archive), onPressed: () {
                 toggleMenu();
+                setState(() {
+                  mode = 2;
+                });
               }),
               IconButton(icon: Icon(Icons.reply_all), onPressed: () {
                 toggleMenu();
