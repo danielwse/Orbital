@@ -202,7 +202,9 @@ class _EditButtonState extends State<EditButton> {
                                 bool notify = Provider.of<PlannerWidgetValues>(context).storedNotify();
                                 if (name != null && name.replaceAll(' ', '').length!=0) {
                                   widget.tasksBloc.removeTaskFromDatabase(widget.oldTask.id);
-                                  widget.disableNotification(widget.oldTask.id);
+                                  if (widget.oldTask.notify) {
+                                    widget.disableNotification(widget.oldTask.id);
+                                  }
                                   Task tempTask = Task(index: index, name: name, time: time, description: (description != null ? description : ""), notify: notify, isComplete: false, isOverdue: false, isArchived: false, opacity: 1, dt: setTime);
                                   int id = await widget.tasksBloc.addTaskToDatabase(tempTask);
                                   print(id);

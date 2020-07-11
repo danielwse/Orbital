@@ -73,7 +73,7 @@ class _PickerButtonState extends State<PickerButton> {
                           },
                           use24hFormat: true,
                           minuteInterval: 1,
-                          minimumDate: limit,
+                          minimumDate: DateTime.now(),
                           maximumDate: limit.add(Duration(days: 6)),
                         ),
                       ),

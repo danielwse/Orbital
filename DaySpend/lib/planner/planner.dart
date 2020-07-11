@@ -40,7 +40,9 @@ class _PlannerState extends State<Planner> {
       builder: (context) => PlannerWidgetValues(),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: TaskScreen(disableNotificationCallback: widget.disableNotificationFn, notificationCallback: widget.notificationFn, slidable: getSlidable, nameTextControl: textControllerName, desTextControl: textControllerDes, fabKey: plannerFabKey),
+        home: TaskScreen(disableNotificationCallback: widget.disableNotificationFn, notificationCallback: widget.notificationFn,
+            slidable: getSlidable, nameTextControl: textControllerName, desTextControl: textControllerDes,
+            fabKey: plannerFabKey),
       ),
     );
   }
