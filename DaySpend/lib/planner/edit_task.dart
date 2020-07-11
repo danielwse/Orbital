@@ -133,7 +133,7 @@ class _EditButtonState extends State<EditButton> {
                                   BorderRadius.circular(10)),
                               child: TextField(
                                   controller: widget.nameEditor,
-                                  maxLength: 20,
+                                  maxLength: 25,
                                   cursorColor: Colors.teal,
                                   textAlign: TextAlign.start,
                                   onChanged: (String newName) {

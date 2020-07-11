@@ -63,7 +63,7 @@ class _TaskScreenState extends State<TaskScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Container(
-              margin: const EdgeInsets.only(left: 8),
+              margin: (mode == 1 ? EdgeInsets.only(left: 0) : EdgeInsets.only(left: 8)),
               child: (mode == 1 ? Header(
                 text: headerText, shadow: Shadow(blurRadius: 2.5, color: Colors.black26, offset: Offset(0,1)),
                 weight: FontWeight.w600, color: Colors.black54, size: 20,

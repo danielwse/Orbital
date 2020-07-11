@@ -233,86 +233,98 @@ class _TaskTileState extends State<TaskTile> {
             shape: RoundedRectangleBorder(
                 borderRadius:
                 BorderRadius.circular(10)),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Container(
-                  height: 25,
-                  margin: EdgeInsets.only(bottom: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[Expanded(
-                      child: Text(
-                        widget.taskName.toUpperCase(),
-                        style: TextStyle(
-                            fontSize: (widget.taskName.length < 10 ? 24 : 15),
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 0.5),
-                      ),
-                    ),],
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.symmetric(vertical: 12),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            content: Container(
+              width: double.minPositive,
+              child: ListView(
+                shrinkWrap: true,
+                children: <Widget>[
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Container(
-                        child: Text(
-                          switchDays(widget.taskIndex) + " - " + widget.taskTime,
-                          style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.blueGrey,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 0.1),
+                        height: 25,
+                        margin: EdgeInsets.only(bottom: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[Expanded(
+                            child: Text(
+                              widget.taskName.toUpperCase(),
+                              style: TextStyle(
+                                  fontSize: (widget.taskName.length < 10 ? 24 : 15),
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 0.5),
+                            ),
+                          ),],
                         ),
                       ),
-                      (widget.taskComplete ? Header(text: "Completed", italic: true, color: Colors.teal, weight: FontWeight.bold, size: 14,) : (widget.taskOverdue ? Header(text: "Overdue", color: Colors.red, weight: FontWeight.bold, size: 14, italic: true,) :
-                      (widget.taskDT.isBefore(DateTime.now()) ? Header(text: "Task due", italic: true, color: Colors.amber, weight: FontWeight.bold, size: 14,) :
-                      FSwitch(
-                        open: widget.taskWidgetStoredNotify(),
-                        width: 40,
-                        height: 24,
-                        openColor: Colors.teal,
-                        onChanged: (v) {
-                          widget.taskWidgetChangeNotify(!widget.taskWidgetStoredNotify());
-                        },
-                        closeChild: Icon(
-                          Icons.notifications_off,
-                          size: 12,
-                          color: Colors.brown,
+                      Container(
+                        margin: EdgeInsets.symmetric(vertical: 12),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Container(
+                              child: Text(
+                                switchDays(widget.taskIndex) + " - " + widget.taskTime,
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.blueGrey,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: 0.1),
+                              ),
+                            ),
+                            (widget.taskComplete ? Header(text: "Completed", italic: true, color: Colors.teal, weight: FontWeight.bold, size: 14,) : (widget.taskOverdue ? Header(text: "Overdue", color: Colors.red, weight: FontWeight.bold, size: 14, italic: true,) :
+                            (widget.taskDT.isBefore(DateTime.now()) ? Header(text: "Task due", italic: true, color: Colors.amber, weight: FontWeight.bold, size: 14,) :
+                            FSwitch(
+                              open: widget.taskWidgetStoredNotify(),
+                              width: 40,
+                              height: 24,
+                              openColor: Colors.teal,
+                              onChanged: (v) {
+                                widget.taskWidgetChangeNotify(!widget.taskWidgetStoredNotify());
+                              },
+                              closeChild: Icon(
+                                Icons.notifications_off,
+                                size: 12,
+                                color: Colors.brown,
+                              ),
+                              openChild: Icon(
+                                Icons.notifications,
+                                size: 12,
+                                color: Colors.white,
+                              ),
+                            )
+                            ))),
+                          ],
                         ),
-                        openChild: Icon(
-                          Icons.notifications,
-                          size: 12,
-                          color: Colors.white,
+                      ),
+                      (widget.taskDes!= "" ? Container(
+                        margin: EdgeInsets.fromLTRB(0, 5, 0, 20),
+                        child: Divider(
+                          color: Colors.blueGrey,
                         ),
-                      )
-                      ))),
+                      ): Container()),
+                      Container(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            Flexible(
+                              child: (widget.taskDes!= "" ? Text(
+                                widget.taskDes,
+                                style: TextStyle(
+                                    color: Colors.blueGrey,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: 0.5),
+                              ) : Container()),
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
-                ),
-                (widget.taskDes!= "" ? Container(
-                  margin: EdgeInsets.fromLTRB(0, 5, 0, 20),
-                  child: Divider(
-                    color: Colors.blueGrey,
-                  ),
-                ): Container()),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    (widget.taskDes!= "" ? Text(
-                      widget.taskDes,
-                      style: TextStyle(
-                          color: Colors.blueGrey,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.5),
-                    ) : Container()),
-                  ],
-                ),
-              ],
+                ],
+              ),
             )
         );
       },

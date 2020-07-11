@@ -103,7 +103,7 @@ class _AddTaskState extends State<AddTask> {
                           borderRadius:
                           BorderRadius.circular(10)),
                       child: TextField(
-                          maxLength: 20,
+                          maxLength: 25,
                           cursorColor: Colors.teal,
                           textAlign: TextAlign.start,
                           onChanged: (String newName) {
