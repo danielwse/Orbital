@@ -44,8 +44,8 @@ class _TaskListState extends State<TaskList> {
               return GroupedListView<dynamic, String>(
                 order: GroupedListOrder.ASC,
                 groupBy: (task) => convertIndex(task.index), // modify index
+                //TODO - mode == 3, snapshot.data filtered get isExpired
                 elements: (widget.mode == 1 ? widgetData.filterArchived(snapshot.data) : (widget.mode == 2 ? widgetData.getArchived(snapshot.data) :
-//                (widget.mode == 3 ? widgetData.getExpired(snapshot.data) :
                 snapshot.data )),
                 groupSeparatorBuilder: (index) => Padding(
                   padding: (revertIndex(index) == getIndex(DateTime.now())

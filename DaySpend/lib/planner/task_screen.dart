@@ -117,7 +117,7 @@ class _TaskScreenState extends State<TaskScreen> {
             toggleMenu(forceClose: true);
           },
           child: TaskList(
-            mode: mode, // 0 = allTask, 1 = filteredArchive, 2 = getArchived, 3 = getExpired
+            mode: mode, // 1 = filteredArchive, 2 = getArchived, 3 = getExpired
             notificationFn: widget.notificationCallback,
             disableNotificationFn: widget.disableNotificationCallback,
             tasksBloc: tasksBloc,
@@ -129,7 +129,7 @@ class _TaskScreenState extends State<TaskScreen> {
         ),
         floatingActionButton: FabCircularMenu(
           key: widget.fabKey,
-          fabOpenIcon: Icon(Icons.home),
+          fabOpenIcon: ( mode == 1 ? Icon(Icons.home) : ( mode == 2 ? Icon(Icons.archive) : Icon(Icons.reply_all))),
           fabColor: Colors.white,
           ringColor: Colors.lightBlue[100],
           ringDiameter: MediaQuery.of(context).copyWith().size.width * 0.8,
