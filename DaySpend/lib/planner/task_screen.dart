@@ -69,8 +69,8 @@ class _TaskScreenState extends State<TaskScreen> {
                 ) :
                   Header(
                     text: headerText,
-                    shadow: Shadow(blurRadius: 2.5, color: Colors.tealAccent, offset: Offset(0,1)),
-                    weight: FontWeight.w600, color: Colors.teal, size: 20,
+                    shadow: Shadow(blurRadius: 2.5, color: Colors.greenAccent, offset: Offset(0,1)),
+                    weight: FontWeight.w600, color: Colors.green, size: 20,
                   )
                 ),
               ),
