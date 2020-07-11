@@ -22,8 +22,9 @@ class TaskList extends StatefulWidget {
   final TasksBloc tasksBloc;
   final Function notificationFn;
   final Function disableNotificationFn;
+  final int mode;
 
-  TaskList({this.slidable, this.nameEdit, this.descriptionEdit, this.fabKey, this.tasksBloc, this.notificationFn, this.disableNotificationFn});
+  TaskList({this.slidable, this.nameEdit, this.descriptionEdit, this.fabKey, this.tasksBloc, this.notificationFn, this.disableNotificationFn, this.mode});
 
   @override
   _TaskListState createState() => _TaskListState();
@@ -43,7 +44,9 @@ class _TaskListState extends State<TaskList> {
               return GroupedListView<dynamic, String>(
                 order: GroupedListOrder.ASC,
                 groupBy: (task) => convertIndex(task.index), // modify index
-                elements: widgetData.filterArchived(snapshot.data),
+                elements: (widget.mode == 1 ? widgetData.filterArchived(snapshot.data) : (widget.mode == 2 ? widgetData.getArchived(snapshot.data) :
+//                (widget.mode == 3 ? widgetData.getExpired(snapshot.data) :
+                snapshot.data )),
                 groupSeparatorBuilder: (index) => Padding(
                   padding: (revertIndex(index) == getIndex(DateTime.now())
                       ? EdgeInsets.fromLTRB(15, 20, 10, 10)
@@ -142,11 +145,6 @@ class _TaskListState extends State<TaskList> {
                           widget.disableNotificationFn(task.id);
                         }
                         widgetData.setOpacity(task);
-                        Scaffold.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Archived Task'),
-                          ),
-                        );
                       },
                       taskWidgetResetAllTask: () {
                         widgetData.resetAddTask();

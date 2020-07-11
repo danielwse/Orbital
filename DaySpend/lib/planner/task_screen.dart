@@ -109,6 +109,7 @@ class _TaskScreenState extends State<TaskScreen> {
             toggleMenu(forceClose: true);
           },
           child: TaskList(
+            mode: 1, // 0 = allTask, 1 = filteredArchive, 2 = getArchived, 3 = getExpired
             notificationFn: widget.notificationCallback,
             disableNotificationFn: widget.disableNotificationCallback,
             tasksBloc: tasksBloc,
@@ -143,7 +144,6 @@ class _TaskScreenState extends State<TaskScreen> {
                     toggleMenu();
                   }),
               IconButton(icon: Icon(Icons.archive), onPressed: () {
-                print('Completed tasks');
                 toggleMenu();
               }),
               IconButton(icon: Icon(Icons.reply_all), onPressed: () {
