@@ -63,17 +63,23 @@ class _TaskScreenState extends State<TaskScreen> {
             children: <Widget>[
               Container(
                 margin: const EdgeInsets.only(left: 8),
-                child: Header(
+                child: (mode == 1 ? Header(
                   text: headerText, shadow: Shadow(blurRadius: 2.5, color: Colors.black26, offset: Offset(0,1)),
                   weight: FontWeight.w600, color: Colors.black54, size: 20,
-                )
+                ) :
+                  Header(
+                    text: headerText,
+                    shadow: Shadow(blurRadius: 2.5, color: Colors.tealAccent, offset: Offset(0,1)),
+                    weight: FontWeight.w600, color: Colors.teal, size: 20,
+                  )
+                ),
               ),
             ],
           ),
           backgroundColor: Colors.transparent,
           elevation: 0.0,
           actions: <Widget>[
-            Container(
+            mode == 1 ? Container(
               margin: EdgeInsets.only(right: 25),
               child: RawMaterialButton(
                 constraints: BoxConstraints.tight(Size(40, 40)),
@@ -102,7 +108,7 @@ class _TaskScreenState extends State<TaskScreen> {
                   size: 20,
                 ),
               ),
-            ),
+            ) : Container(),
           ],
         ),
         body: GestureDetector(
@@ -133,11 +139,14 @@ class _TaskScreenState extends State<TaskScreen> {
                   Stack(
                       children: <Widget>[
                         Icon(Icons.home),
-                        Positioned(  // draw a red marble
-                          top: 0.0,
-                          right: 0.0,
-                          child: Icon(Icons.brightness_1, size: 8.0,
-                            color: Colors.redAccent),
+                        Visibility(
+                          visible: mode == 1,
+                          child: Positioned(  // draw a red marble
+                            top: 0.0,
+                            right: 0.0,
+                            child: Icon(Icons.brightness_1, size: 8.0,
+                              color: Colors.redAccent),
+                          ),
                         )
                       ]
                   ),
@@ -147,13 +156,39 @@ class _TaskScreenState extends State<TaskScreen> {
                       mode = 1;
                     });
                   }),
-              IconButton(icon: Icon(Icons.archive), onPressed: () {
+              IconButton(icon: Stack(
+                  children: <Widget>[
+                    Icon(Icons.archive),
+                    Visibility(
+                      visible: mode == 2,
+                      child: Positioned(  // draw a red marble
+                        top: 0.0,
+                        right: 0.0,
+                        child: Icon(Icons.brightness_1, size: 8.0,
+                            color: Colors.redAccent),
+                      ),
+                    )
+                  ]
+              ), onPressed: () {
                 toggleMenu();
                 setState(() {
                   mode = 2;
                 });
               }),
-              IconButton(icon: Icon(Icons.reply_all), onPressed: () {
+              IconButton(icon: Stack(
+                  children: <Widget>[
+                    Icon(Icons.reply_all),
+                    Visibility(
+                      visible: mode == 3,
+                      child: Positioned(  // draw a red marble
+                        top: 0.0,
+                        right: 0.0,
+                        child: Icon(Icons.brightness_1, size: 8.0,
+                            color: Colors.redAccent),
+                      ),
+                    )
+                  ]
+              ), onPressed: () {
                 toggleMenu();
                 print('Earlier tasks');
               })
