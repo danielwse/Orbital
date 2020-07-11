@@ -10,13 +10,13 @@ class PlannerWidgetValues extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<Task> filterArchived(List<Task> input) { //in future filter Expired
+  List<Task> getRecent(List<Task> input) {
     List<Task> output = [];
     for (Task task in input) {
-      if (task.isArchived) {
-        continue;
-      } else {
+      if (!task.isExpired && !task.isArchived) {
         output.add(task);
+      } else {
+        continue;
       }
     }
     return output;
@@ -26,6 +26,18 @@ class PlannerWidgetValues extends ChangeNotifier {
     List<Task> output = [];
     for (Task task in input) {
       if (task.isArchived) {
+        output.add(task);
+      } else {
+        continue;
+      }
+    }
+    return output;
+  }
+
+  List<Task> getOverdue(List<Task> input) {
+    List<Task> output = [];
+    for (Task task in input) {
+      if (task.isExpired && task.isOverdue) {
         output.add(task);
       } else {
         continue;

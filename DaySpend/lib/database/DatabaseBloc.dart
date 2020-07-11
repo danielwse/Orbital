@@ -226,6 +226,16 @@ class TasksBloc implements Bloc {
     getTasks();
   }
 
+  toggleExpired(Task task) async {
+    await _tasksRepository.toggleExpired(task);
+    getTasks();
+  }
+
+  removeExpiredOnMondays() async {
+    await _tasksRepository.removeExpired();
+    getTasks();
+  }
+
   dispose() {
     _tasksController.close();
   }

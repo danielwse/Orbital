@@ -9,10 +9,11 @@ class Task implements Comparable {
   bool isComplete;
   bool isOverdue;
   bool isArchived;
+  bool isExpired;
   double opacity;
   DateTime dt;
 
-  Task({this.id, this.index, this.name, this.time, this.dt, this.isArchived, this.description, this.notify = false, this.isComplete = false, this.isOverdue = false, this.opacity = 1});
+  Task({this.id, this.index, this.name, this.time, this.dt, this.isArchived, this.description, this.notify = false, this.isComplete, this.isOverdue, this.isExpired, this.opacity = 1});
 
   void toggleAnimate() {
     opacity = 0;
@@ -20,7 +21,7 @@ class Task implements Comparable {
 
   @override
   int compareTo(other) {
-    return time.compareTo(other.time);
+    return dt.compareTo(other.dt);
   }
 
   factory Task.fromJson(Map<String, dynamic> data) => Task(
@@ -33,6 +34,7 @@ class Task implements Comparable {
       isComplete: data["isComplete"] == 0 ? false : true,
       isOverdue: data["isOverdue"] == 0 ? false : true,
       isArchived: data["isArchived"] == 0 ? false : true,
+      isExpired: data["isExpired"] == 0 ? false : true,
       opacity: data["opacity"],
       dt: DateTime.parse(data["dt"])
   );
@@ -48,6 +50,7 @@ class Task implements Comparable {
       "isComplete": isComplete == false ? 0 : 1,
       "isOverdue": isOverdue == false ? 0 : 1,
       "isArchived": isArchived == false ? 0 : 1,
+      "isExpired": isExpired == false ? 0 : 1,
       "opacity": opacity,
       "dt": dt.toIso8601String()
     };

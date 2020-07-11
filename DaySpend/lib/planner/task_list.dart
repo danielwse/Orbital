@@ -44,9 +44,7 @@ class _TaskListState extends State<TaskList> {
               return GroupedListView<dynamic, String>(
                 order: GroupedListOrder.ASC,
                 groupBy: (task) => convertIndex(task.index), // modify index
-                //TODO - mode == 3, snapshot.data filtered get isExpired
-                elements: (widget.mode == 1 ? widgetData.filterArchived(snapshot.data) : (widget.mode == 2 ? widgetData.getArchived(snapshot.data) :
-                snapshot.data )),
+                elements: (widget.mode == 1 ? widgetData.getRecent(snapshot.data) : (widget.mode == 2 ? widgetData.getArchived(snapshot.data) : widgetData.getOverdue(snapshot.data))),
                 groupSeparatorBuilder: (index) => Padding(
                   padding: (revertIndex(index) == getIndex(DateTime.now())
                       ? EdgeInsets.fromLTRB(15, 20, 10, 10)
@@ -87,9 +85,15 @@ class _TaskListState extends State<TaskList> {
                       taskNotify: task.notify,
                       taskComplete: task.isComplete,
                       taskOverdue: task.isOverdue,
+                      taskArchived: task.isArchived,
+                      taskExpired: task.isExpired,
                       rescheduleCallback: (DateTime dt) {
                         widget.fabKey.currentState.close();
+                        widgetData.setOpacity(task);
                         widget.tasksBloc.rescheduleTask(task, dt);
+                        if (task.isExpired) {
+                          widget.tasksBloc.toggleExpired(task);
+                        }
                       },
                       notifyCallback: () {
                         if (!task.dt.isBefore(DateTime.now())) {
@@ -126,7 +130,6 @@ class _TaskListState extends State<TaskList> {
                             widget.disableNotificationFn(task.id);
                           }
                           print(task.name+" overdue");
-                          t.cancel();
                         }
                       },
                       removeCallback: () {
@@ -142,12 +145,14 @@ class _TaskListState extends State<TaskList> {
                       },
                       archiveCallback: () {
                         widget.fabKey.currentState.close();
-                        widget.tasksBloc.toggleArchived(task);
+                        widgetData.setOpacity(task);
                         if (task.notify) {
                           widget.tasksBloc.toggleNotification(task);
                           widget.disableNotificationFn(task.id);
                         }
-                        widgetData.setOpacity(task);
+                        Future.delayed(Duration(milliseconds: 300), () {
+                          widget.tasksBloc.toggleArchived(task);
+                        });
                       },
                       taskWidgetResetAllTask: () {
                         widgetData.resetAddTask();

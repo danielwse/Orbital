@@ -50,6 +50,7 @@ class _TaskScreenState extends State<TaskScreen> {
 
   @override
   Widget build(BuildContext context) {
+    tasksBloc.removeExpiredOnMondays();
     String headerText = DateFormat('MEd').format(DateTime.now()).toString() + " - " + DateFormat('MEd').format(DateTime.now().add(Duration(days: 6))).toString();
     return SafeArea(
       child: Scaffold(
@@ -67,11 +68,16 @@ class _TaskScreenState extends State<TaskScreen> {
                   text: headerText, shadow: Shadow(blurRadius: 2.5, color: Colors.black26, offset: Offset(0,1)),
                   weight: FontWeight.w600, color: Colors.black54, size: 20,
                 ) :
-                  Header(
-                    text: headerText,
-                    shadow: Shadow(blurRadius: 2.5, color: Colors.greenAccent, offset: Offset(0,1)),
-                    weight: FontWeight.w600, color: Colors.green, size: 20,
-                  )
+                (mode == 2 ? Header(
+                  text: headerText,
+                  shadow: Shadow(blurRadius: 2.5, color: Colors.greenAccent, offset: Offset(0,1)),
+                  weight: FontWeight.w600, color: Colors.green, size: 20,
+                ) :
+                Header(
+                  text: headerText,
+                  shadow: Shadow(blurRadius: 2.5, color: Colors.redAccent, offset: Offset(0,1)),
+                  weight: FontWeight.w600, color: Colors.red, size: 20,
+                ))
                 ),
               ),
             ],
@@ -117,7 +123,7 @@ class _TaskScreenState extends State<TaskScreen> {
             toggleMenu(forceClose: true);
           },
           child: TaskList(
-            mode: mode, // 1 = filteredArchive, 2 = getArchived, 3 = getExpired
+            mode: mode, // 1 = activeTasks, 2 = getArchived, 3 = getExpired
             notificationFn: widget.notificationCallback,
             disableNotificationFn: widget.disableNotificationCallback,
             tasksBloc: tasksBloc,
@@ -190,7 +196,9 @@ class _TaskScreenState extends State<TaskScreen> {
                   ]
               ), onPressed: () {
                 toggleMenu();
-                print('Earlier tasks');
+                setState(() {
+                  mode = 3;
+                });
               })
             ]
         ),

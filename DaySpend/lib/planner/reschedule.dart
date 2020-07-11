@@ -4,6 +4,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:nice_button/NiceButton.dart';
 
 class RescheduleButton extends StatelessWidget {
+
   final Function updateTime;
 
   RescheduleButton({this.updateTime});

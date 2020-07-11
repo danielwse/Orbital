@@ -205,7 +205,7 @@ class _EditButtonState extends State<EditButton> {
                                   if (widget.oldTask.notify) {
                                     widget.disableNotification(widget.oldTask.id);
                                   }
-                                  Task tempTask = Task(index: index, name: name, time: time, description: (description != null ? description : ""), notify: notify, isComplete: false, isOverdue: false, isArchived: false, opacity: 1, dt: setTime);
+                                  Task tempTask = Task(index: index, name: name, time: time, description: (description != null ? description : ""), notify: notify, isComplete: false, isOverdue: false, isArchived: false, isExpired: false, opacity: 1, dt: setTime);
                                   int id = await widget.tasksBloc.addTaskToDatabase(tempTask);
                                   print(id);
                                   if (tempTask.notify) {

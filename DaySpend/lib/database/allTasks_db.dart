@@ -8,6 +8,20 @@ import 'package:sqflite/sqflite.dart';
 class TasksDao {
   final dbProvider = DBProvider.db;
 
+  toggleExpired(Task task) {
+    return updateExpired(task.id, task.isExpired ? 0 : 1);
+  }
+
+  Future<int> updateExpired(int taskId, int value) async {
+    final db = await dbProvider.database;
+    var res = await db.rawUpdate('''
+    UPDATE Tasks 
+    SET isExpired = '$value'
+    WHERE id = '$taskId'
+    ''');
+    return res;
+  }
+
   toggleArchived(Task task) {
     return updateArchived(task.id, task.isArchived ? 0 : 1);
   }
@@ -89,11 +103,22 @@ class TasksDao {
   }
 
   void rescheduleOverdue(Task task, DateTime dt) {
-    final tempTask = Task(id: task.id, index: getIndex(dt), name: task.name, time: DateFormat('Hm').format(dt).toString(), description: task.description, notify: task.notify, isComplete: task.isComplete, isOverdue: false, isArchived: task.isArchived, dt: dt);
+    final tempTask = Task(id: task.id, index: getIndex(dt), name: task.name, time: DateFormat('Hm').format(dt).toString(), description: task.description, notify: task.notify, isComplete: task.isComplete, isOverdue: false, isArchived: task.isArchived, isExpired: false, dt: dt);
     print("deleted task with id "+ task.id.toString());
     removeTask(task.id);
     newTask(tempTask);
     print("rescheduled: "+ tempTask.name + "@ " + switchDays(tempTask.index) + " - " + tempTask.time + " - id: " + tempTask.id.toString());
+  }
+
+  void removedExpired() async {
+    if (getIndex(DateTime.now()) == '1') {
+      List<Task> allTasks = await getAllTasks();
+      for (Task task in allTasks) {
+        if (task.isExpired) {
+          removeTask(task.id);
+        }
+      }
+    }
   }
 }
 
@@ -107,4 +132,6 @@ class TasksRepository {
   toggleComplete(Task task) => tasksDao.toggleComplete(task);
   toggleOverdue(Task task) => tasksDao.toggleOverdue(task);
   toggleArchived(Task task) => tasksDao.toggleArchived(task);
+  toggleExpired(Task task) => tasksDao.toggleExpired(task);
+  removeExpired() => tasksDao.removedExpired();
 }

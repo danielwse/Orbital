@@ -116,7 +116,11 @@ class _MyAppState extends State<MyApp> {
 
   void _configureSelectNotificationSubject() {
     selectNotificationSubject.stream.listen((String payload) async {
-      print("Notification!");
+      print("User clicked on notification");
+//      await Navigator.push(
+//        context,
+//        MaterialPageRoute(builder: (context) => SecondScreen(payload)),
+//      );
     });
   }
 
@@ -128,6 +132,7 @@ class _MyAppState extends State<MyApp> {
     super.dispose();
   }
 
+  // basic notification for tasks
   static Future<void> scheduleNotification(int taskId, String taskName, DateTime taskDateTime) async {
     DateTime scheduledNotificationDateTime = taskDateTime;
     var vibrationPattern = Int64List(4);

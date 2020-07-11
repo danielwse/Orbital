@@ -41,8 +41,10 @@ class TaskTile extends StatefulWidget {
   final Function taskWidgetResetAllTask;
   final Function taskWidgetChangeNotify;
   final Function taskWidgetStoredNotify;
+  final bool taskArchived;
+  final bool taskExpired;
 
-  TaskTile({this.tileColor, this.taskIndex,this.taskName,this.taskTime,this.taskDT, this.taskDes,this.taskNotify, this.taskComplete, this.taskOverdue, this.notifyCallback, this.completeCallback, this.overdueCallback, this.removeCallback, this.archiveCallback, this.slidable, this.rescheduleCallback, this.nameEditor, this.desEditor, this.currentTask, this.taskID, this.menu, this.tasksBloc, this.enableNotification, this.disableNotification, this.taskWidgetResetAllTask, this.taskWidgetChangeNotify, this.taskWidgetStoredNotify, this.mode});
+  TaskTile({this.tileColor, this.taskIndex,this.taskName,this.taskTime,this.taskDT, this.taskDes,this.taskNotify, this.taskComplete, this.taskOverdue, this.notifyCallback, this.completeCallback, this.overdueCallback, this.removeCallback, this.archiveCallback, this.slidable, this.rescheduleCallback, this.nameEditor, this.desEditor, this.currentTask, this.taskID, this.menu, this.tasksBloc, this.enableNotification, this.disableNotification, this.taskWidgetResetAllTask, this.taskWidgetChangeNotify, this.taskWidgetStoredNotify, this.mode, this.taskArchived, this.taskExpired});
 
   @override
   _TaskTileState createState() => _TaskTileState();
@@ -52,12 +54,18 @@ class _TaskTileState extends State<TaskTile> {
   @override
   Widget build(BuildContext context) {
     Timer.periodic(Duration(seconds: 1), (Timer t) {
-      if (widget.taskDT.add(Duration(hours: 1)).isBefore(DateTime.now())) {
-        widget.overdueCallback(t);
+      if (!widget.taskComplete && widget.taskDT.add(Duration(hours: 1)).isBefore(DateTime.now())) {
+        widget.overdueCallback(t); //passed due
+        t.cancel();
       }
       if (widget.taskDT.isBefore(DateTime.now()) && widget.taskNotify) {
-        widget.tasksBloc.toggleNotification(widget.currentTask);
+        widget.tasksBloc.toggleNotification(widget.currentTask); //push notification
         print(widget.taskID + widget.currentTask.id);
+        t.cancel();
+      }
+      if ((!widget.taskExpired) && (widget.taskComplete || widget.taskOverdue) && (int.parse(getIndex(widget.taskDT)) < int.parse(getIndex(DateTime.now())))) {
+        widget.tasksBloc.toggleExpired(widget.currentTask);
+        print(widget.taskName + " has expired");
         t.cancel();
       }
     });
@@ -119,13 +127,14 @@ class _TaskTileState extends State<TaskTile> {
       ),
       actions: <Widget>[
         Container(
-            decoration: BoxDecoration(
+          decoration: BoxDecoration(
               borderRadius:
               BorderRadius.circular(20)),
-            margin: EdgeInsets.only(left: 12),
-            height: heightOfActions,
-            child: pickSlideMainAction(),
-        ),],
+          margin: EdgeInsets.only(left: 12),
+          height: heightOfActions,
+          child: pickSlideMainAction(),
+        ),
+      ],
       secondaryActions: <Widget>[
         Container(
           decoration: BoxDecoration(
@@ -159,7 +168,7 @@ class _TaskTileState extends State<TaskTile> {
           color: Colors.teal,
           icon: Icons.archive,
           onTap: widget.archiveCallback);
-    } else if (widget.taskComplete && widget.mode == 2) {
+    } else if (widget.taskArchived) {
       return IconSlideAction(caption: 'Unarchive',
           color: Colors.teal,
           icon: Icons.threesixty,
