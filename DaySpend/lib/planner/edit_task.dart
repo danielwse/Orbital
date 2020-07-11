@@ -115,7 +115,7 @@ class _EditButtonState extends State<EditButton> {
                                   width: MediaQuery.of(context).copyWith().size.width/2.5,
                                   margin: EdgeInsets.fromLTRB(0, 10, 10, 10),
                                   child: PickerButton(
-                                    initDateTime: (!widget.taskOverdue ? widget.taskDT : DateTime.now().add(Duration(minutes: 1))),
+                                    initDateTime: widget.taskDT,
                                   ),
                                 ),
                               ],

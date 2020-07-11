@@ -16,13 +16,11 @@ class PickerButton extends StatefulWidget {
 class _PickerButtonState extends State<PickerButton> {
   DateTime newDateTime;
   DateTime tempOldDateTime;
-  DateTime limit;
 
   @override
   void initState() {
     newDateTime = widget.initDateTime;
     tempOldDateTime = widget.initDateTime;
-    limit = widget.initDateTime;
     return super.initState();
   }
 
@@ -74,7 +72,7 @@ class _PickerButtonState extends State<PickerButton> {
                           use24hFormat: true,
                           minuteInterval: 1,
                           minimumDate: DateTime.now(),
-                          maximumDate: limit.add(Duration(days: 6)),
+                          maximumDate: DateTime.now().add(Duration(days: 6)),
                         ),
                       ),
                       Container(
