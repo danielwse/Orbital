@@ -135,6 +135,7 @@ class _TaskScreenState extends State<TaskScreen> {
         ),
         floatingActionButton: FabCircularMenu(
           key: widget.fabKey,
+          animationDuration: const Duration(milliseconds: 400),
           fabOpenIcon: ( mode == 1 ? Icon(Icons.home) : ( mode == 2 ? Icon(Icons.archive) : Icon(Icons.reply_all))),
           fabColor: Colors.white,
           ringColor: Colors.lightBlue[100],

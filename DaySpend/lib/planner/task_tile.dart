@@ -56,17 +56,29 @@ class _TaskTileState extends State<TaskTile> {
     Timer.periodic(Duration(seconds: 1), (Timer t) {
       if (!widget.taskComplete && widget.taskDT.add(Duration(hours: 1)).isBefore(DateTime.now())) {
         widget.overdueCallback(t); //passed due
-        t.cancel();
+        try {
+          t.cancel();
+        } on Exception {
+          print("User not on task page");
+        }
       }
       if (widget.taskDT.isBefore(DateTime.now()) && widget.taskNotify) {
         widget.tasksBloc.toggleNotification(widget.currentTask); //push notification
-        print(widget.taskID + widget.currentTask.id);
-        t.cancel();
+        print(widget.taskID.toString() + " - " + widget.currentTask.id.toString());
+        try {
+          t.cancel();
+        } on Exception {
+          print("User not on task page");
+        }
       }
       if ((!widget.taskExpired) && (widget.taskComplete || widget.taskOverdue) && (int.parse(getIndex(widget.taskDT)) < int.parse(getIndex(DateTime.now())))) {
         widget.tasksBloc.toggleExpired(widget.currentTask);
         print(widget.taskName + " has expired");
-        t.cancel();
+        try {
+          t.cancel();
+        } on Exception {
+          print("User not on task page");
+        }
       }
     });
     double heightOfActions = 52;
