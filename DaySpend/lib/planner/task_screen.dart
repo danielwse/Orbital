@@ -51,7 +51,8 @@ class _TaskScreenState extends State<TaskScreen> {
   @override
   Widget build(BuildContext context) {
     tasksBloc.removeExpiredOnMondays();
-    String headerText = DateFormat('MEd').format(DateTime.now()).toString() + " - " + DateFormat('MEd').format(DateTime.now().add(Duration(days: 6))).toString();
+    String headerTextFor12 = DateFormat('MEd').format(DateTime.now()).toString() + " - " + DateFormat('MEd').format(DateTime.now().add(Duration(days: 6))).toString();
+    String headerTextFor3 = DateFormat('MEd').format(DateTime.now().subtract(Duration(days: 6))).toString() + " - " + DateFormat('MEd').format(DateTime.now()).toString();
     return Scaffold(
       backgroundColor: Color(0xffF7F7F7),
       appBar: AppBar(
@@ -65,16 +66,16 @@ class _TaskScreenState extends State<TaskScreen> {
             Container(
               margin: (mode == 1 ? EdgeInsets.only(left: 0) : EdgeInsets.only(left: 8)),
               child: (mode == 1 ? Header(
-                text: headerText, shadow: Shadow(blurRadius: 2.5, color: Colors.black26, offset: Offset(0,1)),
+                text: headerTextFor12, shadow: Shadow(blurRadius: 2.5, color: Colors.black26, offset: Offset(0,1)),
                 weight: FontWeight.w600, color: Colors.black54, size: 20,
               ) :
               (mode == 2 ? Header(
-                text: headerText,
+                text: headerTextFor12,
                 shadow: Shadow(blurRadius: 2.5, color: Colors.greenAccent, offset: Offset(0,1)),
                 weight: FontWeight.w600, color: Colors.green, size: 20,
               ) :
               Header(
-                text: headerText,
+                text: headerTextFor3,
                 shadow: Shadow(blurRadius: 2.5, color: Colors.redAccent, offset: Offset(0,1)),
                 weight: FontWeight.w600, color: Colors.red, size: 20,
               ))

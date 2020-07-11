@@ -43,19 +43,22 @@ class _TaskListState extends State<TaskList> {
             builder: (context, widgetData, child) {
               return GroupedListView<dynamic, String>(
                 order: GroupedListOrder.ASC,
+                separator: SizedBox(
+                  height: 12,
+                ),
                 groupBy: (task) => convertIndex(task.index), // modify index
                 elements: (widget.mode == 1 ? widgetData.getRecent(snapshot.data) : (widget.mode == 2 ? widgetData.getArchived(snapshot.data) : widgetData.getOverdue(snapshot.data))),
                 groupSeparatorBuilder: (index) => Padding(
                   padding: (revertIndex(index) == getIndex(DateTime.now())
-                      ? EdgeInsets.fromLTRB(15, 20, 10, 10)
-                      : EdgeInsets.fromLTRB(15, 30, 10, 10)),
+                      ? EdgeInsets.fromLTRB(15, 30, 10, 10)
+                      : EdgeInsets.fromLTRB(15, 40, 10, 10)),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Header(
                         text: switchDays(revertIndex(index)),
                         shadow: Shadow(blurRadius: 2.5, color: Colors.black26, offset: Offset(0,1)),
-                        weight: FontWeight.w600, color: Colors.black54, size: 20,
+                        weight: FontWeight.w600, color: Colors.black54, size: 28,
                       ),
                     ],
                   ),

@@ -243,11 +243,10 @@ class _TaskTileState extends State<TaskTile> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Container(
-                        height: 25,
                         margin: EdgeInsets.only(bottom: 10),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[Expanded(
+                          children: <Widget>[Flexible(
                             child: Text(
                               widget.taskName.toUpperCase(),
                               style: TextStyle(
