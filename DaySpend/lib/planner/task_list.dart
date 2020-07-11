@@ -92,13 +92,15 @@ class _TaskListState extends State<TaskList> {
                         widget.tasksBloc.rescheduleTask(task, dt);
                       },
                       notifyCallback: () {
-                        if (widgetData.storedNotify() != task.notify) {
-                          widget.tasksBloc.toggleNotification(task);
-                        }
-                        if (widgetData.storedNotify()) {
-                          widget.notificationFn(task.id, task.name, task.dt);
-                        } else {
-                          widget.disableNotificationFn(task.id);
+                        if (!task.dt.isBefore(DateTime.now())) {
+                          if (widgetData.storedNotify() != task.notify) {
+                            widget.tasksBloc.toggleNotification(task);
+                          }
+                          if (widgetData.storedNotify()) {
+                            widget.notificationFn(task.id, task.name, task.dt);
+                          } else {
+                            widget.disableNotificationFn(task.id);
+                          }
                         }
                       },
                       completeCallback: () {
