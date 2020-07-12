@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:DaySpend/database/DatabaseBloc.dart';
 import 'package:DaySpend/fonts/header.dart';
 import 'package:DaySpend/planner/task.dart';
-import 'package:DaySpend/planner/widget_values.dart';
+import 'package:DaySpend/planner/widget_functions.dart';
 import 'package:DaySpend/planner/task_tile.dart';
 import 'package:animated_widgets/animated_widgets.dart';
 import 'package:fab_circular_menu/fab_circular_menu.dart';
@@ -39,7 +39,7 @@ class _TaskListState extends State<TaskList> {
       stream: widget.tasksBloc.tasks,
       builder:
       (BuildContext context, AsyncSnapshot<List<Task>> snapshot) {
-        return snapshot.hasData ? Consumer<PlannerWidgetValues>(
+        return snapshot.hasData ? Consumer<PlannerWidgetFunctions>(
             builder: (context, widgetData, child) {
               return GroupedListView<dynamic, String>(
                 order: GroupedListOrder.ASC,
@@ -55,16 +55,18 @@ class _TaskListState extends State<TaskList> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Header(
-                        text: switchDays(revertIndex(index)),
-                        shadow: Shadow(blurRadius: 2.5, color: Colors.black26, offset: Offset(0,1)),
-                        weight: FontWeight.w600, color: Colors.black54, size: 28,
+                      Container(
+                        margin: EdgeInsets.symmetric(horizontal: 30.0, vertical: 10),
+                        child: Header(
+                          text: switchDays(revertIndex(index)),
+                          shadow: Shadow(blurRadius: 2.5, color: Colors.black26, offset: Offset(0,1)),
+                          weight: FontWeight.w600, color: Colors.black54, size: 28,
+                        ),
                       ),
                     ],
                   ),
                 ),
                 itemBuilder: (context, task) {
-                  print(task.opacity);
                   return OpacityAnimatedWidget.tween(
                     enabled: true,
                     opacityDisabled: 1,
@@ -85,6 +87,7 @@ class _TaskListState extends State<TaskList> {
                       taskTime: task.time,
                       taskDes: task.description,
                       taskDT: task.dt,
+                      taskLength: task.length,
                       taskNotify: task.notify,
                       taskComplete: task.isComplete,
                       taskOverdue: task.isOverdue,
@@ -94,9 +97,6 @@ class _TaskListState extends State<TaskList> {
                         widget.fabKey.currentState.close();
                         widgetData.setOpacity(task);
                         widget.tasksBloc.rescheduleTask(task, dt);
-                        if (task.isExpired) {
-                          widget.tasksBloc.toggleExpired(task);
-                        }
                       },
                       notifyCallback: () {
                         if (!task.dt.isBefore(DateTime.now())) {
@@ -111,6 +111,14 @@ class _TaskListState extends State<TaskList> {
                         }
                       },
                       completeCallback: () {
+                        bool changeToCompleted = false;
+                        bool taskHasNotifications = false;
+                        if (!task.isComplete) {
+                          changeToCompleted = true;
+                        }
+                        if (task.notify) {
+                          taskHasNotifications = true;
+                        }
                         widget.fabKey.currentState.close();
                         if (widget.slidable.activeState != null) {
                           widget.slidable.activeState?.close();
@@ -120,7 +128,7 @@ class _TaskListState extends State<TaskList> {
                         } else {
                           widget.tasksBloc.toggleComplete(task);
                         }
-                        if (task.isComplete && task.notify) {
+                        if (changeToCompleted && taskHasNotifications) {
                           widget.tasksBloc.toggleNotification(task);
                           widget.disableNotificationFn(task.id);
                         }

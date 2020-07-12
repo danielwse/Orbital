@@ -2,7 +2,7 @@ import 'package:DaySpend/database/DatabaseBloc.dart';
 import 'package:DaySpend/fonts/header.dart';
 import 'package:DaySpend/planner/picker.dart';
 import 'package:DaySpend/planner/task.dart';
-import 'package:DaySpend/planner/widget_values.dart';
+import 'package:DaySpend/planner/widget_functions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fswitch/fswitch.dart';
@@ -30,7 +30,7 @@ class _AddTaskState extends State<AddTask> {
     return StreamBuilder(
       stream: widget.tasksBloc.tasks,
       builder: (BuildContext context, AsyncSnapshot<List<Task>> snapshot) {
-        return Consumer<PlannerWidgetValues>(
+        return Consumer<PlannerWidgetFunctions>(
           builder: (context, newTask, child) {
             return Container(
               color: Color(0xff757575),
@@ -50,15 +50,30 @@ class _AddTaskState extends State<AddTask> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
                         Container(
-                          margin: EdgeInsets.only(left: 12),
-                          width: MediaQuery.of(context).copyWith().size.width/2.5,
+                          width: MediaQuery.of(context).copyWith().size.width/2,
+                          margin: EdgeInsets.symmetric(vertical: 10),
                           child: Row(
                             children: <Widget>[
                               Header(
                                 weight: FontWeight.bold,
-                                text: "Notification : ",
+                                text: "Set time:",
                                 color: Colors.black,
-                                size: MediaQuery.of(context).copyWith().size.width/30,
+                                size: MediaQuery.of(context).copyWith().size.width/40,
+                              ),
+                              PickerButton(
+                                initDateTime: datetime.add(Duration(minutes: 1)),
+                              ),],
+                          ),
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).copyWith().size.width/3,
+                          child: Row(
+                            children: <Widget>[
+                              Header(
+                                weight: FontWeight.bold,
+                                text: "Notification: ",
+                                color: Colors.black,
+                                size: MediaQuery.of(context).copyWith().size.width/40,
                               ),
                               FSwitch(
                                 open: newTask.storedNotify(),
@@ -80,13 +95,6 @@ class _AddTaskState extends State<AddTask> {
                                 ),
                               ),
                             ],
-                          ),
-                        ),
-                        Container(
-                          width: MediaQuery.of(context).copyWith().size.width/2.5,
-                          margin: EdgeInsets.fromLTRB(0, 10, 10, 10),
-                          child: PickerButton(
-                            initDateTime: datetime.add(Duration(minutes: 1)),
                           ),
                         ),
                       ],
@@ -164,7 +172,8 @@ class _AddTaskState extends State<AddTask> {
                           String time = DateFormat('Hm').format(setTime).toString();
                           String description = newTask.storedDes();
                           bool notify = newTask.storedNotify();
-                          Task tempTask = Task(index: index, name: name, time: time, description: (description != null ? description : ""), notify: notify, isComplete: false, isOverdue: false, isArchived: false, isExpired: false, opacity: 1, dt: setTime);
+                          int length = 1; //TODO get length of task from drop down list
+                          Task tempTask = Task(index: index, name: name, time: time, description: (description != null ? description : ""), notify: notify, isComplete: false, isOverdue: false, isArchived: false, isExpired: false, opacity: 1, dt: setTime, length: length);
                           int id = await widget.tasksBloc.addTaskToDatabase(tempTask);
                           if (tempTask.notify) {
                             widget.enableNotification(id, tempTask.name, tempTask.dt);

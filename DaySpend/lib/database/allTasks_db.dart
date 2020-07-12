@@ -103,7 +103,7 @@ class TasksDao {
   }
 
   void rescheduleOverdue(Task task, DateTime dt) {
-    final tempTask = Task(id: task.id, index: getIndex(dt), name: task.name, time: DateFormat('Hm').format(dt).toString(), description: task.description, notify: task.notify, isComplete: task.isComplete, isOverdue: false, isArchived: task.isArchived, isExpired: false, dt: dt);
+    final tempTask = Task(id: task.id, index: getIndex(dt), name: task.name, time: DateFormat('Hm').format(dt).toString(), description: task.description, notify: false, isComplete: false, isOverdue: false, isArchived: false, isExpired: false, dt: dt, length: task.length);
     print("deleted task with id "+ task.id.toString());
     removeTask(task.id);
     newTask(tempTask);
@@ -111,15 +111,35 @@ class TasksDao {
   }
 
   void removedExpired() async {
-    if (getIndex(DateTime.now()) == '1') {
+    final db = await dbProvider.database;
+    var prevDay = await db.query("TimeValues");
+    List<DayIndex> list = prevDay.isNotEmpty ? prevDay.map((c) => DayIndex.fromJson(c)).toList() : [];
+    String dbDate = list[0].index;
+    print("Last updated on: " + dbDate);
+    String currDate = DateFormat("yMMMMd").format(DateTime.now());
+    String key = "prevDay";
+    if (dbDate != currDate) {
+      await db.rawUpdate('''
+      UPDATE TimeValues
+      SET dayIndex = '$currDate'
+      WHERE id = '$key'
+      ''');
       List<Task> allTasks = await getAllTasks();
       for (Task task in allTasks) {
-        if (task.isExpired) {
+        DateTime now = DateTime.now();
+        if (task.isExpired && task.dt.isBefore(DateTime(now.year, now.month, now.day).subtract(Duration(days: 6)))) {
           removeTask(task.id);
         }
       }
     }
   }
+}
+
+class DayIndex {
+  String index;
+  DayIndex({this.index});
+
+  factory DayIndex.fromJson(Map<String, dynamic> data) => DayIndex(index: data["dayIndex"]);
 }
 
 class TasksRepository {

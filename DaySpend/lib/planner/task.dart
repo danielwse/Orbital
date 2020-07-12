@@ -12,8 +12,9 @@ class Task implements Comparable {
   bool isExpired;
   double opacity;
   DateTime dt;
+  int length;
 
-  Task({this.id, this.index, this.name, this.time, this.dt, this.isArchived, this.description, this.notify = false, this.isComplete, this.isOverdue, this.isExpired, this.opacity = 1});
+  Task({this.id, this.index, this.name, this.time, this.dt, this.isArchived, this.description, this.notify = false, this.isComplete, this.isOverdue, this.isExpired, this.opacity = 1, this.length});
 
   void toggleAnimate() {
     opacity = 0;
@@ -36,7 +37,8 @@ class Task implements Comparable {
       isArchived: data["isArchived"] == 0 ? false : true,
       isExpired: data["isExpired"] == 0 ? false : true,
       opacity: data["opacity"],
-      dt: DateTime.parse(data["dt"])
+      dt: DateTime.parse(data["dt"]),
+      length: data["length"]
   );
 
   Map<String, dynamic> toJson() {
@@ -52,7 +54,8 @@ class Task implements Comparable {
       "isArchived": isArchived == false ? 0 : 1,
       "isExpired": isExpired == false ? 0 : 1,
       "opacity": opacity,
-      "dt": dt.toIso8601String()
+      "dt": dt.toIso8601String(),
+      "length": length
     };
   }
 }

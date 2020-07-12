@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -45,8 +46,7 @@ class DBProvider {
           "type TEXT PRIMARY KEY,"
           "value TEXT"
           ")");
-      await db.execute("DROP TABLE IF EXISTS Tasks").then((value) => print("dropped table"));
-      print("Creating table");
+      await db.execute("DROP TABLE IF EXISTS Tasks").then((value) => print("dropped Tasks"));
       await db.execute("CREATE TABLE Tasks ("
           "id INTEGER PRIMARY KEY AUTOINCREMENT,"
       "converted_index TEXT," //must have one indent less, just leave it
@@ -59,9 +59,17 @@ class DBProvider {
       "isArchived INTEGER,"
       "isExpired INTEGER,"
           "opacity DOUBLE,"
-          "dt TEXT"
+          "dt TEXT,"
+      "length INTEGER"
           ")");
-      print("Created table");
+      print("Created Tasks");
+      await db.execute("DROP TABLE IF EXISTS TimeValues").then((value) => print("dropped TimeValues"));
+      await db.execute("CREATE TABLE TimeValues ("
+      "id TEXT PRIMARY KEY,"
+      "dayIndex TEXT"
+      ")");
+      print("Created TimeValues");
+      await db.insert("TimeValues", {"id": 'prevDay', "dayIndex": DateFormat("yMMMMd").format(DateTime.now())});
       await db.insert("Variables", {"type": 'MaxSpend', "value": 'Not Set'});
       await db.insert("Categories", {"name": "Others", "amount": 0, "budgetPercentage": "Not Set"});
     });

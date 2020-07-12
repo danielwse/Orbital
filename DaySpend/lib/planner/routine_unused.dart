@@ -1,23 +1,24 @@
+import 'package:DaySpend/fonts/header.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:intl/intl.dart';
 import 'package:nice_button/NiceButton.dart';
 
-class RescheduleButton extends StatelessWidget {
+class RoutineButton extends StatelessWidget {
 
   final Function updateTime;
-  final Color color;
+  final DateTime originalTime;
 
-  RescheduleButton({this.updateTime, this.color});
+  RoutineButton({this.updateTime, this.originalTime});
   @override
   Widget build(BuildContext context) {
-    DateTime newDateTime;
-    DateTime currentTime = DateTime.now().add(Duration(minutes: 1));
+    DateTime newDateTime = originalTime.add(Duration(days: 7));
+    String displayText = "This task will be set to the next \n\n" + DateFormat('EEEE').format(newDateTime).toString() + ", at " + DateFormat('Hm').format(newDateTime).toString();
 
     return IconSlideAction(
-      caption: 'Schedule', color: color, icon: Icons.replay,
+      caption: 'Reset', color: Colors.teal[100], icon: Icons.replay,
       onTap: () {
-        newDateTime = currentTime;
         showModalBottomSheet(
           context: context,
           isScrollControlled: true,
@@ -40,19 +41,14 @@ class RescheduleButton extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Container(
-                        margin: EdgeInsets.symmetric(vertical: 20),
-                        height: MediaQuery.of(context).copyWith().size.height / 4,
-                        width: MediaQuery.of(context).copyWith().size.width / 1.5,
-                        child: CupertinoDatePicker(
-                          mode: CupertinoDatePickerMode.dateAndTime,
-                          initialDateTime: currentTime,
-                          onDateTimeChanged: (DateTime dt) {
-                            newDateTime = dt;
-                          },
-                          use24hFormat: true,
-                          minuteInterval: 1,
-                          minimumDate: currentTime,
-                          maximumDate: currentTime.add(Duration(days: 6)),
+                        margin: EdgeInsets.fromLTRB(0, 30, 0, 50),
+                        child: Text(
+                          displayText,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 20
+                          ),
                         ),
                       ),
                       Container(
@@ -66,12 +62,7 @@ class RescheduleButton extends StatelessWidget {
                           textColor: Colors.white,
                           background: Colors.teal,
                           onPressed: () {
-                            if (newDateTime.isBefore(DateTime.now())) {
-                              updateTime(DateTime.now().add(Duration(minutes: 1)));
-                              print("set time too close to current time");
-                            } else {
-                              updateTime(newDateTime);
-                            }
+                            updateTime(newDateTime);
                             Navigator.pop(context);
                           },
                         ),

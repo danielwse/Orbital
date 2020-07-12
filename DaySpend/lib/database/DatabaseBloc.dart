@@ -231,7 +231,7 @@ class TasksBloc implements Bloc {
     getTasks();
   }
 
-  removeExpiredOnMondays() async {
+  removeExpired() async {
     await _tasksRepository.removeExpired();
     getTasks();
   }

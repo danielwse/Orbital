@@ -1,6 +1,9 @@
 
 import 'dart:typed_data';
 
+import 'package:DaySpend/database/DatabaseBloc.dart';
+import 'package:DaySpend/database/DatabaseHelper.dart';
+import 'package:DaySpend/database/allTasks_db.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -60,6 +63,10 @@ Future<void> main() async {
         }
         selectNotificationSubject.add(payload);
       });
+
+  await DBProvider.db.database.then((value){print("Initialized database");});
+
+  await TasksBloc().removeExpired().then((value){print("Removed Expired tasks");});
 
   runApp(MyApp());
 }

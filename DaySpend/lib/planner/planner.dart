@@ -2,7 +2,7 @@ import 'package:DaySpend/planner/task_screen.dart';
 import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:DaySpend/planner/widget_values.dart';
+import 'package:DaySpend/planner/widget_functions.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 
@@ -37,7 +37,7 @@ class _PlannerState extends State<Planner> {
   Widget build(BuildContext context) {
     // ignore: missing_required_param
     return ChangeNotifierProvider(
-      builder: (context) => PlannerWidgetValues(),
+      builder: (context) => PlannerWidgetFunctions(),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         home: TaskScreen(disableNotificationCallback: widget.disableNotificationFn, notificationCallback: widget.notificationFn,

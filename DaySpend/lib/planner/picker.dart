@@ -1,4 +1,4 @@
-import 'package:DaySpend/planner/widget_values.dart';
+import 'package:DaySpend/planner/widget_functions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -19,22 +19,24 @@ class _PickerButtonState extends State<PickerButton> {
 
   @override
   void initState() {
-    newDateTime = widget.initDateTime;
-    tempOldDateTime = widget.initDateTime;
+    newDateTime = !widget.initDateTime.isBefore(DateTime.now())? widget.initDateTime : DateTime.now();
+    tempOldDateTime = !widget.initDateTime.isBefore(DateTime.now())? widget.initDateTime : DateTime.now();
     return super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    String textInput = DateFormat('E').format(tempOldDateTime).toString() + " - " + DateFormat('Hm').format(tempOldDateTime).toString();
     double width = MediaQuery.of(context).copyWith().size.width;
     return NiceButton(
-      text: DateFormat('EEEE').format(tempOldDateTime).toString() + " - " + DateFormat('Hm').format(tempOldDateTime).toString(),
+      text: textInput,
+      padding: const EdgeInsets.all(12.0),
       background: Colors.teal,
       elevation: 6,
       fontSize: width/40,
       textColor: Colors.white,
-      width: width/2.7,
-      radius: 30.0,
+      width: width/4.5,
+      radius: 10.0,
       onPressed: () {
         showModalBottomSheet(
           context: context,
@@ -86,7 +88,7 @@ class _PickerButtonState extends State<PickerButton> {
                           textColor: Colors.white,
                           background: Colors.teal,
                           onPressed: () {
-                            Provider.of<PlannerWidgetValues>(context).changeDateTime(newDateTime);
+                            Provider.of<PlannerWidgetFunctions>(context).changeDateTime(newDateTime);
                             tempOldDateTime = newDateTime;
                             Navigator.pop(context);
                           },

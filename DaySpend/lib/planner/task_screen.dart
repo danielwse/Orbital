@@ -1,6 +1,6 @@
 import 'package:DaySpend/database/DatabaseBloc.dart';
 import 'package:DaySpend/fonts/header.dart';
-import 'package:DaySpend/planner/widget_values.dart';
+import 'package:DaySpend/planner/widget_functions.dart';
 import 'package:DaySpend/planner/task_list.dart';
 import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:flutter/cupertino.dart';
@@ -50,9 +50,8 @@ class _TaskScreenState extends State<TaskScreen> {
 
   @override
   Widget build(BuildContext context) {
-    tasksBloc.removeExpiredOnMondays();
     String headerTextFor12 = DateFormat('MEd').format(DateTime.now()).toString() + " - " + DateFormat('MEd').format(DateTime.now().add(Duration(days: 6))).toString();
-    String headerTextFor3 = DateFormat('MEd').format(DateTime.now().subtract(Duration(days: 6))).toString() + " - " + DateFormat('MEd').format(DateTime.now()).toString();
+    String headerTextFor3 = DateFormat('MEd').format(DateTime.now().subtract(Duration(days: 6))).toString() + " - " + DateFormat('MEd').format(DateTime.now().subtract(Duration(days: 1))).toString();
     return Scaffold(
       backgroundColor: Color(0xffF7F7F7),
       appBar: AppBar(
@@ -95,7 +94,7 @@ class _TaskScreenState extends State<TaskScreen> {
               elevation: 7,
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               onPressed: () {
-                Provider.of<PlannerWidgetValues>(context).resetAddTask();
+                Provider.of<PlannerWidgetFunctions>(context).resetAddTask();
                 toggleMenu(forceClose: true);
                 widget.slidable.activeState?.close();
                 showModalBottomSheet(
@@ -135,6 +134,7 @@ class _TaskScreenState extends State<TaskScreen> {
         ),
       ),
       floatingActionButton: FabCircularMenu(
+        alignment: Alignment.bottomRight,
         key: widget.fabKey,
         animationDuration: const Duration(milliseconds: 400),
         fabOpenIcon: ( mode == 1 ? Icon(Icons.home) : ( mode == 2 ? Icon(Icons.archive) : Icon(Icons.reply_all))),

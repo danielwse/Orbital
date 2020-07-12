@@ -2,7 +2,7 @@ import 'package:DaySpend/planner/task.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 
-class PlannerWidgetValues extends ChangeNotifier {
+class PlannerWidgetFunctions extends ChangeNotifier {
 
   //might move this to db, but if working, leave it
   void setOpacity(Task task) {
@@ -37,7 +37,7 @@ class PlannerWidgetValues extends ChangeNotifier {
   List<Task> getOverdue(List<Task> input) {
     List<Task> output = [];
     for (Task task in input) {
-      if (task.isExpired && task.isOverdue) {
+      if (task.isExpired && !task.isArchived) {
         output.add(task);
       } else {
         continue;
