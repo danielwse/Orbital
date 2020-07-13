@@ -10,7 +10,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:fswitch/fswitch.dart';
-import 'package:intl/intl.dart';
 import 'day2index.dart';
 
 class TaskTile extends StatefulWidget {
@@ -124,7 +123,7 @@ class _TaskTileState extends State<TaskTile> {
                   decoration: widget.taskComplete ? TextDecoration.lineThrough : null,
                   fontSize: 16,
                   color: Colors.black87,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                   letterSpacing: 0.5),
             ),
             trailing: Row(
