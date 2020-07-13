@@ -194,9 +194,9 @@ class _TaskTileState extends State<TaskTile> {
           icon: Icons.archive,
           onTap: widget.archiveCallback);
     } else if (widget.taskArchived && widget.mode == 2) {
-      return RescheduleButton(updateTime: widget.rescheduleCallback, color: Colors.teal[100]);
+      return RescheduleButton(rescheduleCallback: widget.rescheduleCallback, prevDuration: widget.taskLength, color: Colors.teal[100]);
     } else if (widget.taskOverdue) {
-      return RescheduleButton(updateTime: widget.rescheduleCallback, color: Colors.redAccent[100]);
+      return RescheduleButton(rescheduleCallback: widget.rescheduleCallback, prevDuration: widget.taskLength, color: Colors.redAccent[100]);
     } else {
       return IconSlideAction(caption: 'Pending', color: Colors.black26, icon: Icons.access_time);
     }

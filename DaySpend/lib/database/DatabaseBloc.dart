@@ -195,8 +195,8 @@ class TasksBloc implements Bloc {
     getTasks();
   }
 
-  rescheduleTask(Task task, DateTime dt) async {
-    await _tasksRepository.rescheduleOverdue(task, dt);
+  rescheduleTask(Task task, DateTime dt, Duration duration) async {
+    await _tasksRepository.rescheduleOverdue(task, dt, duration);
     getTasks();
   }
 

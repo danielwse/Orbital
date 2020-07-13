@@ -102,8 +102,8 @@ class TasksDao {
     return list;
   }
 
-  void rescheduleOverdue(Task task, DateTime dt) {
-    final tempTask = Task(id: task.id, index: getIndex(dt), name: task.name, time: DateFormat('Hm').format(dt).toString(), description: task.description, notify: false, isComplete: false, isOverdue: false, isArchived: false, isExpired: false, dt: dt, length: task.length);
+  void rescheduleOverdue(Task task, DateTime dt, Duration duration) {
+    final tempTask = Task(id: task.id, index: getIndex(dt), name: task.name, time: DateFormat('Hm').format(dt).toString(), description: task.description, notify: false, isComplete: false, isOverdue: false, isArchived: false, isExpired: false, dt: dt, length: duration);
     print("deleted task with id "+ task.id.toString());
     removeTask(task.id);
     newTask(tempTask);
@@ -147,7 +147,7 @@ class TasksRepository {
   Future<int> newTask(Task task) => tasksDao.newTask(task);
   Future getAllTasks() => tasksDao.getAllTasks();
   Future removeTask(int id) => tasksDao.removeTask(id);
-  rescheduleOverdue(Task task, DateTime dt) => tasksDao.rescheduleOverdue(task, dt);
+  rescheduleOverdue(Task task, DateTime dt, Duration duration) => tasksDao.rescheduleOverdue(task, dt, duration);
   toggleNotification(Task task) => tasksDao.toggleNotify(task);
   toggleComplete(Task task) => tasksDao.toggleComplete(task);
   toggleOverdue(Task task) => tasksDao.toggleOverdue(task);

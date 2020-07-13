@@ -5,19 +5,22 @@ import 'package:nice_button/NiceButton.dart';
 
 class RescheduleButton extends StatelessWidget {
 
-  final Function updateTime;
+  final Function rescheduleCallback;
   final Color color;
+  final Duration prevDuration;
 
-  RescheduleButton({this.updateTime, this.color});
+  RescheduleButton({this.rescheduleCallback, this.color, this.prevDuration});
   @override
   Widget build(BuildContext context) {
     DateTime newDateTime;
+    Duration newDuration;
     DateTime currentTime = DateTime.now().add(Duration(minutes: 1));
 
     return IconSlideAction(
       caption: 'Schedule', color: color, icon: Icons.replay,
       onTap: () {
         newDateTime = currentTime;
+        newDuration = prevDuration;
         showModalBottomSheet(
           context: context,
           isScrollControlled: true,
@@ -34,11 +37,46 @@ class RescheduleButton extends StatelessWidget {
                       topRight: Radius.circular(20.0),
                     ),
                   ),
-                  height: MediaQuery.of(context).copyWith().size.height / 2.5,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
+                      Container(
+                        margin: EdgeInsets.symmetric(vertical: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text("Set duration of task:", style:
+                            TextStyle(
+                                fontSize: 18
+                            ),)
+                          ],
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.symmetric(vertical: 20),
+                        height: MediaQuery.of(context).copyWith().size.height / 4,
+                        width: MediaQuery.of(context).copyWith().size.width / 1.5,
+                        child: CupertinoTimerPicker(
+                          mode: CupertinoTimerPickerMode.hm,
+                          initialTimerDuration: prevDuration,
+                          onTimerDurationChanged: (Duration dur) {
+                            newDuration = dur;
+                          },
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.symmetric(vertical: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text("Choose a date:", style:
+                              TextStyle(
+                                fontSize: 18
+                              ),)
+                          ],
+                        ),
+                      ),
                       Container(
                         margin: EdgeInsets.symmetric(vertical: 20),
                         height: MediaQuery.of(context).copyWith().size.height / 4,
@@ -56,9 +94,9 @@ class RescheduleButton extends StatelessWidget {
                         ),
                       ),
                       Container(
-                        margin: EdgeInsets.only(bottom: 16),
+                        margin: EdgeInsets.symmetric(vertical: 25),
                         child: NiceButton(
-                          width: 100,
+                          width: 120,
                           text: "Confirm",
                           elevation: 8.0,
                           radius: 52.0,
@@ -67,14 +105,17 @@ class RescheduleButton extends StatelessWidget {
                           background: Colors.teal,
                           onPressed: () {
                             if (newDateTime.isBefore(DateTime.now())) {
-                              updateTime(DateTime.now().add(Duration(minutes: 1)));
+                              rescheduleCallback(DateTime.now().add(Duration(minutes: 1)), newDuration);
                               print("set time too close to current time");
                             } else {
-                              updateTime(newDateTime);
+                              rescheduleCallback(newDateTime, newDuration);
                             }
                             Navigator.pop(context);
                           },
                         ),
+                      ),
+                      SizedBox(
+                        height: 30,
                       )
                     ],
                   ),

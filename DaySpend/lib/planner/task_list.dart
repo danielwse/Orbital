@@ -93,10 +93,10 @@ class _TaskListState extends State<TaskList> {
                       taskOverdue: task.isOverdue,
                       taskArchived: task.isArchived,
                       taskExpired: task.isExpired,
-                      rescheduleCallback: (DateTime dt) {
+                      rescheduleCallback: (DateTime dt, Duration duration) {
                         widget.fabKey.currentState.close();
                         widgetData.setOpacity(task);
-                        widget.tasksBloc.rescheduleTask(task, dt);
+                        widget.tasksBloc.rescheduleTask(task, dt, duration);
                       },
                       notifyCallback: () {
                         if (!task.dt.isBefore(DateTime.now())) {
