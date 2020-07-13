@@ -2,18 +2,18 @@ import 'package:DaySpend/database/DatabaseBloc.dart';
 import 'package:DaySpend/planner/homepage/today_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:DaySpend/planner/widget_functions.dart';
+import 'package:provider/provider.dart';
 
-class TaskView extends StatefulWidget {
-  final Function notificationCallback;
-  final Function disableNotificationCallback;
-
-  TaskView({this.notificationCallback, this.disableNotificationCallback});
-
+class PlannerHome extends StatefulWidget {
+  final Function notificationFn;
+  final Function disableNotificationFn;
+  PlannerHome({this.notificationFn, this.disableNotificationFn});
   @override
-  _TaskViewState createState() => _TaskViewState();
+  _PlannerHomeState createState() => _PlannerHomeState();
 }
 
-class _TaskViewState extends State<TaskView> {
+class _PlannerHomeState extends State<PlannerHome> {
 
   final TasksBloc tasksBloc = TasksBloc();
 
@@ -22,12 +22,17 @@ class _TaskViewState extends State<TaskView> {
     tasksBloc.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
-    return TodayTaskList(
-      notificationFn: widget.notificationCallback,
-      disableNotificationFn: widget.disableNotificationCallback,
-      tasksBloc: tasksBloc,
+    return Container(
+      height: MediaQuery.of(context).size.height/2,
+      width: MediaQuery.of(context).size.width,
+      // ignore: missing_required_param
+      child: ChangeNotifierProvider(
+        builder: (context) => PlannerWidgetFunctions(),
+        child: TodayTaskList(tasksBloc: tasksBloc, disableNotificationFn: widget.disableNotificationFn, notificationFn: widget.notificationFn),
+      ),
     );
   }
 }

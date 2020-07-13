@@ -1,6 +1,6 @@
 
 import 'package:DaySpend/expenses/add_expense_popup.dart';
-import 'package:DaySpend/planner/homepage/planner_view_wrapper.dart';
+import 'package:DaySpend/planner/homepage/planner_view.dart';
 import 'package:flutter/material.dart';
 import 'package:DaySpend/expenses/homepage_expenses.dart';
 

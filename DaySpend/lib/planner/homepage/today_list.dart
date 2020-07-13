@@ -37,7 +37,7 @@ class _TodayTaskListState extends State<TodayTaskList> {
           (BuildContext context, AsyncSnapshot<List<Task>> snapshot) {
         return snapshot.hasData ? Consumer<PlannerWidgetFunctions>(
             builder: (context, widgetData, child) {
-              return GroupedListView<dynamic, String>(
+              return widgetData.getTodayTasks(snapshot.data).length != 0 ? GroupedListView<dynamic, String>(
                 order: GroupedListOrder.ASC,
                 separator: SizedBox(
                   height: 12,
@@ -123,11 +123,18 @@ class _TodayTaskListState extends State<TodayTaskList> {
                     ),
                   );
                 },
+              ) : Container(
+                alignment: Alignment.center,
+                child: Text("You have no tasks set for today\n\nAdd a new task\n\n\n →",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.grey,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                ),),
               );
             }
-        ) : Container(
-          child: Text("no tasks set for today"),
-        );
+        ) : Container();
       },
     );
   }
