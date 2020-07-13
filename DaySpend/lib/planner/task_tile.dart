@@ -104,7 +104,7 @@ class _TaskTileState extends State<TaskTile> {
             borderRadius:
             BorderRadius.circular(10)),
         elevation: 7.0,
-        margin: EdgeInsets.symmetric(horizontal: 50.0, vertical: 6.0),
+        margin: EdgeInsets.symmetric(horizontal: 40.0, vertical: 6.0),
         child: Container(
           decoration: BoxDecoration(
             color: widget.tileColor,
@@ -181,6 +181,9 @@ class _TaskTileState extends State<TaskTile> {
             onTap: widget.removeCallback,
           ),
         ),
+        SizedBox(
+          height: heightOfActions,
+        )
       ],
     );
   }
