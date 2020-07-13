@@ -66,7 +66,7 @@ class _EditButtonState extends State<EditButton> {
                     child: Container(
                       color: Color(0xff757575),
                       child: Container(
-                        padding: EdgeInsets.all(20.0),
+                        padding: EdgeInsets.only(bottom: 12),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.only(
@@ -77,7 +77,7 @@ class _EditButtonState extends State<EditButton> {
                         child: Column(
                           children: <Widget>[
                             Container(
-                              margin: EdgeInsets.only(bottom: 20),
+                              margin: EdgeInsets.symmetric(vertical: 20),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
@@ -182,10 +182,10 @@ class _EditButtonState extends State<EditButton> {
                               ),
                             ),
                             NiceButton(
-                              width: 160,
+                              width: MediaQuery.of(context).copyWith().size.width/3,
                               elevation: 8.0,
                               radius: 52.0,
-                              fontSize: 14,
+                              fontSize: MediaQuery.of(context).copyWith().size.width/30,
                               text: "Save Changes",
                               textColor: Colors.white,
                               background: (widget.nameEditor.text != null && widget.nameEditor.text.replaceAll(' ', '').length!=0 ? Colors.teal : Colors.blueGrey[100]),

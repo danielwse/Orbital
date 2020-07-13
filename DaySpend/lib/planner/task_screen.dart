@@ -66,17 +66,17 @@ class _TaskScreenState extends State<TaskScreen> {
               margin: (mode == 1 ? EdgeInsets.only(left: 0) : EdgeInsets.only(left: 8)),
               child: (mode == 1 ? Header(
                 text: headerTextFor12, shadow: Shadow(blurRadius: 2.5, color: Colors.black26, offset: Offset(0,1)),
-                weight: FontWeight.w600, color: Colors.black54, size: 20,
+                weight: FontWeight.w600, color: Colors.black54, size: MediaQuery.of(context).copyWith().size.width/25,
               ) :
               (mode == 2 ? Header(
                 text: headerTextFor12,
                 shadow: Shadow(blurRadius: 2.5, color: Colors.greenAccent, offset: Offset(0,1)),
-                weight: FontWeight.w600, color: Colors.green, size: 20,
+                weight: FontWeight.w600, color: Colors.green, size: MediaQuery.of(context).copyWith().size.width/25,
               ) :
               Header(
                 text: headerTextFor3,
                 shadow: Shadow(blurRadius: 2.5, color: Colors.redAccent, offset: Offset(0,1)),
-                weight: FontWeight.w600, color: Colors.red, size: 20,
+                weight: FontWeight.w600, color: Colors.red, size: MediaQuery.of(context).copyWith().size.width/25,
               ))
               ),
             ),

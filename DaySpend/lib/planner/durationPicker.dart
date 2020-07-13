@@ -53,7 +53,6 @@ class _DurationPickerButtonState extends State<DurationPickerButton> {
                       topRight: Radius.circular(20.0),
                     ),
                   ),
-                  height: MediaQuery.of(context).copyWith().size.height / 2.5,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,

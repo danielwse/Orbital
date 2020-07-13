@@ -56,7 +56,7 @@ class _TodayTaskListState extends State<TodayTaskList> {
                         child: Header(
                           text: "Today's Task",
                           shadow: Shadow(blurRadius: 2.5, color: Colors.black26, offset: Offset(0,1)),
-                          weight: FontWeight.w600, color: Colors.black54, size: 28,
+                          weight: FontWeight.w600, color: Colors.black54, size: MediaQuery.of(context).copyWith().size.width/15,
                         ),
                       ),
                     ],
@@ -129,7 +129,7 @@ class _TodayTaskListState extends State<TodayTaskList> {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.grey,
-                    fontSize: 20,
+                    fontSize: MediaQuery.of(context).copyWith().size.width/30,
                     fontWeight: FontWeight.w600,
                 ),),
               );

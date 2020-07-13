@@ -60,7 +60,7 @@ class _TaskListState extends State<TaskList> {
                         child: Header(
                           text: switchDays(revertIndex(index)),
                           shadow: Shadow(blurRadius: 2.5, color: Colors.black26, offset: Offset(0,1)),
-                          weight: FontWeight.w600, color: Colors.black54, size: 28,
+                          weight: FontWeight.w600, color: Colors.black54, size: MediaQuery.of(context).copyWith().size.width/15,
                         ),
                       ),
                     ],

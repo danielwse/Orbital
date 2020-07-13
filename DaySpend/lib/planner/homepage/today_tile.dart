@@ -64,7 +64,7 @@ class _TodayTaskTileState extends State<TodayTaskTile> {
             widget.taskName,
             style: TextStyle(
                 decoration: widget.taskComplete ? TextDecoration.lineThrough : null,
-                fontSize: 16,
+                fontSize: MediaQuery.of(context).copyWith().size.width/25,
                 color: Colors.black87,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 0.5),
@@ -72,14 +72,14 @@ class _TodayTaskTileState extends State<TodayTaskTile> {
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              (widget.taskComplete ? Icon(Icons.check_circle, color: Colors.teal, size: 22) : (widget.taskOverdue ? Icon(Icons.cancel, color: Colors.red, size: 20) : (widget.taskNotify ? Icon(Icons.notifications, color: Colors.orangeAccent, size: 20) :
-              (!widget.taskOverdue && !widget.taskComplete && widget.taskDT.isBefore(DateTime.now()) ? Icon(Icons.timer, color: Colors.black, size: 22) : Icon(Icons.notifications, color: Colors.orangeAccent, size: 0))))),
+              (widget.taskComplete ? Icon(Icons.check_circle, color: Colors.teal, size: MediaQuery.of(context).copyWith().size.width/25,) : (widget.taskOverdue ? Icon(Icons.cancel, color: Colors.red, size: MediaQuery.of(context).copyWith().size.width/25) : (widget.taskNotify ? Icon(Icons.notifications, color: Colors.orangeAccent, size: MediaQuery.of(context).copyWith().size.width/25) :
+              (!widget.taskOverdue && !widget.taskComplete && widget.taskDT.isBefore(DateTime.now()) ? Icon(Icons.timer, color: Colors.black, size: MediaQuery.of(context).copyWith().size.width/25) : Icon(Icons.notifications, color: Colors.orangeAccent, size: 0))))),
               Container(
                 margin: EdgeInsets.fromLTRB(12, 0, 6, 0),
                 child: Text(
                   widget.taskTime,
                   style: TextStyle(
-                      fontSize: 14,
+                      fontSize: MediaQuery.of(context).copyWith().size.width/30,
                       fontWeight: FontWeight.w500,
                       letterSpacing: 0.2),
                 ),

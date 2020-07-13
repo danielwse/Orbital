@@ -34,7 +34,7 @@ class _AddTaskState extends State<AddTask> {
             return Container(
               color: Color(0xff757575),
               child: Container(
-                padding: EdgeInsets.all(20.0),
+                padding: EdgeInsets.only(bottom: 12),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
@@ -45,7 +45,7 @@ class _AddTaskState extends State<AddTask> {
                 child: Column(
                   children: <Widget>[
                     Container(
-                      margin: EdgeInsets.only(bottom: 20),
+                      margin: EdgeInsets.symmetric(vertical: 20),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
@@ -148,10 +148,10 @@ class _AddTaskState extends State<AddTask> {
                       ),
                     ),
                     NiceButton(
-                      width: 160,
+                      width: MediaQuery.of(context).copyWith().size.width/3,
                       elevation: 8.0,
                       radius: 52.0,
-                      fontSize: 14,
+                      fontSize: MediaQuery.of(context).copyWith().size.width/30,
                       text: "Add New Task",
                       textColor: Colors.white,
                       background: ((newTask.storedName() != null && newTask.storedName().replaceAll(' ', '').length!=0) ? Colors.teal : Colors.blueGrey[100]),
