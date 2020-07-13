@@ -2,7 +2,6 @@ import 'package:DaySpend/database/DatabaseBloc.dart';
 import 'package:DaySpend/planner/homepage/today_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 
 class TaskView extends StatefulWidget {
   final Function notificationCallback;

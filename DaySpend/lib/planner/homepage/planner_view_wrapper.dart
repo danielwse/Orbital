@@ -17,7 +17,7 @@ class _PlannerHomeState extends State<PlannerHome> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height,
+      height: MediaQuery.of(context).size.height/2,
       width: MediaQuery.of(context).size.width,
       // ignore: missing_required_param
       child: ChangeNotifierProvider(
