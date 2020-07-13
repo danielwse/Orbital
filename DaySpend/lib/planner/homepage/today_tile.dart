@@ -84,7 +84,6 @@ class _TodayTaskTileState extends State<TodayTaskTile> {
                       letterSpacing: 0.2),
                 ),
               ),
-              Icon(Icons.arrow_right),
             ],
           ),
         ),
