@@ -40,9 +40,7 @@ class ReceivedNotification {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-  ]);
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   notificationAppLaunchDetails = await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
   var initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
   var initializationSettingsIOS = IOSInitializationSettings(
@@ -55,16 +53,14 @@ Future<void> main() async {
             id: id, title: title, body: body, payload: payload));
       });
   var initializationSettings = InitializationSettings(initializationSettingsAndroid, initializationSettingsIOS);
-  await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-      onSelectNotification: (String payload) async {
+
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings, onSelectNotification: (String payload) async {
         if (payload != null) {
           debugPrint('notification payload: ' + payload);
         }
-        selectNotificationSubject.add(payload);
-      });
-
+        selectNotificationSubject.add(payload);});
   await DBProvider.db.database.then((value){print("Initialized database");});
-
+  
   await TasksBloc().removeExpired().then((value){print("Removed Expired tasks");});
 
   runApp(MyApp());

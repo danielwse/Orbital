@@ -50,7 +50,7 @@ class PlannerWidgetFunctions extends ChangeNotifier {
   List<Task> getOverdue(List<Task> input) {
     List<Task> output = [];
     for (Task task in input) {
-      if (task.isExpired && !task.isArchived) {
+      if (task.isExpired && !task.isArchived && !task.isComplete) {
         output.add(task);
       } else {
         continue;

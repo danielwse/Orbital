@@ -157,6 +157,9 @@ class _TaskListState extends State<TaskList> {
                       archiveCallback: () {
                         widget.fabKey.currentState.close();
                         widgetData.setOpacity(task);
+                        if (!task.isComplete) {
+                          widget.tasksBloc.toggleComplete(task);
+                        }
                         if (task.notify) {
                           widget.tasksBloc.toggleNotification(task);
                           widget.disableNotificationFn(task.id);

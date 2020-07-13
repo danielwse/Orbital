@@ -55,7 +55,7 @@ class _TaskTileState extends State<TaskTile> {
   @override
   Widget build(BuildContext context) {
     Timer.periodic(Duration(seconds: 1), (Timer t) {
-      if (!widget.taskComplete && widget.taskDT.add(widget.taskLength).isBefore(DateTime.now())) {
+      if (widget.taskDT.add(widget.taskLength).isBefore(DateTime.now())) {
         widget.overdueCallback(t); //passed due
         try {
           t.cancel();
@@ -81,7 +81,7 @@ class _TaskTileState extends State<TaskTile> {
         }
       }
       DateTime now = DateTime.now();
-      if ((!widget.taskExpired) && (widget.taskComplete || widget.taskOverdue) && (widget.taskDT.isBefore(DateTime(now.year, now.month, now.day)))) {
+      if ((!widget.taskExpired) && (widget.taskDT.isBefore(DateTime(now.year, now.month, now.day)))) {
         widget.tasksBloc.toggleExpired(widget.currentTask);
         print(widget.taskName + " has expired");
         try {
@@ -115,7 +115,7 @@ class _TaskTileState extends State<TaskTile> {
               widget.slidable.activeState?.close();
               getDetails(context);
             },
-            onLongPress: (widget.mode != 2 ? widget.completeCallback : null),
+            onLongPress: (widget.mode != 2 ? (widget.taskExpired ? widget.archiveCallback : widget.completeCallback) : null),
             contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
             title: Text(
               widget.taskName,
