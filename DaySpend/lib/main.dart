@@ -3,7 +3,6 @@ import 'dart:typed_data';
 
 import 'package:DaySpend/database/DatabaseBloc.dart';
 import 'package:DaySpend/database/DatabaseHelper.dart';
-import 'package:DaySpend/database/allTasks_db.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -177,7 +176,7 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-  List<Widget> pages = [Expenses(),Homepage(), Planner(notificationFn: scheduleNotification, disableNotificationFn: cancelNotification,)];
+  List<Widget> pages = [Expenses(),Homepage(notificationFn: scheduleNotification, disableNotificationFn: cancelNotification), Planner(notificationFn: scheduleNotification, disableNotificationFn: cancelNotification)];
 
   @override
   Widget build(BuildContext context) {

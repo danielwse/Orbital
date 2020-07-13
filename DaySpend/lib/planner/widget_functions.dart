@@ -1,3 +1,4 @@
+import 'package:DaySpend/planner/day2index.dart';
 import 'package:DaySpend/planner/task.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
@@ -8,6 +9,18 @@ class PlannerWidgetFunctions extends ChangeNotifier {
   void setOpacity(Task task) {
     task.toggleAnimate();
     notifyListeners();
+  }
+
+  List<Task> getTodayTasks(List<Task> input) {
+    List<Task> output = [];
+    for (Task task in input) {
+      if (!task.isExpired && !task.isArchived && task.index == getIndex(DateTime.now())) {
+        output.add(task);
+      } else {
+        continue;
+      }
+    }
+    return output;
   }
 
   List<Task> getRecent(List<Task> input) {

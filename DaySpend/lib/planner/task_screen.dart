@@ -123,7 +123,7 @@ class _TaskScreenState extends State<TaskScreen> {
           toggleMenu(forceClose: true);
         },
         child: TaskList(
-          mode: mode, // 1 = activeTasks, 2 = getArchived, 3 = getExpired
+          mode: mode, // 0 = today's task, 1 = activeTasks, 2 = getArchived, 3 = getExpired
           notificationFn: widget.notificationCallback,
           disableNotificationFn: widget.disableNotificationCallback,
           tasksBloc: tasksBloc,
