@@ -50,8 +50,8 @@ class _TaskScreenState extends State<TaskScreen> {
 
   @override
   Widget build(BuildContext context) {
-    String headerTextFor12 = DateFormat('MEd').format(DateTime.now()).toString() + " - " + DateFormat('MEd').format(DateTime.now().add(Duration(days: 6))).toString();
-    String headerTextFor3 = DateFormat('MEd').format(DateTime.now().subtract(Duration(days: 6))).toString() + " - " + DateFormat('MEd').format(DateTime.now().subtract(Duration(days: 1))).toString();
+    String headerTextFor1 = DateFormat('MEd').format(DateTime.now()).toString() + " - " + DateFormat('MEd').format(DateTime.now().add(Duration(days: 6))).toString();
+    String headerTextFor23 = DateFormat('MEd').format(DateTime.now().subtract(Duration(days: 6))).toString() + " - " + DateFormat('MEd').format(DateTime.now().subtract(Duration(days: 1))).toString();
     return Scaffold(
       backgroundColor: Color(0xffF7F7F7),
       appBar: AppBar(
@@ -65,16 +65,16 @@ class _TaskScreenState extends State<TaskScreen> {
             Container(
               margin: (mode == 1 ? EdgeInsets.only(left: 0) : EdgeInsets.only(left: 8)),
               child: (mode == 1 ? Header(
-                text: headerTextFor12, shadow: Shadow(blurRadius: 2.5, color: Colors.black26, offset: Offset(0,1)),
+                text: headerTextFor1, shadow: Shadow(blurRadius: 2.5, color: Colors.black26, offset: Offset(0,1)),
                 weight: FontWeight.w600, color: Colors.black54, size: MediaQuery.of(context).copyWith().size.width/25,
               ) :
               (mode == 2 ? Header(
-                text: headerTextFor12,
+                text: headerTextFor23,
                 shadow: Shadow(blurRadius: 2.5, color: Colors.greenAccent, offset: Offset(0,1)),
                 weight: FontWeight.w600, color: Colors.green, size: MediaQuery.of(context).copyWith().size.width/25,
               ) :
               Header(
-                text: headerTextFor3,
+                text: headerTextFor23,
                 shadow: Shadow(blurRadius: 2.5, color: Colors.redAccent, offset: Offset(0,1)),
                 weight: FontWeight.w600, color: Colors.red, size: MediaQuery.of(context).copyWith().size.width/25,
               ))

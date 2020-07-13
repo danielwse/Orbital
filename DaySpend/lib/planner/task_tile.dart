@@ -10,6 +10,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:fswitch/fswitch.dart';
+import 'package:intl/intl.dart';
 import 'day2index.dart';
 
 class TaskTile extends StatefulWidget {
@@ -160,14 +161,6 @@ class _TaskTileState extends State<TaskTile> {
       secondaryActions: <Widget>[
         Container(
           decoration: BoxDecoration(
-            borderRadius:
-            BorderRadius.circular(20)),
-          height: heightOfActions,
-          margin: EdgeInsets.only(right:12),
-          child: pickSlideSecondaryAction(),
-        ),
-        Container(
-          decoration: BoxDecoration(
               borderRadius:
               BorderRadius.circular(20)),
           margin: EdgeInsets.only(right: 12),
@@ -188,27 +181,12 @@ class _TaskTileState extends State<TaskTile> {
   }
 
   pickSlideMainAction() {
-    if (widget.taskComplete && widget.mode == 1) {
-      return IconSlideAction(caption: 'Archive',
-          color: Colors.teal,
-          icon: Icons.archive,
-          onTap: widget.archiveCallback);
-    } else if (widget.taskArchived && widget.mode == 2) {
+    if (widget.taskComplete) {
       return RescheduleButton(rescheduleCallback: widget.rescheduleCallback, prevDuration: widget.taskLength, color: Colors.teal[100]);
     } else if (widget.taskOverdue) {
       return RescheduleButton(rescheduleCallback: widget.rescheduleCallback, prevDuration: widget.taskLength, color: Colors.redAccent[100]);
-    } else {
-      return IconSlideAction(caption: 'Pending', color: Colors.black26, icon: Icons.access_time);
-    }
-  }
-
-  pickSlideSecondaryAction() {
-    if (!widget.taskOverdue && !widget.taskComplete && widget.taskDT.isBefore(DateTime.now())) {
+    } else if (!widget.taskOverdue && !widget.taskComplete && widget.taskDT.isBefore(DateTime.now())) {
       return IconSlideAction(caption: 'Due', color: Colors.amber, icon: Icons.access_time);
-    } else if (widget.taskOverdue && !widget.taskComplete) {
-      return IconSlideAction(caption: 'Overdue', color: Colors.redAccent[100], icon: Icons.cancel);
-    } else if (widget.taskComplete) {
-      return IconSlideAction(caption: 'Done', color: Colors.teal[100], icon: Icons.check_circle);
     } else {
       return EditButton(
         enableNotification: widget.enableNotification,
@@ -257,7 +235,8 @@ class _TaskTileState extends State<TaskTile> {
                         margin: EdgeInsets.only(bottom: 10),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[Flexible(
+                          children: <Widget>[
+                            Flexible(
                             child: Text(
                               widget.taskName.toUpperCase(),
                               style: TextStyle(
@@ -275,7 +254,7 @@ class _TaskTileState extends State<TaskTile> {
                           children: <Widget>[
                             Container(
                               child: Text(
-                                switchDays(widget.taskIndex) + ", " + widget.taskTime + "\n" + widget.taskLength.toString().split(":")[0] + "h " + widget.taskLength.toString().split(":")[1] + "m",
+                                DateFormat('yMd').format(widget.taskDT).toString() + "\n" + switchDays(widget.taskIndex) + "\n" + widget.taskTime + "\n" + widget.taskLength.toString().split(":")[0] + "h " + widget.taskLength.toString().split(":")[1] + "m",
                                 style: TextStyle(
                                     fontSize: 14,
                                     color: Colors.blueGrey,
