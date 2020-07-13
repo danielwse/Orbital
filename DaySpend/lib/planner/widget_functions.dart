@@ -47,6 +47,7 @@ class PlannerWidgetFunctions extends ChangeNotifier {
   }
 
   void resetAddTask() {
+    tempDuration = null;
     tempName = null;
     tempDes = null;
     tempDateTime =  null;
@@ -97,6 +98,17 @@ class PlannerWidgetFunctions extends ChangeNotifier {
 
   String storedDes() {
     return tempDes;
+  }
+
+  Duration tempDuration;
+
+  void changeDuration(Duration input) {
+    tempDuration = input;
+    notifyListeners();
+  }
+
+  Duration storedDuration() {
+    return tempDuration;
   }
 
   DateTime tempDateTime;

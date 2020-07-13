@@ -1,6 +1,7 @@
 import 'package:DaySpend/database/DatabaseBloc.dart';
 import 'package:DaySpend/fonts/header.dart';
-import 'package:DaySpend/planner/picker.dart';
+import 'package:DaySpend/planner/datePicker.dart';
+import 'package:DaySpend/planner/durationPicker.dart';
 import 'package:DaySpend/planner/task.dart';
 import 'package:DaySpend/planner/widget_functions.dart';
 import 'package:flutter/cupertino.dart';
@@ -25,8 +26,6 @@ class _AddTaskState extends State<AddTask> {
 
   @override
   Widget build(BuildContext context) {
-    DateTime datetime = DateTime.now();
-
     return StreamBuilder(
       stream: widget.tasksBloc.tasks,
       builder: (BuildContext context, AsyncSnapshot<List<Task>> snapshot) {
@@ -45,59 +44,57 @@ class _AddTaskState extends State<AddTask> {
                 ),
                 child: Column(
                   children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Container(
-                          width: MediaQuery.of(context).copyWith().size.width/2,
-                          margin: EdgeInsets.symmetric(vertical: 10),
-                          child: Row(
-                            children: <Widget>[
-                              Header(
-                                weight: FontWeight.bold,
-                                text: "Set time:",
-                                color: Colors.black,
-                                size: MediaQuery.of(context).copyWith().size.width/40,
-                              ),
-                              PickerButton(
-                                initDateTime: datetime.add(Duration(minutes: 1)),
-                              ),],
+                    Container(
+                      margin: EdgeInsets.only(bottom: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Header(
+                            weight: FontWeight.bold,
+                            text: "Toggle reminder: ",
+                            color: Colors.black,
+                            size: MediaQuery.of(context).copyWith().size.width/40,
                           ),
-                        ),
-                        Container(
-                          width: MediaQuery.of(context).copyWith().size.width/3,
-                          child: Row(
-                            children: <Widget>[
-                              Header(
-                                weight: FontWeight.bold,
-                                text: "Notification: ",
-                                color: Colors.black,
-                                size: MediaQuery.of(context).copyWith().size.width/40,
-                              ),
-                              FSwitch(
-                                open: newTask.storedNotify(),
-                                width: 48,
-                                height: 28,
-                                openColor: Colors.teal,
-                                onChanged: (v) {
-                                  newTask.changeNotify(!newTask.storedNotify());
-                                },
-                                closeChild: Icon(
-                                  Icons.notifications_off,
-                                  size: 12,
-                                  color: Colors.brown,
-                                ),
-                                openChild: Icon(
-                                  Icons.notifications,
-                                  size: 12,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
+                          FSwitch(
+                            open: newTask.storedNotify(),
+                            width: 48,
+                            height: 28,
+                            openColor: Colors.teal,
+                            onChanged: (v) {
+                              newTask.changeNotify(!newTask.storedNotify());
+                            },
+                            closeChild: Icon(
+                              Icons.notifications_off,
+                              size: 12,
+                              color: Colors.brown,
+                            ),
+                            openChild: Icon(
+                              Icons.notifications,
+                              size: 12,
+                              color: Colors.white,
+                            ),
                           ),
+                        ],
+                      ),
+                    ),
+                    ConstrainedBox(
+                      constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width),
+                      child: Container(
+                        margin: EdgeInsets.fromLTRB(0, 10, 0, 25),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Header(
+                              weight: FontWeight.bold,
+                              text: "Set time & duration:",
+                              color: Colors.black,
+                              size: MediaQuery.of(context).copyWith().size.width/40,
+                            ),
+                            DatePickerButton(initDateTime: DateTime.now().add(Duration(minutes: 1))),
+                            DurationPickerButton(initDuration: Duration()),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                     Container(
                       height: 50,
@@ -162,6 +159,10 @@ class _AddTaskState extends State<AddTask> {
                         String name = newTask.storedName();
                         if (name != null && name.replaceAll(' ', '').length!=0) {
                           DateTime setTime = newTask.storedDateTime();
+                          Duration length = newTask.storedDuration();
+                          if (length == null ) {
+                            length = Duration();
+                          }
                           if (setTime == null ) {
                             setTime = DateTime.now().add(Duration(minutes: 1));
                           }
@@ -172,7 +173,6 @@ class _AddTaskState extends State<AddTask> {
                           String time = DateFormat('Hm').format(setTime).toString();
                           String description = newTask.storedDes();
                           bool notify = newTask.storedNotify();
-                          int length = 1; //TODO get length of task from drop down list
                           Task tempTask = Task(index: index, name: name, time: time, description: (description != null ? description : ""), notify: notify, isComplete: false, isOverdue: false, isArchived: false, isExpired: false, opacity: 1, dt: setTime, length: length);
                           int id = await widget.tasksBloc.addTaskToDatabase(tempTask);
                           if (tempTask.notify) {

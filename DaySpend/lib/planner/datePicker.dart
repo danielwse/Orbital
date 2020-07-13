@@ -5,22 +5,24 @@ import 'package:intl/intl.dart';
 import 'package:nice_button/NiceButton.dart';
 import 'package:provider/provider.dart';
 
-class PickerButton extends StatefulWidget {
+class DatePickerButton extends StatefulWidget {
   final DateTime initDateTime;
-  PickerButton({this.initDateTime});
+  DatePickerButton({this.initDateTime});
 
   @override
-  _PickerButtonState createState() => _PickerButtonState();
+  _DatePickerButtonState createState() => _DatePickerButtonState();
 }
 
-class _PickerButtonState extends State<PickerButton> {
+class _DatePickerButtonState extends State<DatePickerButton> {
   DateTime newDateTime;
   DateTime tempOldDateTime;
+  DateTime base;
 
   @override
   void initState() {
     newDateTime = !widget.initDateTime.isBefore(DateTime.now())? widget.initDateTime : DateTime.now();
     tempOldDateTime = !widget.initDateTime.isBefore(DateTime.now())? widget.initDateTime : DateTime.now();
+    base = !widget.initDateTime.isBefore(DateTime.now())? widget.initDateTime : DateTime.now();
     return super.initState();
   }
 
@@ -73,7 +75,7 @@ class _PickerButtonState extends State<PickerButton> {
                           },
                           use24hFormat: true,
                           minuteInterval: 1,
-                          minimumDate: DateTime.now(),
+                          minimumDate: base,
                           maximumDate: DateTime.now().add(Duration(days: 6)),
                         ),
                       ),

@@ -1,6 +1,6 @@
 import 'package:DaySpend/database/DatabaseBloc.dart';
 import 'package:DaySpend/fonts/header.dart';
-import 'package:DaySpend/planner/picker.dart';
+import 'package:DaySpend/planner/datePicker.dart';
 import 'package:DaySpend/planner/task.dart';
 import 'package:DaySpend/planner/widget_functions.dart';
 import 'package:fab_circular_menu/fab_circular_menu.dart';
@@ -13,6 +13,7 @@ import 'package:nice_button/NiceButton.dart';
 import 'package:provider/provider.dart';
 
 import 'day2index.dart';
+import 'durationPicker.dart';
 
 class EditButton extends StatefulWidget {
   final TextEditingController nameEditor;
@@ -28,12 +29,13 @@ class EditButton extends StatefulWidget {
   final bool taskComplete;
   final bool taskOverdue;
   final Task oldTask;
+  final Duration taskLength;
   final GlobalKey<FabCircularMenuState> menu;
   final TasksBloc tasksBloc;
   final Function enableNotification;
   final Function disableNotification;
 
-  EditButton({this.slidableController, this.taskName, this.taskIndex, this.taskTime, this.taskDT, this.taskDes, this.taskNotify, this.taskComplete, this.taskOverdue, this.nameEditor, this.desEditor, this.oldTask, this.taskID, this.menu, this.tasksBloc, this.enableNotification, this.disableNotification});
+  EditButton({this.slidableController, this.taskName, this.taskIndex, this.taskTime, this.taskDT, this.taskDes, this.taskNotify, this.taskComplete, this.taskOverdue, this.nameEditor, this.desEditor, this.oldTask, this.taskID, this.menu, this.tasksBloc, this.enableNotification, this.disableNotification, this.taskLength});
 
   @override
   _EditButtonState createState() => _EditButtonState();
@@ -74,61 +76,57 @@ class _EditButtonState extends State<EditButton> {
                         ),
                         child: Column(
                           children: <Widget>[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                Container(
-                                  width: MediaQuery.of(context).copyWith().size.width/2,
-                                  margin: EdgeInsets.symmetric(vertical: 10),
-                                  child: Row(
-                                    children: <Widget>[
-                                      Header(
-                                        weight: FontWeight.bold,
-                                        text: "Set time:",
-                                        color: Colors.black,
-                                        size: MediaQuery.of(context).copyWith().size.width/40,
-                                      ),
-                                      PickerButton(
-                                        initDateTime: widget.taskDT,
-                                      ),
-                                    ],
+                            Container(
+                              margin: EdgeInsets.only(bottom: 20),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Header(
+                                    weight: FontWeight.bold,
+                                    text: "Toggle reminder: ",
+                                    color: Colors.black,
+                                    size: MediaQuery.of(context).copyWith().size.width/40,
                                   ),
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(left: 12),
-                                  width: MediaQuery.of(context).copyWith().size.width/3,
-                                  child: Row(
-                                    children: <Widget>[
-                                      Header(
-                                        weight: FontWeight.bold,
-                                        text: "Notification: ",
-                                        color: Colors.black,
-                                        size: MediaQuery.of(context).copyWith().size.width/40,
-                                      ),
-                                      FSwitch(
-                                        open: Provider.of<PlannerWidgetFunctions>(context).storedNotify(),
-                                        width: 48,
-                                        height: 28,
-                                        openColor: Colors.teal,
-                                        onChanged: (v) {
-                                          Provider.of<PlannerWidgetFunctions>(context).changeNotify(!Provider.of<PlannerWidgetFunctions>(context).storedNotify());
-                                        },
-                                        closeChild: Icon(
-                                          Icons.notifications_off,
-                                          size: 12,
-                                          color: Colors.brown,
-                                        ),
-                                        openChild: Icon(
-                                          Icons.notifications,
-                                          size: 12,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ],
+                                  FSwitch(
+                                    open: Provider.of<PlannerWidgetFunctions>(context).storedNotify(),
+                                    width: 48,
+                                    height: 28,
+                                    openColor: Colors.teal,
+                                    onChanged: (v) {
+                                      Provider.of<PlannerWidgetFunctions>(context).changeNotify(!Provider.of<PlannerWidgetFunctions>(context).storedNotify());
+                                    },
+                                    closeChild: Icon(
+                                      Icons.notifications_off,
+                                      size: 12,
+                                      color: Colors.brown,
+                                    ),
+                                    openChild: Icon(
+                                      Icons.notifications,
+                                      size: 12,
+                                      color: Colors.white,
+                                    ),
                                   ),
+                                ],
+                              ),
+                            ),
+                            ConstrainedBox(
+                              constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width),
+                              child: Container(
+                                margin: EdgeInsets.fromLTRB(0, 10, 0, 25),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Header(
+                                      weight: FontWeight.bold,
+                                      text: "Set time & duration:",
+                                      color: Colors.black,
+                                      size: MediaQuery.of(context).copyWith().size.width/40,
+                                    ),
+                                    DatePickerButton(initDateTime: widget.taskDT),
+                                    DurationPickerButton(initDuration: widget.taskLength),
+                                  ],
                                 ),
-                              ],
+                              ),
                             ),
                             Container(
                               height: 50,
@@ -197,8 +195,12 @@ class _EditButtonState extends State<EditButton> {
                                   name = widget.taskName;
                                 }
                                 DateTime setTime = Provider.of<PlannerWidgetFunctions>(context).storedDateTime();
+                                Duration length = Provider.of<PlannerWidgetFunctions>(context).storedDuration();
+                                if (length == null ) {
+                                  length = widget.taskLength;
+                                }
                                 if (setTime == null ) {
-                                  setTime = DateTime.now().add(Duration(minutes: 1));
+                                  setTime = widget.taskDT;
                                 }
                                 if (setTime.isBefore(DateTime.now())){
                                   setTime = DateTime.now().add(Duration(minutes: 1));
@@ -210,7 +212,6 @@ class _EditButtonState extends State<EditButton> {
                                   description = widget.taskDes;
                                 }
                                 bool notify = Provider.of<PlannerWidgetFunctions>(context).storedNotify();
-                                int length = 1; //TODO fetch length from drop down list
                                 if (name != null && name.replaceAll(' ', '').length!=0) {
                                   widget.tasksBloc.removeTaskFromDatabase(widget.oldTask.id);
                                   if (widget.oldTask.notify) {

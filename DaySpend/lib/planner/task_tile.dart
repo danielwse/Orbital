@@ -10,6 +10,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:fswitch/fswitch.dart';
+import 'package:intl/intl.dart';
 import 'day2index.dart';
 
 class TaskTile extends StatefulWidget {
@@ -24,6 +25,7 @@ class TaskTile extends StatefulWidget {
   final String taskDes;
   final bool taskNotify;
   final bool taskComplete;
+  final Duration taskLength;
   final bool taskOverdue;
   final Function notifyCallback;
   final Function completeCallback;
@@ -43,7 +45,6 @@ class TaskTile extends StatefulWidget {
   final Function taskWidgetStoredNotify;
   final bool taskArchived;
   final bool taskExpired;
-  final int taskLength;
 
   TaskTile({this.tileColor, this.taskIndex,this.taskName,this.taskTime,this.taskDT, this.taskDes,this.taskNotify, this.taskComplete, this.taskOverdue, this.notifyCallback, this.completeCallback, this.overdueCallback, this.removeCallback, this.archiveCallback, this.slidable, this.rescheduleCallback, this.nameEditor, this.desEditor, this.currentTask, this.taskID, this.menu, this.tasksBloc, this.enableNotification, this.disableNotification, this.taskWidgetResetAllTask, this.taskWidgetChangeNotify, this.taskWidgetStoredNotify, this.mode, this.taskArchived, this.taskExpired, this.taskLength});
 
@@ -55,7 +56,7 @@ class _TaskTileState extends State<TaskTile> {
   @override
   Widget build(BuildContext context) {
     Timer.periodic(Duration(seconds: 1), (Timer t) {
-      if (!widget.taskComplete && widget.taskDT.add(Duration(hours: widget.taskLength)).isBefore(DateTime.now())) {
+      if (!widget.taskComplete && widget.taskDT.add(widget.taskLength).isBefore(DateTime.now())) {
         widget.overdueCallback(t); //passed due
         try {
           t.cancel();
@@ -225,6 +226,7 @@ class _TaskTileState extends State<TaskTile> {
         taskIndex: widget.taskIndex,
         menu: widget.menu,
         tasksBloc: widget.tasksBloc,
+        taskLength: widget.taskLength,
       );
     }
   }
@@ -271,7 +273,7 @@ class _TaskTileState extends State<TaskTile> {
                           children: <Widget>[
                             Container(
                               child: Text(
-                                switchDays(widget.taskIndex) + " - " + widget.taskTime,
+                                switchDays(widget.taskIndex) + ", " + widget.taskTime + "\n" + widget.taskLength.toString().split(":")[0] + "h " + widget.taskLength.toString().split(":")[1] + "m",
                                 style: TextStyle(
                                     fontSize: 14,
                                     color: Colors.blueGrey,
