@@ -17,12 +17,14 @@ class _DatePickerButtonState extends State<DatePickerButton> {
   DateTime newDateTime;
   DateTime tempOldDateTime;
   DateTime base;
+  DateTime ref;
 
   @override
   void initState() {
-    newDateTime = !widget.initDateTime.isBefore(DateTime.now())? widget.initDateTime : DateTime.now();
+    ref = widget.initDateTime;
+    newDateTime = widget.initDateTime;
     tempOldDateTime = !widget.initDateTime.isBefore(DateTime.now())? widget.initDateTime : DateTime.now();
-    base = !widget.initDateTime.isBefore(DateTime.now())? widget.initDateTime : DateTime.now();
+    base = DateTime.now();
     return super.initState();
   }
 
@@ -74,9 +76,8 @@ class _DatePickerButtonState extends State<DatePickerButton> {
                             });
                           },
                           use24hFormat: true,
-                          minuteInterval: 1,
                           minimumDate: base,
-                          maximumDate: DateTime.now().add(Duration(days: 6)),
+                          maximumDate: base.add(Duration(days: 6)),
                         ),
                       ),
                       Container(
@@ -90,6 +91,12 @@ class _DatePickerButtonState extends State<DatePickerButton> {
                           textColor: Colors.white,
                           background: Colors.teal,
                           onPressed: () {
+                            newDateTime = !newDateTime.isBefore(DateTime.now()) ? newDateTime : DateTime.now();
+                            DateTime catchBug = DateTime(base.year,base.month,base.day,ref.hour,ref.minute).add(Duration(days: 1));
+                            if (catchBug == newDateTime) {
+                              newDateTime = DateTime.now().add(Duration(minutes: 1));
+                            }
+                            print("(Edit) Set time is: " + newDateTime.toString());
                             Provider.of<PlannerWidgetFunctions>(context).changeDateTime(newDateTime);
                             tempOldDateTime = newDateTime;
                             Navigator.pop(context);

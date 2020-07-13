@@ -122,7 +122,7 @@ class _EditButtonState extends State<EditButton> {
                                       color: Colors.black,
                                       size: MediaQuery.of(context).copyWith().size.width/40,
                                     ),
-                                    DatePickerButton(initDateTime: widget.taskDT),
+                                    DatePickerButton(initDateTime: widget.taskDT.isBefore(DateTime.now()) ? DateTime.now(): widget.taskDT),
                                     DurationPickerButton(initDuration: widget.taskLength),
                                   ],
                                 ),
