@@ -143,15 +143,15 @@ class _TaskListState extends State<TaskList> {
                           print(task.name+" overdue");
                         }
                       },
-                      removeCallback: () {
+                      removeCallback: () async {
                         widget.fabKey.currentState.close();
                         widgetData.setOpacity(task);
                         if (task.notify) {
                           widget.tasksBloc.toggleNotification(task);
                           widget.disableNotificationFn(task.id);
                         }
-                        Future.delayed(Duration(milliseconds: 300), () {
-                          widget.tasksBloc.removeTaskFromDatabase(task.id);
+                        Future.delayed(Duration(milliseconds: 300), () async {
+                          await widget.tasksBloc.removeTaskFromDatabase(task.id);
                         });
                       },
                       archiveCallback: () {

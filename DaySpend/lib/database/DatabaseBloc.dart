@@ -190,7 +190,7 @@ class TasksBloc implements Bloc {
     return k;
   }
 
-  removeTaskFromDatabase(int id) async {
+  Future removeTaskFromDatabase(int id) async {
     await _tasksRepository.removeTask(id);
     getTasks();
   }

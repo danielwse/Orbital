@@ -89,10 +89,9 @@ class TasksDao {
     return null;
   }
 
-  Future<int> removeTask(int id) async {
+  Future removeTask(int id) async {
     final db = await dbProvider.database;
-    var result = await db.delete("Tasks", where: 'id = ?', whereArgs: [id]);
-    return result;
+    await db.delete("Tasks", where: 'id = ?', whereArgs: [id]).then((value) => print("deleted task"));
   }
 
   Future<List<Task>> getAllTasks() async {

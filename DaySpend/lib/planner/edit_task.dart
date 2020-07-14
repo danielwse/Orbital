@@ -194,32 +194,32 @@ class _EditButtonState extends State<EditButton> {
                                 if (name == null) {
                                   name = widget.taskName;
                                 }
-                                DateTime setTime = Provider.of<PlannerWidgetFunctions>(context).storedDateTime();
-                                Duration length = Provider.of<PlannerWidgetFunctions>(context).storedDuration();
-                                if (length == null ) {
-                                  length = widget.taskLength;
-                                }
-                                if (setTime == null ) {
-                                  setTime = widget.taskDT;
-                                }
-                                if (setTime.isBefore(DateTime.now())){
-                                  setTime = DateTime.now().add(Duration(minutes: 1));
-                                }
-                                String index = getIndex(setTime);
-                                String time = DateFormat('Hm').format(setTime).toString();
-                                String description = Provider.of<PlannerWidgetFunctions>(context).storedDes();
-                                if (description == null) {
-                                  description = widget.taskDes;
-                                }
-                                bool notify = Provider.of<PlannerWidgetFunctions>(context).storedNotify();
                                 if (name != null && name.replaceAll(' ', '').length!=0) {
+                                  DateTime setTime = Provider.of<PlannerWidgetFunctions>(context).storedDateTime();
+                                  if (setTime == null ) {
+                                    setTime = widget.taskDT;
+                                  }
+                                  if (setTime.isBefore(DateTime.now())){
+                                    setTime = DateTime.now().add(Duration(minutes: 1));
+                                  }
+                                  Duration length = Provider.of<PlannerWidgetFunctions>(context).storedDuration();
+                                  if (length == null ) {
+                                    length = widget.taskLength;
+                                  }
+                                  String index = getIndex(setTime);
+                                  String time = DateFormat('Hm').format(setTime).toString();
+                                  String description = Provider.of<PlannerWidgetFunctions>(context).storedDes();
+                                  if (description == null) {
+                                    description = widget.taskDes;
+                                  }
+                                  bool notify = Provider.of<PlannerWidgetFunctions>(context).storedNotify();
                                   widget.tasksBloc.removeTaskFromDatabase(widget.oldTask.id);
                                   if (widget.oldTask.notify) {
                                     widget.disableNotification(widget.oldTask.id);
                                   }
                                   Task tempTask = Task(index: index, name: name, time: time, description: (description != null ? description : ""), notify: notify, isComplete: false, isOverdue: false, isArchived: false, isExpired: false, opacity: 1, dt: setTime, length: length);
                                   int id = await widget.tasksBloc.addTaskToDatabase(tempTask);
-                                  print(id);
+                                  print("New task id" + id.toString());
                                   if (tempTask.notify) {
                                     widget.enableNotification(id, tempTask.name, tempTask.dt);
                                   }

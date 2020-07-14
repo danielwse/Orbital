@@ -53,45 +53,58 @@ class TaskTile extends StatefulWidget {
 }
 
 class _TaskTileState extends State<TaskTile> {
+  Timer counter;
+
   @override
   Widget build(BuildContext context) {
-    Timer.periodic(Duration(seconds: 1), (Timer t) {
-      if (widget.taskDT.add(widget.taskLength).isBefore(DateTime.now())) {
-        widget.overdueCallback(t); //passed due
-        try {
-          t.cancel();
-        } on Exception {
-          print("User not on task page");
-        }
+    if (!widget.taskExpired || !widget.taskComplete || !widget.taskOverdue) {
+      if (counter!= null) {
+        print(widget.taskID.toString() + ": found existing timer");
+        counter.cancel();
       }
-      if (widget.taskComplete && widget.taskExpired && !widget.taskArchived) {
-        widget.archiveCallback(); // completed after overdued and expired
-        try {
-          t.cancel();
-        } on Exception {
-          print("User not on task page");
+      print(widget.taskID.toString() + ": timer initiated");
+      counter = Timer.periodic(Duration(seconds: 1), (Timer t) {
+        if (widget.taskDT.add(widget.taskLength).isBefore(DateTime.now())) {
+          widget.overdueCallback(t); //passed due
+          try {
+            t.cancel();
+            print(widget.taskID.toString() + ": timer terminated");
+          } on Exception {
+            print("User not on task page");
+          }
         }
-      }
-      if (widget.taskDT.isBefore(DateTime.now()) && widget.taskNotify) {
-        widget.tasksBloc.toggleNotification(widget.currentTask); //push notification
-        print(widget.taskID.toString() + " - " + widget.currentTask.id.toString());
-        try {
-          t.cancel();
-        } on Exception {
-          print("User not on task page");
+        if (widget.taskComplete && widget.taskExpired && !widget.taskArchived) {
+          widget.archiveCallback(); // completed after overdued and expired
+          try {
+            t.cancel();
+            print(widget.taskID.toString() + ": timer terminated");
+          } on Exception {
+            print("User not on task page");
+          }
         }
-      }
-      DateTime now = DateTime.now();
-      if ((!widget.taskExpired) && (widget.taskDT.isBefore(DateTime(now.year, now.month, now.day)))) {
-        widget.tasksBloc.toggleExpired(widget.currentTask);
-        print(widget.taskName + " has expired");
-        try {
-          t.cancel();
-        } on Exception {
-          print("User not on task page");
+        if (widget.taskDT.isBefore(DateTime.now()) && widget.taskNotify) {
+          widget.tasksBloc.toggleNotification(widget.currentTask); //push notification
+          print(widget.taskID.toString() + " - " + widget.currentTask.id.toString());
+          try {
+            t.cancel();
+            print(widget.taskID.toString() + ": timer terminated");
+          } on Exception {
+            print("User not on task page");
+          }
         }
-      }
-    });
+        DateTime now = DateTime.now();
+        if ((!widget.taskExpired) && (widget.taskDT.isBefore(DateTime(now.year, now.month, now.day)))) {
+          widget.tasksBloc.toggleExpired(widget.currentTask);
+          print(widget.taskName + " has expired");
+          try {
+            t.cancel();
+            print(widget.taskID.toString() + ": timer terminated");
+          } on Exception {
+            print("User not on task page");
+          }
+        }
+      });
+    }
     double heightOfActions = 52;
     return Slidable(
       key: Key(widget.taskID.toString()),
@@ -170,7 +183,9 @@ class _TaskTileState extends State<TaskTile> {
             caption: 'Delete',
             color: Colors.blueGrey,
             icon: Icons.delete,
-            onTap: widget.removeCallback,
+            onTap: () {
+              widget.removeCallback();
+            },
           ),
         ),
         SizedBox(
@@ -254,7 +269,7 @@ class _TaskTileState extends State<TaskTile> {
                           children: <Widget>[
                             Container(
                               child: Text(
-                                DateFormat('yMd').format(widget.taskDT).toString() + "\n" + switchDays(widget.taskIndex) + "\n" + widget.taskTime + "\n" + widget.taskLength.toString().split(":")[0] + "h " + widget.taskLength.toString().split(":")[1] + "m",
+                                DateFormat('Md').format(widget.taskDT).toString() + "\n" + switchDays(widget.taskIndex) + "\n" + widget.taskTime + "\n" + widget.taskLength.toString().split(":")[0] + "h " + widget.taskLength.toString().split(":")[1] + "m",
                                 style: TextStyle(
                                     fontSize: 14,
                                     color: Colors.blueGrey,
