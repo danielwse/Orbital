@@ -2,8 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:DaySpend/expenses/database/DatabaseBloc.dart';
-import 'package:DaySpend/expenses/database/db_models.dart';
+import 'package:DaySpend/database/DatabaseBloc.dart';
+import 'package:DaySpend/database/db_models.dart';
 
 class AddExpense extends StatefulWidget {
   AddExpense({Key key}) : super(key: key);

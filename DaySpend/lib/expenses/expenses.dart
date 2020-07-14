@@ -2,8 +2,8 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:DaySpend/expenses/database/DatabaseBloc.dart';
-import 'package:DaySpend/expenses/database/db_models.dart';
+import 'package:DaySpend/database/DatabaseBloc.dart';
+import 'package:DaySpend/database/db_models.dart';
 import 'package:DaySpend/expenses/add_expense_popup.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:DaySpend/expenses/edit_category.dart';

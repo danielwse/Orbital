@@ -36,7 +36,7 @@ class DBProvider {
           ")");
       await db.execute("CREATE TABLE Categories ("
           "id INTEGER PRIMARY KEY AUTOINCREMENT,"
-          "name TEXT,"
+          "name TEXT UNIQUE,"
           "amount DOUBLE,"
           "budgetPercentage TEXT,"
           "color TEXT"

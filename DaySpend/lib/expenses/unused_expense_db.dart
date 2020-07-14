@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:DaySpend/expenses/database/db_models.dart';
+import 'package:DaySpend/database/db_models.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DBProvider {
@@ -73,7 +73,8 @@ class DBProvider {
     var res = await db.insert("Expenses", expense.toMap());
     return res;
   }
-Future<List<Variable>> getAllVariables() async {
+
+  Future<List<Variable>> getAllVariables() async {
     final db = await database;
     var res = await db.query("Variables");
     List<Variable> list =
@@ -117,8 +118,6 @@ Future<List<Variable>> getAllVariables() async {
   //   return list;
   // }
 
-  
-
   // deleteExpense(int id) async {
   //   final db = await database;
   //   return db.delete("Expense", where: "id = ?", whereArgs: [id]);
@@ -129,4 +128,3 @@ Future<List<Variable>> getAllVariables() async {
   //   db.rawDelete("Delete * from Expense");
   // }
 }
-

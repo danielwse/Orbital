@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:flutter_rounded_progress_bar/rounded_progress_bar_style.dart';
 import 'package:DaySpend/fonts/header.dart';
-import 'package:DaySpend/expenses/database/db_models.dart';
-import 'package:DaySpend/expenses/database/DatabaseBloc.dart';
+import 'package:DaySpend/database/db_models.dart';
+import 'package:DaySpend/database/DatabaseBloc.dart';
 
 class HomePageExpenses extends StatefulWidget {
   @override

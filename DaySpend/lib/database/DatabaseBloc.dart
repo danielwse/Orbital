@@ -1,9 +1,9 @@
 //CONTAINS ALL THE BLoCS
 import 'dart:async';
-import 'package:DaySpend/expenses/database/db_models.dart';
-import 'package:DaySpend/expenses/database/categories_db.dart';
-import 'package:DaySpend/expenses/database/variables_db.dart';
-import 'package:DaySpend/expenses/database/expenses_db.dart';
+import 'package:DaySpend/database/db_models.dart';
+import 'package:DaySpend/database/categories_db.dart';
+import 'package:DaySpend/database/variables_db.dart';
+import 'package:DaySpend/database/expenses_db.dart';
 
 abstract class Bloc {
   void dispose();
