@@ -45,8 +45,9 @@ class TaskTile extends StatefulWidget {
   final Function taskWidgetStoredNotify;
   final bool taskArchived;
   final bool taskExpired;
+  final Function updateTask;
 
-  TaskTile({this.tileColor, this.taskIndex,this.taskName,this.taskTime,this.taskDT, this.taskDes,this.taskNotify, this.taskComplete, this.taskOverdue, this.notifyCallback, this.completeCallback, this.overdueCallback, this.removeCallback, this.archiveCallback, this.slidable, this.rescheduleCallback, this.nameEditor, this.desEditor, this.currentTask, this.taskID, this.menu, this.tasksBloc, this.enableNotification, this.disableNotification, this.taskWidgetResetAllTask, this.taskWidgetChangeNotify, this.taskWidgetStoredNotify, this.mode, this.taskArchived, this.taskExpired, this.taskLength});
+  TaskTile({this.tileColor, this.taskIndex,this.taskName,this.taskTime,this.taskDT, this.taskDes,this.taskNotify, this.taskComplete, this.taskOverdue, this.notifyCallback, this.completeCallback, this.overdueCallback, this.removeCallback, this.archiveCallback, this.slidable, this.rescheduleCallback, this.nameEditor, this.desEditor, this.currentTask, this.taskID, this.menu, this.tasksBloc, this.enableNotification, this.disableNotification, this.taskWidgetResetAllTask, this.taskWidgetChangeNotify, this.taskWidgetStoredNotify, this.mode, this.taskArchived, this.taskExpired, this.taskLength, this.updateTask});
 
   @override
   _TaskTileState createState() => _TaskTileState();
@@ -204,6 +205,7 @@ class _TaskTileState extends State<TaskTile> {
       return IconSlideAction(caption: 'Due', color: Colors.amber, icon: Icons.access_time);
     } else {
       return EditButton(
+        updateTask: widget.updateTask,
         enableNotification: widget.enableNotification,
         disableNotification: widget.disableNotification,
         taskID: widget.taskID,

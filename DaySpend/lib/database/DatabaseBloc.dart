@@ -171,6 +171,7 @@ class CategoryBloc implements Bloc {
 }
 
 class TasksBloc implements Bloc {
+
   final _tasksRepository = TasksRepository();
   final _tasksController = StreamController<List<Task>>.broadcast();
 
@@ -192,6 +193,11 @@ class TasksBloc implements Bloc {
 
   Future removeTaskFromDatabase(int id) async {
     await _tasksRepository.removeTask(id);
+    getTasks();
+  }
+
+  updateTask(Task task, String index, String name, String time, String description, bool notify, DateTime dt, Duration duration) async {
+    await _tasksRepository.updateTask(task, index, name, time, description, notify, dt, duration);
     getTasks();
   }
 

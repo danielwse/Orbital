@@ -177,6 +177,16 @@ class _TaskListState extends State<TaskList> {
                       taskWidgetStoredNotify: () {
                         return widgetData.storedNotify();
                       },
+                      updateTask: (index, name, time, description, notify, dt, duration) async {
+                        if (task.notify) {
+                          print("disabled previous notification");
+                          widget.tasksBloc.toggleNotification(task);
+                          widget.disableNotificationFn(task.id);
+                        }
+                        Future.delayed(Duration(milliseconds: 300), () async {
+                          await widget.tasksBloc.updateTask(task, index, name, time, description, notify, dt, duration);
+                        });
+                      },
                     ),
                   );
                 },

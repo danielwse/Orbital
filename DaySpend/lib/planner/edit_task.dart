@@ -34,8 +34,9 @@ class EditButton extends StatefulWidget {
   final TasksBloc tasksBloc;
   final Function enableNotification;
   final Function disableNotification;
+  final Function updateTask;
 
-  EditButton({this.slidableController, this.taskName, this.taskIndex, this.taskTime, this.taskDT, this.taskDes, this.taskNotify, this.taskComplete, this.taskOverdue, this.nameEditor, this.desEditor, this.oldTask, this.taskID, this.menu, this.tasksBloc, this.enableNotification, this.disableNotification, this.taskLength});
+  EditButton({this.slidableController, this.taskName, this.taskIndex, this.taskTime, this.taskDT, this.taskDes, this.taskNotify, this.taskComplete, this.taskOverdue, this.nameEditor, this.desEditor, this.oldTask, this.taskID, this.menu, this.tasksBloc, this.enableNotification, this.disableNotification, this.taskLength, this.updateTask});
 
   @override
   _EditButtonState createState() => _EditButtonState();
@@ -195,6 +196,15 @@ class _EditButtonState extends State<EditButton> {
                                   name = widget.taskName;
                                 }
                                 if (name != null && name.replaceAll(' ', '').length!=0) {
+                                  String description = Provider.of<PlannerWidgetFunctions>(context).storedDes();
+                                  if (description == null) {
+                                    description = widget.taskDes;
+                                  }
+                                  Duration length = Provider.of<PlannerWidgetFunctions>(context).storedDuration();
+                                  if (length == null ) {
+                                    length = widget.taskLength;
+                                  }
+                                  bool notify = Provider.of<PlannerWidgetFunctions>(context).storedNotify();
                                   DateTime setTime = Provider.of<PlannerWidgetFunctions>(context).storedDateTime();
                                   if (setTime == null ) {
                                     setTime = widget.taskDT;
@@ -202,26 +212,12 @@ class _EditButtonState extends State<EditButton> {
                                   if (setTime.isBefore(DateTime.now())){
                                     setTime = DateTime.now().add(Duration(minutes: 1));
                                   }
-                                  Duration length = Provider.of<PlannerWidgetFunctions>(context).storedDuration();
-                                  if (length == null ) {
-                                    length = widget.taskLength;
-                                  }
                                   String index = getIndex(setTime);
                                   String time = DateFormat('Hm').format(setTime).toString();
-                                  String description = Provider.of<PlannerWidgetFunctions>(context).storedDes();
-                                  if (description == null) {
-                                    description = widget.taskDes;
-                                  }
-                                  bool notify = Provider.of<PlannerWidgetFunctions>(context).storedNotify();
-                                  widget.tasksBloc.removeTaskFromDatabase(widget.oldTask.id);
-                                  if (widget.oldTask.notify) {
-                                    widget.disableNotification(widget.oldTask.id);
-                                  }
-                                  Task tempTask = Task(index: index, name: name, time: time, description: (description != null ? description : ""), notify: notify, isComplete: false, isOverdue: false, isArchived: false, isExpired: false, opacity: 1, dt: setTime, length: length);
-                                  int id = await widget.tasksBloc.addTaskToDatabase(tempTask);
-                                  print("New task id" + id.toString());
-                                  if (tempTask.notify) {
-                                    widget.enableNotification(id, tempTask.name, tempTask.dt);
+                                  widget.updateTask(index, name, time, description, notify, setTime, length);
+                                  if (notify) {
+                                    print("notification enabled for updated task");
+                                    widget.enableNotification(widget.taskID, name, setTime);
                                   }
                                 }
                                 Navigator.pop(context);

@@ -109,6 +109,15 @@ class TasksDao {
     print("rescheduled: "+ tempTask.name + "@ " + switchDays(tempTask.index) + " - " + tempTask.time + " - id: " + tempTask.id.toString());
   }
 
+  //check if got notification before and after this function
+  void updateTask(Task task, String index, String name, String time, String description, bool notify, DateTime dt, Duration duration) {
+    final tempTask = Task(id: task.id, index: index, name: name, time: time, description: description, notify: notify, isComplete: false, isOverdue: false, isArchived: false, isExpired: false, dt: dt, length: duration);
+    print("deleted task with id "+ task.id.toString());
+    removeTask(task.id);
+    newTask(tempTask);
+    print("updated: "+ tempTask.name + "@ " + switchDays(tempTask.index) + " - " + tempTask.time + " - id: " + tempTask.id.toString());
+  }
+
   void removedExpired() async {
     final db = await dbProvider.database;
     var prevDay = await db.query("TimeValues");
@@ -153,4 +162,5 @@ class TasksRepository {
   toggleArchived(Task task) => tasksDao.toggleArchived(task);
   toggleExpired(Task task) => tasksDao.toggleExpired(task);
   removeExpired() => tasksDao.removedExpired();
+  updateTask(Task task, String index, String name, String time, String description, bool notify, DateTime dt, Duration duration) => tasksDao.updateTask(task, index, name, time, description, notify, dt, duration);
 }
