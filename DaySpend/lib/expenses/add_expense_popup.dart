@@ -23,14 +23,11 @@ class _AddExpenseState extends State<AddExpense> {
             mini: true,
             backgroundColor: Colors.lightBlue,
             onPressed: () {
-              var bottomSheetController = showBottomSheet(
+              showModalBottomSheet(
+                  isScrollControlled: true,
                   context: context,
                   builder: (context) => BottomSheetWidget(
                       new ExpensesBloc(), new CategoryBloc()));
-              showFloatingActionButton(false);
-              bottomSheetController.closed.then((value) {
-                showFloatingActionButton(true);
-              });
             },
           )
         : Container();
@@ -56,7 +53,8 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        margin: const EdgeInsets.only(top: 5, left: 15, right: 15),
+        padding:
+            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         height: 350,
         child: SingleChildScrollView(
           child: Column(

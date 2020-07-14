@@ -184,7 +184,8 @@ class _ExpensesState extends State<Expenses> {
   void _showAddCategory(BuildContext context) {
     SizeConfig().init(context);
 
-    showBottomSheet(
+    showModalBottomSheet(
+        isScrollControlled: true,
         context: context,
         builder: (builder) {
           return FutureBuilder(
