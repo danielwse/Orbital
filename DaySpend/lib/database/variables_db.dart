@@ -12,16 +12,16 @@ class VariablesDao {
     maxSpend = await db
         .rawQuery('SELECT value FROM Variables')
         .then((value) => value[0]['value']);
-        return maxSpend;
+    return maxSpend;
   }
 
   Future<int> updateMaxSpend(String maximumSpend) async {
     if (maximumSpend != null) {
-    final db = await dbProvider.database;
-    maxSpend = maximumSpend;
-    var res = await db
-        .update("Variables", {"type": "MaxSpend", "value": maximumSpend});
-    return res;
+      final db = await dbProvider.database;
+      maxSpend = maximumSpend;
+      var res = await db
+          .update("Variables", {"type": "MaxSpend", "value": maximumSpend});
+      return res;
     }
     return null;
   }
@@ -38,6 +38,7 @@ class VariablesDao {
 class VariablesRepository {
   final variablesDao = VariablesDao();
   Future getMaxSpend() => variablesDao.getMaxSpend();
-  Future updateMaxSpend(String maximumSpend) => variablesDao.updateMaxSpend(maximumSpend);
+  Future updateMaxSpend(String maximumSpend) =>
+      variablesDao.updateMaxSpend(maximumSpend);
   Future getAllVariables() => variablesDao.getAllVariables();
 }

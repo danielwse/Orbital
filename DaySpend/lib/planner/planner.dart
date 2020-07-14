@@ -17,7 +17,6 @@ class Planner extends StatefulWidget {
 }
 
 class _PlannerState extends State<Planner> {
-
   @override
   Widget build(BuildContext context) {
     // ignore: missing_required_param
@@ -25,8 +24,12 @@ class _PlannerState extends State<Planner> {
       builder: (context) => PlannerWidgetFunctions(),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: TaskScreen(disableNotificationCallback: widget.disableNotificationFn, notificationCallback: widget.notificationFn,
-            slidable: slidable, nameTextControl: textControllerName, desTextControl: textControllerDes),
+        home: TaskScreen(
+            disableNotificationCallback: widget.disableNotificationFn,
+            notificationCallback: widget.notificationFn,
+            slidable: slidable,
+            nameTextControl: textControllerName,
+            desTextControl: textControllerDes),
       ),
     );
   }

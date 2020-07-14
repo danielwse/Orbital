@@ -12,6 +12,16 @@ String expenseToJson(Expense data) {
   return json.encode(dyn);
 }
 
+Categories categoriesFromJson(String str) {
+  final jsonData = json.decode(str);
+  return Categories.fromMap(jsonData);
+}
+
+String categoriesToJson(Categories data) {
+  final dyn = data.toMap();
+  return json.encode(dyn);
+}
+
 class Expense {
   int id;
   String description;
@@ -69,20 +79,23 @@ class Categories {
   String name;
   double amount;
   String budgetPercentage;
+  String color;
 
-  Categories({this.id, this.name, this.amount, this.budgetPercentage});
+  Categories(
+      {this.id, this.name, this.amount, this.budgetPercentage, this.color});
 
   factory Categories.fromMap(Map<String, dynamic> json) => new Categories(
-        id: json["id"],
-        name: json["name"],
-        amount: json["amount"],
-        budgetPercentage: json["budgetPercentage"],
-      );
+      id: json["id"],
+      name: json["name"],
+      amount: json["amount"],
+      budgetPercentage: json["budgetPercentage"],
+      color: json["color"]);
 
   Map<String, dynamic> toMap() => {
         "id": id,
         "name": name,
         "amount": amount,
         "budgetPercentage": budgetPercentage,
+        "color": color
       };
 }

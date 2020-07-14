@@ -62,6 +62,16 @@ class ExpensesDao {
     return res;
   }
 
+  Future<int> changeDate(String newDate, int id) async {
+    final db = await dbProvider.database;
+    var res = await db.rawUpdate('''
+    UPDATE Expenses 
+    SET date = '$newDate'
+    WHERE id = $id
+    ''');
+    return res;
+  }
+
   Future getExpensesByCategory(String category) async {
     final db = await dbProvider.database;
     final List<Map<String, dynamic>> maps = await db.rawQuery('''
@@ -95,4 +105,6 @@ class ExpensesRepository {
       expensesDao.changeDescription(newDescription, id);
   Future changeAmount(double newAmount, int id) =>
       expensesDao.changeAmount(newAmount, id);
+  Future changeDate(String newDate, int id) =>
+      expensesDao.changeDate(newDate, id);
 }

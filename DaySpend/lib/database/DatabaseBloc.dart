@@ -59,6 +59,11 @@ class ExpensesBloc implements Bloc {
     getExpenses();
   }
 
+  changeDate(String newDate, int id) async {
+    await _expensesRepository.changeDate(newDate, id);
+    getExpenses();
+  }
+
   dispose() {
     _expensesController.close();
   }
@@ -104,7 +109,11 @@ class VariablesBloc implements Bloc {
 class CategoryBloc implements Bloc {
   final _categoryRepository = CategoryRepository();
   final _categoryController = StreamController<List<Categories>>.broadcast();
+  final _categoriesWithBudgetController =
+      StreamController<Categories>.broadcast();
 
+  get categoriesWithBudget => _categoriesWithBudgetController.stream
+      .where((event) => event.budgetPercentage != "Not Set");
   get categories => _categoryController.stream;
 
   CategoryBloc() {
@@ -143,6 +152,12 @@ class CategoryBloc implements Bloc {
     return res;
   }
 
+  Future<String> getCategoryColor(String categoryName) async {
+    var res = await _categoryRepository.getCategoryColor(categoryName);
+    getCategories();
+    return res;
+  }
+
   renameCategory(String oldName, String newName) async {
     await _categoryRepository.renameCategory(oldName, newName);
     getCategories();
@@ -165,13 +180,19 @@ class CategoryBloc implements Bloc {
     getCategories();
   }
 
+  Future<bool> categoryExist(String categoryName) async {
+    var res = await _categoryRepository.categoryExist(categoryName);
+    getCategories();
+    return res;
+  }
+
   dispose() {
     _categoryController.close();
+    _categoriesWithBudgetController.close();
   }
 }
 
 class TasksBloc implements Bloc {
-
   final _tasksRepository = TasksRepository();
   final _tasksController = StreamController<List<Task>>.broadcast();
 
@@ -196,8 +217,10 @@ class TasksBloc implements Bloc {
     getTasks();
   }
 
-  updateTask(Task task, String index, String name, String time, String description, bool notify, DateTime dt, Duration duration) async {
-    await _tasksRepository.updateTask(task, index, name, time, description, notify, dt, duration);
+  updateTask(Task task, String index, String name, String time,
+      String description, bool notify, DateTime dt, Duration duration) async {
+    await _tasksRepository.updateTask(
+        task, index, name, time, description, notify, dt, duration);
     getTasks();
   }
 

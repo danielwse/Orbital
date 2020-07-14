@@ -29,6 +29,7 @@ class _EditExpenseState extends State<EditExpense> {
   bool isButtonEnabled = false;
   DateTime pickedDate = DateTime.now();
   String formattedDate;
+  bool dateChanged = false;
 
   @override
   void dispose() {
@@ -42,7 +43,7 @@ class _EditExpenseState extends State<EditExpense> {
   void initState() {
     _renameController.text = widget.initialDescription;
     _amountController.text = widget.initialAmount.toString();
-    formattedDate =  widget.date;
+    formattedDate = widget.date;
     return super.initState();
   }
 
@@ -64,11 +65,16 @@ class _EditExpenseState extends State<EditExpense> {
     });
   }
 
+  void dateChange() {
+    setState(() {
+      dateChanged = true;
+    });
+  }
+
   void isEmpty() {
     if ((_amountController.text.isEmpty) || (_renameController.text.isEmpty)) {
       isButtonEnabled = false;
-    }
-    else {
+    } else {
       isButtonEnabled = true;
     }
   }
@@ -79,11 +85,16 @@ class _EditExpenseState extends State<EditExpense> {
     return result;
   }
 
+  static DateTime convertStringtoDatetime(String date) {
+    String result =
+        date.substring(0, 4) + date.substring(5, 7) + date.substring(8);
+    return DateTime.parse(result);
+  }
 
   Widget _showDatePicker() {
     return MaterialButton(
       child: Text(
-        convertDate(pickedDate),
+        formattedDate,
         style: TextStyle(color: Colors.white),
       ),
       color: Colors.orange,
@@ -93,25 +104,24 @@ class _EditExpenseState extends State<EditExpense> {
             builder: (BuildContext builder) {
               return Container(
                 child: CupertinoDatePicker(
-        initialDateTime: DateTime.now(),
-        onDateTimeChanged: (DateTime newdate) {
-          pickedDate = newdate;
-          setState(() {
-            formattedDate = convertDate(pickedDate);
-          });
-        },
-        use24hFormat: true,
-        maximumDate: new DateTime(DateTime.now().year, DateTime.now().month + 3,
-            DateTime.now().day + 14),
-        minimumYear: DateTime.now().year,
-        maximumYear: DateTime.now().year,
-        mode: CupertinoDatePickerMode.date),
+                    initialDateTime: convertStringtoDatetime(widget.date),
+                    onDateTimeChanged: (DateTime newDate) {
+                      dateChange();
+                      formattedDate = convertDate(newDate);
+                      isEmpty();
+                    },
+                    use24hFormat: true,
+                    maximumDate: DateTime.now(),
+                    minimumYear: DateTime.now().year,
+                    maximumYear: DateTime.now().year,
+                    mode: CupertinoDatePickerMode.date),
                 height: MediaQuery.of(context).copyWith().size.height / 3,
               );
             });
       },
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -152,36 +162,57 @@ class _EditExpenseState extends State<EditExpense> {
                           Column(
                             children: <Widget>[
                               FlatButton(
-                                  onPressed: isButtonEnabled ? () {
-                                    if (descriptionChanged) {
-                                      widget.expensesBloc.changeDescription(
-                                        _renameController.text,
-                                        widget.expenseID,
-                                      );
-                                    }
-                                    if (amountChanged) {
-                                      widget.expensesBloc.changeAmount(
-                                          double.parse(_amountController.text),
-                                          widget.expenseID);
-                                          if (!categoryChanged) {
-                                      widget.categoryBloc
-                                          .removeAmountFromCategory(
-                                              widget.initialAmount,
-                                              widget.category);
-                                      widget.categoryBloc.addAmountToCategory(
-                                          double.parse(_amountController.text),
-                                          widget.category);
+                                  onPressed: isButtonEnabled
+                                      ? () {
+                                          if (dateChanged) {
+                                            widget.expensesBloc.changeDate(
+                                                formattedDate,
+                                                widget.expenseID);
                                           }
-                                    }
-                                    if (categoryChanged) {
-                                      widget.expensesBloc.changeExpenseCategory(_currentCategory.name, widget.expenseID);
-                                      
-                                      widget.categoryBloc.removeAmountFromCategory(widget.initialAmount, widget.category);
-                                      widget.categoryBloc.addAmountToCategory(double.parse(_amountController.text), _currentCategory.name); 
-                                      
-                                    }
-                                    Navigator.of(context).pop();
-                                  } : null,
+                                          if (descriptionChanged) {
+                                            widget.expensesBloc
+                                                .changeDescription(
+                                              _renameController.text,
+                                              widget.expenseID,
+                                            );
+                                          }
+                                          if (amountChanged) {
+                                            widget.expensesBloc.changeAmount(
+                                                double.parse(
+                                                    _amountController.text),
+                                                widget.expenseID);
+                                            if (!categoryChanged) {
+                                              widget.categoryBloc
+                                                  .removeAmountFromCategory(
+                                                      widget.initialAmount,
+                                                      widget.category);
+                                              widget.categoryBloc
+                                                  .addAmountToCategory(
+                                                      double.parse(
+                                                          _amountController
+                                                              .text),
+                                                      widget.category);
+                                            }
+                                          }
+                                          if (categoryChanged) {
+                                            widget.expensesBloc
+                                                .changeExpenseCategory(
+                                                    _currentCategory.name,
+                                                    widget.expenseID);
+
+                                            widget.categoryBloc
+                                                .removeAmountFromCategory(
+                                                    widget.initialAmount,
+                                                    widget.category);
+                                            widget.categoryBloc
+                                                .addAmountToCategory(
+                                                    double.parse(
+                                                        _amountController.text),
+                                                    _currentCategory.name);
+                                          }
+                                          Navigator.of(context).pop();
+                                        }
+                                      : null,
                                   child: Icon(Icons.done, size: 40)),
                               Text('Done')
                             ],

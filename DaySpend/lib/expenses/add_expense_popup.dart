@@ -105,7 +105,7 @@ class _DecoratedTextFieldState extends State<DecoratedTextField> {
   void initState() {
     formattedDate = convertDate(pickedDate);
     super.initState();
-  } 
+  }
 
   @override
   void dispose() {
@@ -162,7 +162,6 @@ class _DecoratedTextFieldState extends State<DecoratedTextField> {
     return result;
   }
 
-
   Widget _showDatePicker() {
     return MaterialButton(
       child: Text(
@@ -176,19 +175,18 @@ class _DecoratedTextFieldState extends State<DecoratedTextField> {
             builder: (BuildContext builder) {
               return Container(
                 child: CupertinoDatePicker(
-        initialDateTime: DateTime.now(),
-        onDateTimeChanged: (DateTime newdate) {
-          pickedDate = newdate;
-          setState(() {
-            formattedDate = convertDate(pickedDate);
-          });
-        },
-        use24hFormat: true,
-        maximumDate: new DateTime(DateTime.now().year, DateTime.now().month + 3,
-            DateTime.now().day + 14),
-        minimumYear: DateTime.now().year,
-        maximumYear: DateTime.now().year,
-        mode: CupertinoDatePickerMode.date),
+                    initialDateTime: DateTime.now(),
+                    onDateTimeChanged: (DateTime newdate) {
+                      pickedDate = newdate;
+                      setState(() {
+                        formattedDate = convertDate(pickedDate);
+                      });
+                    },
+                    use24hFormat: true,
+                    maximumDate: DateTime.now(),
+                    minimumYear: DateTime.now().year,
+                    maximumYear: DateTime.now().year,
+                    mode: CupertinoDatePickerMode.date),
                 height: MediaQuery.of(context).copyWith().size.height / 3,
               );
             });
@@ -280,4 +278,3 @@ class _DecoratedTextFieldState extends State<DecoratedTextField> {
     ]);
   }
 }
-

@@ -1,4 +1,3 @@
-
 import 'dart:typed_data';
 
 import 'package:DaySpend/database/DatabaseBloc.dart';
@@ -14,13 +13,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:DaySpend/planner/planner.dart';
 import 'package:DaySpend/expenses/expenses.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 
 // Streams are created so that app can respond to notification-related events since the plugin is initialised in the `main` function
-final BehaviorSubject<ReceivedNotification> didReceiveLocalNotificationSubject = BehaviorSubject<ReceivedNotification>();
+final BehaviorSubject<ReceivedNotification> didReceiveLocalNotificationSubject =
+    BehaviorSubject<ReceivedNotification>();
 
-final BehaviorSubject<String> selectNotificationSubject = BehaviorSubject<String>();
+final BehaviorSubject<String> selectNotificationSubject =
+    BehaviorSubject<String>();
 
 NotificationAppLaunchDetails notificationAppLaunchDetails;
 
@@ -41,7 +44,8 @@ class ReceivedNotification {
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  notificationAppLaunchDetails = await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+  notificationAppLaunchDetails =
+      await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
   var initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
   var initializationSettingsIOS = IOSInitializationSettings(
       requestAlertPermission: false,
@@ -52,16 +56,23 @@ Future<void> main() async {
         didReceiveLocalNotificationSubject.add(ReceivedNotification(
             id: id, title: title, body: body, payload: payload));
       });
-  var initializationSettings = InitializationSettings(initializationSettingsAndroid, initializationSettingsIOS);
+  var initializationSettings = InitializationSettings(
+      initializationSettingsAndroid, initializationSettingsIOS);
 
-  await flutterLocalNotificationsPlugin.initialize(initializationSettings, onSelectNotification: (String payload) async {
-        if (payload != null) {
-          debugPrint('notification payload: ' + payload);
-        }
-        selectNotificationSubject.add(payload);});
-  await DBProvider.db.database.then((value){print("Initialized database");});
-  
-  await TasksBloc().removeExpired().then((value){print("Removed Expired tasks");});
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+      onSelectNotification: (String payload) async {
+    if (payload != null) {
+      debugPrint('notification payload: ' + payload);
+    }
+    selectNotificationSubject.add(payload);
+  });
+  await DBProvider.db.database.then((value) {
+    print("Initialized database");
+  });
+
+  await TasksBloc().removeExpired().then((value) {
+    print("Removed Expired tasks");
+  });
 
   runApp(MyApp());
 }
@@ -74,7 +85,8 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   PageController controller;
 
-  final MethodChannel platform = MethodChannel('crossingthestreams.io/resourceResolver');
+  final MethodChannel platform =
+      MethodChannel('crossingthestreams.io/resourceResolver');
 
   @override
   void initState() {
@@ -88,12 +100,12 @@ class _MyAppState extends State<MyApp> {
   void _requestIOSPermissions() {
     flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
-        IOSFlutterLocalNotificationsPlugin>()
+            IOSFlutterLocalNotificationsPlugin>()
         ?.requestPermissions(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
+          alert: true,
+          badge: true,
+          sound: true,
+        );
   }
 
   void _configureDidReceiveLocalNotificationSubject() {
@@ -139,7 +151,8 @@ class _MyAppState extends State<MyApp> {
   }
 
   // basic notification for tasks
-  static Future<void> scheduleNotification(int taskId, String taskName, DateTime taskDateTime) async {
+  static Future<void> scheduleNotification(
+      int taskId, String taskName, DateTime taskDateTime) async {
     DateTime scheduledNotificationDateTime = taskDateTime;
     var vibrationPattern = Int64List(4);
     vibrationPattern[0] = 0;
@@ -148,7 +161,9 @@ class _MyAppState extends State<MyApp> {
     vibrationPattern[3] = 2000;
 
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        'your other channel id', 'your other channel name', 'your other channel description', //cannot be empty
+        'your other channel id',
+        'your other channel name',
+        'your other channel description', //cannot be empty
         icon: 'secondary_icon',
         sound: RawResourceAndroidNotificationSound('slow_spring_board'),
         vibrationPattern: vibrationPattern,
@@ -157,10 +172,14 @@ class _MyAppState extends State<MyApp> {
         ledColor: const Color.fromARGB(255, 255, 0, 0),
         ledOnMs: 1000,
         ledOffMs: 500);
-    var iOSPlatformChannelSpecifics = IOSNotificationDetails(sound: 'slow_spring_board.aiff');
-    var platformChannelSpecifics = NotificationDetails(androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    var iOSPlatformChannelSpecifics =
+        IOSNotificationDetails(sound: 'slow_spring_board.aiff');
+    var platformChannelSpecifics = NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     print("enabled notification");
-    await flutterLocalNotificationsPlugin.schedule(taskId, 'Your task is due!', '$taskName', scheduledNotificationDateTime, platformChannelSpecifics, androidAllowWhileIdle:true);
+    await flutterLocalNotificationsPlugin.schedule(taskId, 'Your task is due!',
+        '$taskName', scheduledNotificationDateTime, platformChannelSpecifics,
+        androidAllowWhileIdle: true);
   }
 
   static Future<void> cancelNotification(int taskId) async {
@@ -172,17 +191,32 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-  List<Widget> pages = [Expenses(),Homepage(notificationFn: scheduleNotification, disableNotificationFn: cancelNotification), Planner(notificationFn: scheduleNotification, disableNotificationFn: cancelNotification)];
+  List<Widget> pages = [
+    Expenses(),
+    Homepage(
+        notificationFn: scheduleNotification,
+        disableNotificationFn: cancelNotification),
+    Planner(
+        notificationFn: scheduleNotification,
+        disableNotificationFn: cancelNotification)
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: PageView(
-        children: pages,
-        scrollDirection: Axis.horizontal,
-        controller: controller,
-      ),
-    );
+    return NeumorphicApp(
+        debugShowCheckedModeBanner: false,
+        themeMode: ThemeMode.light,
+        theme: NeumorphicThemeData(
+          baseColor: Colors.white,
+          lightSource: LightSource.topLeft,
+          depth: 10,
+        ),
+        home: Scaffold(
+          body: PageView(
+            children: pages,
+            scrollDirection: Axis.horizontal,
+            controller: controller,
+          ),
+        ));
   }
 }

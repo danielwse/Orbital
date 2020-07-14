@@ -1,158 +1,180 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:flutter_rounded_progress_bar/rounded_progress_bar_style.dart';
-import 'package:flutter_rounded_progress_bar/flutter_rounded_progress_bar.dart';
 import 'package:DaySpend/fonts/header.dart';
+import 'package:DaySpend/database/db_models.dart';
+import 'package:DaySpend/database/DatabaseBloc.dart';
 
-class HomePageExpenses extends StatelessWidget {
-  const HomePageExpenses({Key key}) : super(key: key);
+class HomePageExpenses extends StatefulWidget {
+  @override
+  _HomePageExpensesState createState() => _HomePageExpensesState();
+}
+
+class _HomePageExpensesState extends State<HomePageExpenses> {
+  CategoryBloc categoryBloc = CategoryBloc();
+  VariablesBloc variablesBloc = VariablesBloc();
+  var list = [
+    RoundedProgressBarTheme.blue,
+    RoundedProgressBarTheme.red,
+    RoundedProgressBarTheme.green,
+    RoundedProgressBarTheme.purple,
+    RoundedProgressBarTheme.yellow,
+    RoundedProgressBarTheme.midnight
+  ];
+
+  @override
+  void dispose() {
+    categoryBloc.dispose();
+    variablesBloc.dispose();
+    super.dispose();
+  }
+
+  Color stringToColor(String stringColor) {
+    String valueString = stringColor.split('(0x')[1].split(')')[0];
+    int value = int.parse(valueString, radix: 16);
+    return new Color(value);
+  }
+
+  Widget budgetBars() {
+    return StreamBuilder(
+        stream: categoryBloc.categories,
+        builder:
+            (BuildContext context, AsyncSnapshot<List<Categories>> snapshot) {
+          return snapshot.hasData
+              ? FutureBuilder(
+                  future: variablesBloc.getMaxSpend(),
+                  builder:
+                      (BuildContext context, AsyncSnapshot<dynamic> snapshot1) {
+                    return snapshot1.hasData
+                        ? SingleChildScrollView(
+                            child: Column(children: <Widget>[
+                            SizedBox(
+                                height: 220,
+                                child: ListView.builder(
+                                    // itemCount: snapshot.data
+                                    //     .where((element) =>
+                                    //         element.budgetPercentage !=
+                                    //         "Not Set")
+                                    //     .length,
+                                    itemCount: snapshot.data.length,
+                                    itemBuilder: (context, int position) {
+                                      final item = snapshot.data[position];
+                                      double percentSpent = snapshot1.data !=
+                                                  "Not Set" &&
+                                              item.budgetPercentage != "Not Set"
+                                          ? (item.amount /
+                                                  (double.parse(item
+                                                          .budgetPercentage) *
+                                                      0.01 *
+                                                      double.parse(
+                                                          snapshot1.data))) *
+                                              100
+                                          : null;
+                                      return Column(children: [
+                                        SizedBox(
+                                            width: 300,
+                                            height: 30,
+                                            child: Row(children: <Widget>[
+                                              NeumorphicText(
+                                                item.name,
+                                                textStyle: NeumorphicTextStyle(
+                                                    fontSize: 15),
+                                                style: NeumorphicStyle(
+                                                  color: Colors.black,
+                                                ),
+                                              ),
+                                              Spacer(),
+                                              Icon(
+                                                percentSpent == null
+                                                    ? Icons.warning
+                                                    : percentSpent >= 100
+                                                        ? Icons.mood_bad
+                                                        : percentSpent >= 80
+                                                            ? Icons
+                                                                .sentiment_dissatisfied
+                                                            : Icons.mood,
+                                                color: percentSpent == null
+                                                    ? Colors.red
+                                                    : percentSpent >= 100
+                                                        ? Colors.red
+                                                        : percentSpent >= 80
+                                                            ? Colors.orange
+                                                            : Colors.green,
+                                              )
+                                            ])),
+                                        SizedBox(
+                                            width: 300,
+                                            child: NeumorphicIndicator(
+                                              orientation:
+                                                  NeumorphicIndicatorOrientation
+                                                      .horizontal,
+                                              percent: percentSpent == null
+                                                  ? 1
+                                                  : percentSpent * 0.01,
+                                              height: 15,
+                                              style: IndicatorStyle(
+                                                  lightSource:
+                                                      LightSource.topLeft,
+                                                  depth: 10,
+                                                  accent: stringToColor(
+                                                      item.color)),
+                                            )),
+                                        percentSpent == null
+                                            ? SizedBox(
+                                                child: Text(
+                                                  "Start Budgeting Today!",
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                                width: 300,
+                                              )
+                                            : Container()
+                                      ]);
+                                    }))
+                          ]))
+                        : Container();
+                  })
+              : Container();
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.fromLTRB(12, 40, 12, 0),
-      child: ClipPath(
-          clipper: MyClipper(),
-          child: Container(
-            height: 350,
-            width: double.infinity,
-            color: Color(0xffF7F7F7),
-            child: Container(
-                child: Column(children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Header(
-                    text: 'DaySpend',
-                    size: 20,
-                    italic: true,
-                  ),
-                  Spacer(),
-                  IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.settings, size: 25),
-                  ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.notifications, size: 25),
-                  ),
-                  IconButton(
-                      onPressed: () {}, icon: Icon(Icons.assessment, size: 25))
-                ],
-              ),
-              Center(
-                heightFactor: 1,
-                child: Header(
-                  text: 'BUDGET',
-                  size: 20,
-                  italic: false,
-                ),
+        height: 350,
+        width: double.infinity,
+        color: Color(0xffF7F7F7),
+        child: Container(
+            child: Column(children: <Widget>[
+          Row(
+            children: <Widget>[
+              Header(
+                text: 'DaySpend',
+                size: 20,
+                italic: true,
               ),
               Spacer(),
-              SizedBox(
-                  width: 300,
-                  child: Row(children: <Widget>[
-                    Text(
-                      "Entertainment",
-                      style: TextStyle(color: Colors.black, fontSize: 15),
-                    ),
-                    Spacer(),
-                    Text("\$300 left")
-                  ])),
-              SizedBox(
-                  width: 300,
-                  child: RoundedProgressBar(
-                    percent: 100,
-                    height: 12,
-                    theme: RoundedProgressBarTheme.blue,
-                    style:
-                        RoundedProgressBarStyle(borderWidth: 0, widthShadow: 0),
-                    margin: EdgeInsets.symmetric(vertical: 10),
-                    borderRadius: BorderRadius.circular(24),
-                  )),
-              SizedBox(
-                  width: 300,
-                  child: Row(children: <Widget>[
-                    Text(
-                      "Eating Out",
-                      style: TextStyle(color: Colors.black, fontSize: 15),
-                    ),
-                    Spacer(),
-                    Text("\$20 left")
-                  ])),
-              SizedBox(
-                  width: 300,
-                  child: RoundedProgressBar(
-                    height: 12,
-                    theme: RoundedProgressBarTheme.red,
-                    style:
-                        RoundedProgressBarStyle(borderWidth: 0, widthShadow: 0),
-                    margin: EdgeInsets.symmetric(vertical: 10),
-                    borderRadius: BorderRadius.circular(24),
-                  )),
-              SizedBox(
-                  width: 300,
-                  child: Row(children: <Widget>[
-                    Text(
-                      "Shopping",
-                      style: TextStyle(color: Colors.black, fontSize: 15),
-                    ),
-                    Spacer(),
-                    Text("\$90 left")
-                  ])),
-              SizedBox(
-                  width: 300,
-                  child: RoundedProgressBar(
-                    milliseconds: 1000,
-                    height: 12,
-                    theme: RoundedProgressBarTheme.midnight,
-                    style:
-                        RoundedProgressBarStyle(borderWidth: 0, widthShadow: 0),
-                    margin: EdgeInsets.symmetric(vertical: 10),
-                    borderRadius: BorderRadius.circular(24),
-                  )),
-              SizedBox(
-                  width: 300,
-                  child: Row(children: <Widget>[
-                    Text(
-                      "Utilities",
-                      style: TextStyle(color: Colors.black, fontSize: 15),
-                    ),
-                    Spacer(),
-                    Text("\$100 left")
-                  ])),
-              SizedBox(
-                  width: 300,
-                  child: RoundedProgressBar(
-                    height: 12,
-                    theme: RoundedProgressBarTheme.green,
-                    style:
-                        RoundedProgressBarStyle(borderWidth: 0, widthShadow: 0),
-                    margin: EdgeInsets.symmetric(vertical: 10),
-                    borderRadius: BorderRadius.circular(24),
-                  ))
-            ])),
-          )),
-    );
-  }
-}
-
-class MyClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    Path path = Path();
-    path.lineTo(0, size.height);
-    var curXPos = 0.0;
-    var curYPos = size.height;
-    var increment = size.width / 20;
-    while (curXPos < size.width) {
-      curXPos += increment;
-      path.arcToPoint(Offset(curXPos, curYPos), radius: Radius.circular(5));
-    }
-    path.lineTo(size.width, 0);
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) {
-    return false;
+              IconButton(
+                onPressed: () {},
+                icon: Icon(Icons.settings, size: 25),
+              ),
+              IconButton(
+                onPressed: () {},
+                icon: Icon(Icons.notifications, size: 25),
+              ),
+              IconButton(
+                  onPressed: () {}, icon: Icon(Icons.assessment, size: 25))
+            ],
+          ),
+          Center(
+            heightFactor: 1,
+            child: Header(
+              text: 'BUDGETS',
+              size: 20,
+              italic: false,
+            ),
+          ),
+          SizedBox(height: 40),
+          budgetBars()
+        ])));
   }
 }
