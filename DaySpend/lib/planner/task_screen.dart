@@ -14,11 +14,10 @@ class TaskScreen extends StatefulWidget {
   final SlidableController slidable;
   final TextEditingController nameTextControl;
   final TextEditingController desTextControl;
-  final GlobalKey<FabCircularMenuState> fabKey;
   final Function notificationCallback;
   final Function disableNotificationCallback;
 
-  TaskScreen({this.slidable, this.desTextControl, this.nameTextControl, this.fabKey, this.notificationCallback, this.disableNotificationCallback});
+  TaskScreen({this.slidable, this.desTextControl, this.nameTextControl, this.notificationCallback, this.disableNotificationCallback});
 
   @override
   _TaskScreenState createState() => _TaskScreenState();
@@ -26,19 +25,23 @@ class TaskScreen extends StatefulWidget {
 
 class _TaskScreenState extends State<TaskScreen> {
 
+  final GlobalKey<FabCircularMenuState> plannerFabKey = GlobalKey();
+  final TasksBloc tasksBloc = TasksBloc();
+  String headerTextFor1 = DateFormat('MEd').format(DateTime.now()).toString() + " - " + DateFormat('MEd').format(DateTime.now().add(Duration(days: 6))).toString();
+  String headerTextFor23 = DateFormat('MEd').format(DateTime.now().subtract(Duration(days: 6))).toString() + " - " + DateFormat('MEd').format(DateTime.now().subtract(Duration(days: 1))).toString();
+  int mode = 1;
+
   void toggleMenu({bool forceClose}) {
-    if (widget.fabKey.currentState.isOpen) {
-      widget.fabKey.currentState.close();
+    if (plannerFabKey.currentState.isOpen) {
+      plannerFabKey.currentState.close();
     } else {
       if (forceClose) {
-        widget.fabKey.currentState.close();
+        plannerFabKey.currentState.close();
       } else {
-        widget.fabKey.currentState.open();
+        plannerFabKey.currentState.open();
       }
     }
   }
-
-  final TasksBloc tasksBloc = TasksBloc();
 
   @override
   void dispose() {
@@ -46,12 +49,8 @@ class _TaskScreenState extends State<TaskScreen> {
     super.dispose();
   }
 
-  int mode = 1;
-
   @override
   Widget build(BuildContext context) {
-    String headerTextFor1 = DateFormat('MEd').format(DateTime.now()).toString() + " - " + DateFormat('MEd').format(DateTime.now().add(Duration(days: 6))).toString();
-    String headerTextFor23 = DateFormat('MEd').format(DateTime.now().subtract(Duration(days: 6))).toString() + " - " + DateFormat('MEd').format(DateTime.now().subtract(Duration(days: 1))).toString();
     return Scaffold(
       backgroundColor: Color(0xffF7F7F7),
       appBar: AppBar(
@@ -130,12 +129,12 @@ class _TaskScreenState extends State<TaskScreen> {
           slidable: widget.slidable,
           nameEdit: widget.nameTextControl,
           descriptionEdit: widget.desTextControl,
-          fabKey: widget.fabKey,
+          fabKey: plannerFabKey,
         ),
       ),
       floatingActionButton: FabCircularMenu(
         alignment: Alignment.bottomRight,
-        key: widget.fabKey,
+        key: plannerFabKey,
         animationDuration: const Duration(milliseconds: 400),
         fabOpenIcon: ( mode == 1 ? Icon(Icons.home) : ( mode == 2 ? Icon(Icons.archive) : Icon(Icons.reply_all))),
         fabColor: Colors.white,

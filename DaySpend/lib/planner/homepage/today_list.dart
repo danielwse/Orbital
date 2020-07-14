@@ -1,24 +1,17 @@
-import 'dart:async';
-
 import 'package:DaySpend/database/DatabaseBloc.dart';
 import 'package:DaySpend/fonts/header.dart';
 import 'package:DaySpend/planner/task.dart';
 import 'package:DaySpend/planner/homepage/today_tile.dart';
 import 'package:DaySpend/planner/widget_functions.dart';
-import 'package:DaySpend/planner/task_tile.dart';
 import 'package:animated_widgets/animated_widgets.dart';
-import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:provider/provider.dart';
-import '../day2index.dart';
 
 class TodayTaskList extends StatefulWidget {
   final TasksBloc tasksBloc;
-  final Function notificationFn;
-  final Function disableNotificationFn;
+  final Function notificationFn, disableNotificationFn;
 
   TodayTaskList({this.tasksBloc, this.notificationFn, this.disableNotificationFn});
 
@@ -27,7 +20,6 @@ class TodayTaskList extends StatefulWidget {
 }
 
 class _TodayTaskListState extends State<TodayTaskList> {
-
 
   @override
   Widget build(BuildContext context) {

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:DaySpend/database/DatabaseHelper.dart';
-import 'package:DaySpend/planner/day2index.dart';
 import 'package:DaySpend/planner/task.dart';
+import 'package:DaySpend/planner/widget_functions.dart';
 import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart';
 

@@ -6,8 +6,7 @@ import 'package:DaySpend/planner/widget_functions.dart';
 import 'package:provider/provider.dart';
 
 class PlannerHome extends StatefulWidget {
-  final Function notificationFn;
-  final Function disableNotificationFn;
+  final Function notificationFn, disableNotificationFn;
   PlannerHome({this.notificationFn, this.disableNotificationFn});
   @override
   _PlannerHomeState createState() => _PlannerHomeState();

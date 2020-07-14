@@ -1,7 +1,7 @@
-import 'package:DaySpend/planner/day2index.dart';
 import 'package:DaySpend/planner/task.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 
 class PlannerWidgetFunctions extends ChangeNotifier {
 
@@ -134,4 +134,68 @@ class PlannerWidgetFunctions extends ChangeNotifier {
     tempDateTime = dt;
     notifyListeners();
   }
+}
+
+String switchDays(i) {
+  switch (i) {
+    case '1':
+      return 'Monday';
+      break;
+    case '2':
+      return 'Tuesday';
+      break;
+    case '3':
+      return 'Wednesday';
+      break;
+    case '4':
+      return 'Thursday';
+      break;
+    case '5':
+      return 'Friday';
+      break;
+    case '6':
+      return 'Saturday';
+      break;
+    case '7':
+      return 'Sunday';
+      break;
+    default:
+      return '';
+  }
+}
+
+String getIndex(DateTime dt){
+  String i;
+  switch (DateFormat('EEEE').format(dt).toString()) {
+    case 'Monday': i = '1'; break;
+    case 'Tuesday': i = '2'; break;
+    case 'Wednesday': i = '3'; break;
+    case 'Thursday': i = '4'; break;
+    case 'Friday': i = '5'; break;
+    case 'Saturday': i = '6'; break;
+    case 'Sunday': i = '7'; break;
+  }
+  return i;
+}
+
+String convertIndex(String index) {
+  int currIndex = int.parse(getIndex(DateTime.now()));
+  int n = currIndex - 1;
+  int inputIndex = int.parse(index);
+  int output = inputIndex - n;
+  if (inputIndex <= n) {
+    output += 7;
+  }
+  return output.toString();
+}
+
+String revertIndex(String index) {
+  int currIndex = int.parse(getIndex(DateTime.now()));
+  int n = currIndex - 1;
+  int inputIndex = int.parse(index);
+  int output = inputIndex + n;
+  if (output > 7) {
+    output -= 7;
+  }
+  return output.toString();
 }

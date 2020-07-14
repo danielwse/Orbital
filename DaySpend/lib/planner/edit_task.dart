@@ -11,8 +11,6 @@ import 'package:fswitch/fswitch.dart';
 import 'package:intl/intl.dart';
 import 'package:nice_button/NiceButton.dart';
 import 'package:provider/provider.dart';
-
-import 'day2index.dart';
 import 'durationPicker.dart';
 
 class EditButton extends StatefulWidget {

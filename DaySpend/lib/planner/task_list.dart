@@ -12,7 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:provider/provider.dart';
-import 'day2index.dart';
 
 class TaskList extends StatefulWidget {
   final SlidableController slidable;
@@ -155,8 +154,6 @@ class _TaskListState extends State<TaskList> {
                         });
                       },
                       archiveCallback: () {
-                        widget.fabKey.currentState.close();
-                        widgetData.setOpacity(task);
                         if (!task.isComplete) {
                           widget.tasksBloc.toggleComplete(task);
                         }
@@ -164,9 +161,7 @@ class _TaskListState extends State<TaskList> {
                           widget.tasksBloc.toggleNotification(task);
                           widget.disableNotificationFn(task.id);
                         }
-                        Future.delayed(Duration(milliseconds: 300), () {
-                          widget.tasksBloc.toggleArchived(task);
-                        });
+                        widget.tasksBloc.toggleArchived(task);
                       },
                       taskWidgetResetAllTask: () {
                         widgetData.resetAddTask();
@@ -177,15 +172,13 @@ class _TaskListState extends State<TaskList> {
                       taskWidgetStoredNotify: () {
                         return widgetData.storedNotify();
                       },
-                      updateTask: (index, name, time, description, notify, dt, duration) async {
+                      updateTaskCallback: (index, name, time, description, notify, dt, duration) async {
                         if (task.notify) {
                           print("disabled previous notification");
                           widget.tasksBloc.toggleNotification(task);
                           widget.disableNotificationFn(task.id);
                         }
-                        Future.delayed(Duration(milliseconds: 300), () async {
-                          await widget.tasksBloc.updateTask(task, index, name, time, description, notify, dt, duration);
-                        });
+                        await widget.tasksBloc.updateTask(task, index, name, time, description, notify, dt, duration);
                       },
                     ),
                   );

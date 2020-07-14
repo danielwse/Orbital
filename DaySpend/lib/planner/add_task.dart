@@ -10,7 +10,6 @@ import 'package:fswitch/fswitch.dart';
 import 'package:nice_button/NiceButton.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-import 'day2index.dart';
 
 class AddTask extends StatefulWidget {
   final TasksBloc tasksBloc;

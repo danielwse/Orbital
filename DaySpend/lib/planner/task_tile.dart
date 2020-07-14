@@ -5,67 +5,45 @@ import 'package:DaySpend/fonts/header.dart';
 import 'package:DaySpend/planner/edit_task.dart';
 import 'package:DaySpend/planner/reschedule.dart';
 import 'package:DaySpend/planner/task.dart';
+import 'package:DaySpend/planner/widget_functions.dart';
 import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:fswitch/fswitch.dart';
 import 'package:intl/intl.dart';
-import 'day2index.dart';
 
 class TaskTile extends StatefulWidget {
-  final int mode;
+  final int mode, taskID;
   final TasksBloc tasksBloc;
   final GlobalKey<FabCircularMenuState> menu;
   final Task currentTask;
-  final String taskName;
-  final String taskIndex;
-  final String taskTime;
+  final String taskName, taskIndex, taskTime, taskDes;
   final DateTime taskDT;
-  final String taskDes;
-  final bool taskNotify;
-  final bool taskComplete;
+  final bool taskNotify, taskArchived, taskExpired, taskComplete, taskOverdue;
   final Duration taskLength;
-  final bool taskOverdue;
-  final Function notifyCallback;
-  final Function completeCallback;
-  final Function overdueCallback;
-  final Function removeCallback;
-  final Function archiveCallback;
-  final Function rescheduleCallback;
-  final Function enableNotification;
-  final Function disableNotification;
+  final Function updateTaskCallback, notifyCallback, completeCallback, overdueCallback, removeCallback, archiveCallback, rescheduleCallback;
+  final Function enableNotification, disableNotification;
+  final Function taskWidgetResetAllTask, taskWidgetChangeNotify, taskWidgetStoredNotify;
   final SlidableController slidable;
   final Color tileColor;
-  final TextEditingController nameEditor;
-  final TextEditingController desEditor;
-  final int taskID;
-  final Function taskWidgetResetAllTask;
-  final Function taskWidgetChangeNotify;
-  final Function taskWidgetStoredNotify;
-  final bool taskArchived;
-  final bool taskExpired;
-  final Function updateTask;
+  final TextEditingController nameEditor, desEditor;
 
-  TaskTile({this.tileColor, this.taskIndex,this.taskName,this.taskTime,this.taskDT, this.taskDes,this.taskNotify, this.taskComplete, this.taskOverdue, this.notifyCallback, this.completeCallback, this.overdueCallback, this.removeCallback, this.archiveCallback, this.slidable, this.rescheduleCallback, this.nameEditor, this.desEditor, this.currentTask, this.taskID, this.menu, this.tasksBloc, this.enableNotification, this.disableNotification, this.taskWidgetResetAllTask, this.taskWidgetChangeNotify, this.taskWidgetStoredNotify, this.mode, this.taskArchived, this.taskExpired, this.taskLength, this.updateTask});
+  TaskTile({this.tileColor, this.taskIndex,this.taskName,this.taskTime,this.taskDT, this.taskDes,this.taskNotify, this.taskComplete, this.taskOverdue, this.notifyCallback, this.completeCallback, this.overdueCallback, this.removeCallback, this.archiveCallback, this.slidable, this.rescheduleCallback, this.nameEditor, this.desEditor, this.currentTask, this.taskID, this.menu, this.tasksBloc, this.enableNotification, this.disableNotification, this.taskWidgetResetAllTask, this.taskWidgetChangeNotify, this.taskWidgetStoredNotify, this.mode, this.taskArchived, this.taskExpired, this.taskLength, this.updateTaskCallback});
 
   @override
   _TaskTileState createState() => _TaskTileState();
 }
 
 class _TaskTileState extends State<TaskTile> {
-  Timer counter;
 
-  @override
-  Widget build(BuildContext context) {
+  buildTimer() {
     if (!widget.taskExpired || !widget.taskComplete || !widget.taskOverdue) {
-      if (counter!= null) {
-        print(widget.taskID.toString() + ": found existing timer");
-        counter.cancel();
-      }
       print(widget.taskID.toString() + ": timer initiated");
-      counter = Timer.periodic(Duration(seconds: 1), (Timer t) {
+      return Timer.periodic(Duration(seconds: 1), (Timer t) {
+        print(widget.taskID.toString() + ": tick");
         if (widget.taskDT.add(widget.taskLength).isBefore(DateTime.now())) {
+          print(widget.taskID.toString() + ": passed due -> overdue");
           widget.overdueCallback(t); //passed due
           try {
             t.cancel();
@@ -106,7 +84,27 @@ class _TaskTileState extends State<TaskTile> {
         }
       });
     }
-    double heightOfActions = 52;
+  }
+  double heightOfActions = 52;
+  Timer _timer;
+
+  //ensure only one timer is initiated and is disposed when widget is destroyed
+
+  @override
+  void initState() {
+    _timer = buildTimer();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    print(widget.taskID.toString() + ": timer is disposed");
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Slidable(
       key: Key(widget.taskID.toString()),
       controller: widget.slidable,
@@ -205,7 +203,7 @@ class _TaskTileState extends State<TaskTile> {
       return IconSlideAction(caption: 'Due', color: Colors.amber, icon: Icons.access_time);
     } else {
       return EditButton(
-        updateTask: widget.updateTask,
+        updateTask: widget.updateTaskCallback,
         enableNotification: widget.enableNotification,
         disableNotification: widget.disableNotification,
         taskID: widget.taskID,
