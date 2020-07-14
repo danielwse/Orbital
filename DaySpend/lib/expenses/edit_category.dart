@@ -116,13 +116,18 @@ class _EditCategoryState extends State<EditCategory> {
                                                                                 widget.expensesBloc.changeExpenseCategory(_renameController.text, expense.id)
                                                                               })
                                                                       : null);
-                                                              String newBudget =
-                                                                  percentageController
-                                                                              .text ==
-                                                                          '0' 
-                                                                      ? "Not Set"
+                                                              String newBudget = percentageController
+                                                                          .text ==
+                                                                      '0'
+                                                                  ? "Not Set"
+                                                                  : percentageController
+                                                                          .text
+                                                                          .isEmpty
+                                                                      ? widget
+                                                                          .category
+                                                                          .budgetPercentage
                                                                       : percentageController
-                                                                          .text.isEmpty ? widget.category.budgetPercentage : percentageController.text;
+                                                                          .text;
                                                               widget
                                                                   .categoryBloc
                                                                   .changeBudget(
@@ -130,6 +135,11 @@ class _EditCategoryState extends State<EditCategory> {
                                                                       widget
                                                                           .category
                                                                           .id);
+                                                              widget
+                                                                  .categoryBloc
+                                                                  .getCategoryColor(
+                                                                      _renameController
+                                                                          .text);
                                                               Navigator.of(
                                                                       context)
                                                                   .pop();
