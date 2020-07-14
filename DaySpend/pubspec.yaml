@@ -18,6 +18,11 @@ dependencies:
   flutter_datetime_picker: ^1.3.8
   flutter_speed_dial: ^1.2.5
   flutter_neumorphic: ^3.0.1
+  percent_indicator: ^2.1.5
+  flip_card: ^0.4.4
+  pdf: ^1.9.0
+  random_color: ^1.0.5
+  auto_size_text: ^2.1.0
 
   flutter_cupertino_date_picker: ^1.0.26
   grouped_list: ^3.1.0

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:DaySpend/planner/planner.dart';
 import 'package:DaySpend/expenses/expenses.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
 void main() {
   runApp(MyApp());
@@ -32,8 +33,14 @@ class _MyAppState extends State<MyApp> {
   List<Widget> pages = [Expenses(), Homepage(), Planner()];
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return NeumorphicApp(
         debugShowCheckedModeBanner: false,
+        themeMode: ThemeMode.light,
+        theme: NeumorphicThemeData(
+          baseColor: Colors.white,
+          lightSource: LightSource.topLeft,
+          depth: 10,
+        ),
         home: Scaffold(
           body: PageView(
             children: pages,
