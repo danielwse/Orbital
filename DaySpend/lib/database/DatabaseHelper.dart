@@ -1,4 +1,4 @@
-//Initializes Database
+//Initializes Database 
 
 import 'dart:async';
 import 'dart:io';
@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:random_color/random_color.dart';
 
 class DBProvider {
   DBProvider._();
@@ -24,7 +23,11 @@ class DBProvider {
 
   initDB() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
+<<<<<<< HEAD:DaySpend/lib/database/DatabaseHelper.dart
     String path = join(documentsDirectory.path, "DaySpend.db");
+=======
+    String path = join(documentsDirectory.path, "Expense.db");
+>>>>>>> parent of c4e349c... design improvments and bug fixes:DaySpend/lib/expenses/database/DatabaseHelper.dart
     return await openDatabase(path, version: 2, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       await db.execute("DROP TABLE IF EXISTS Expenses");
@@ -40,8 +43,7 @@ class DBProvider {
           "id INTEGER PRIMARY KEY AUTOINCREMENT,"
           "name TEXT UNIQUE,"
           "amount DOUBLE,"
-          "budgetPercentage TEXT,"
-          "color TEXT"
+          "budgetPercentage TEXT"
           ")");
       await db.execute("DROP TABLE IF EXISTS Variables");
       await db.execute("CREATE TABLE Variables ("
@@ -80,14 +82,7 @@ class DBProvider {
         "dayIndex": DateFormat("yMMMMd").format(DateTime.now())
       });
       await db.insert("Variables", {"type": 'MaxSpend', "value": 'Not Set'});
-      await db.insert("Categories", {
-        "name": "Others",
-        "amount": 0,
-        "budgetPercentage": "Not Set",
-        "color": RandomColor()
-            .randomColor(colorBrightness: ColorBrightness.light)
-            .toString()
-      });
+      await db.insert("Categories", {"name": "Others", "amount": 0, "budgetPercentage": "Not Set"});
     });
   }
 }

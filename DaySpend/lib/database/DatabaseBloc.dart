@@ -152,12 +152,6 @@ class CategoryBloc implements Bloc {
     return res;
   }
 
-  Future<String> getCategoryColor(String categoryName) async {
-    var res = await _categoryRepository.getCategoryColor(categoryName);
-    getCategories();
-    return res;
-  }
-
   renameCategory(String oldName, String newName) async {
     await _categoryRepository.renameCategory(oldName, newName);
     getCategories();
@@ -178,12 +172,6 @@ class CategoryBloc implements Bloc {
   changeBudget(String newBudget, int categoryID) async {
     await _categoryRepository.changeBudget(newBudget, categoryID);
     getCategories();
-  }
-
-  Future<bool> categoryExist(String categoryName) async {
-    var res = await _categoryRepository.categoryExist(categoryName);
-    getCategories();
-    return res;
   }
 
   dispose() {

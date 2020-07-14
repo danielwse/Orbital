@@ -13,7 +13,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:DaySpend/planner/planner.dart';
 import 'package:DaySpend/expenses/expenses.dart';
-import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -203,14 +202,8 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return NeumorphicApp(
+    return MaterialApp(
         debugShowCheckedModeBanner: false,
-        themeMode: ThemeMode.light,
-        theme: NeumorphicThemeData(
-          baseColor: Colors.white,
-          lightSource: LightSource.topLeft,
-          depth: 10,
-        ),
         home: Scaffold(
           body: PageView(
             children: pages,

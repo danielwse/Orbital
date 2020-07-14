@@ -79,23 +79,20 @@ class Categories {
   String name;
   double amount;
   String budgetPercentage;
-  String color;
 
-  Categories(
-      {this.id, this.name, this.amount, this.budgetPercentage, this.color});
+  Categories({this.id, this.name, this.amount, this.budgetPercentage});
 
   factory Categories.fromMap(Map<String, dynamic> json) => new Categories(
-      id: json["id"],
-      name: json["name"],
-      amount: json["amount"],
-      budgetPercentage: json["budgetPercentage"],
-      color: json["color"]);
+        id: json["id"],
+        name: json["name"],
+        amount: json["amount"],
+        budgetPercentage: json["budgetPercentage"],
+      );
 
   Map<String, dynamic> toMap() => {
         "id": id,
         "name": name,
         "amount": amount,
         "budgetPercentage": budgetPercentage,
-        "color": color
       };
 }

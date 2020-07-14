@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:flutter_rounded_progress_bar/rounded_progress_bar_style.dart';
+import 'package:flutter_rounded_progress_bar/flutter_rounded_progress_bar.dart';
 import 'package:DaySpend/fonts/header.dart';
+<<<<<<< HEAD
 import 'package:DaySpend/database/db_models.dart';
 import 'package:DaySpend/database/DatabaseBloc.dart';
+=======
+import 'package:DaySpend/expenses/database/db_models.dart';
+import 'package:DaySpend/expenses/database/DatabaseBloc.dart';
+import 'dart:math';
+>>>>>>> parent of c4e349c... design improvments and bug fixes
 
 class HomePageExpenses extends StatefulWidget {
   @override
@@ -13,6 +19,7 @@ class HomePageExpenses extends StatefulWidget {
 class _HomePageExpensesState extends State<HomePageExpenses> {
   CategoryBloc categoryBloc = CategoryBloc();
   VariablesBloc variablesBloc = VariablesBloc();
+  final _random = Random();
   var list = [
     RoundedProgressBarTheme.blue,
     RoundedProgressBarTheme.red,
@@ -27,12 +34,6 @@ class _HomePageExpensesState extends State<HomePageExpenses> {
     categoryBloc.dispose();
     variablesBloc.dispose();
     super.dispose();
-  }
-
-  Color stringToColor(String stringColor) {
-    String valueString = stringColor.split('(0x')[1].split(')')[0];
-    int value = int.parse(valueString, radix: 16);
-    return new Color(value);
   }
 
   Widget budgetBars() {
@@ -51,17 +52,15 @@ class _HomePageExpensesState extends State<HomePageExpenses> {
                             SizedBox(
                                 height: 220,
                                 child: ListView.builder(
-                                    // itemCount: snapshot.data
-                                    //     .where((element) =>
-                                    //         element.budgetPercentage !=
-                                    //         "Not Set")
-                                    //     .length,
-                                    itemCount: snapshot.data.length,
+                                    itemCount: snapshot.data
+                                        .where((element) =>
+                                            element.budgetPercentage !=
+                                            "Not Set")
+                                        .length,
                                     itemBuilder: (context, int position) {
                                       final item = snapshot.data[position];
                                       double percentSpent = snapshot1.data !=
-                                                  "Not Set" &&
-                                              item.budgetPercentage != "Not Set"
+                                              "Not Set"
                                           ? (item.amount /
                                                   (double.parse(item
                                                           .budgetPercentage) *
@@ -73,15 +72,12 @@ class _HomePageExpensesState extends State<HomePageExpenses> {
                                       return Column(children: [
                                         SizedBox(
                                             width: 300,
-                                            height: 30,
                                             child: Row(children: <Widget>[
-                                              NeumorphicText(
+                                              Text(
                                                 item.name,
-                                                textStyle: NeumorphicTextStyle(
+                                                style: TextStyle(
+                                                    color: Colors.black,
                                                     fontSize: 15),
-                                                style: NeumorphicStyle(
-                                                  color: Colors.black,
-                                                ),
                                               ),
                                               Spacer(),
                                               Icon(
@@ -104,20 +100,20 @@ class _HomePageExpensesState extends State<HomePageExpenses> {
                                             ])),
                                         SizedBox(
                                             width: 300,
-                                            child: NeumorphicIndicator(
-                                              orientation:
-                                                  NeumorphicIndicatorOrientation
-                                                      .horizontal,
+                                            child: RoundedProgressBar(
                                               percent: percentSpent == null
-                                                  ? 1
-                                                  : percentSpent * 0.01,
-                                              height: 15,
-                                              style: IndicatorStyle(
-                                                  lightSource:
-                                                      LightSource.topLeft,
-                                                  depth: 10,
-                                                  accent: stringToColor(
-                                                      item.color)),
+                                                  ? 100
+                                                  : percentSpent,
+                                              height: 12,
+                                              theme: list[
+                                                  _random.nextInt(list.length)],
+                                              style: RoundedProgressBarStyle(
+                                                  borderWidth: 0,
+                                                  widthShadow: 0),
+                                              margin: EdgeInsets.symmetric(
+                                                  vertical: 5),
+                                              borderRadius:
+                                                  BorderRadius.circular(24),
                                             )),
                                         percentSpent == null
                                             ? SizedBox(
@@ -139,42 +135,66 @@ class _HomePageExpensesState extends State<HomePageExpenses> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        height: 350,
-        width: double.infinity,
-        color: Color(0xffF7F7F7),
+    return ClipPath(
+        clipper: MyClipper(),
         child: Container(
-            child: Column(children: <Widget>[
-          Row(
-            children: <Widget>[
-              Header(
-                text: 'DaySpend',
-                size: 20,
-                italic: true,
+            height: 350,
+            width: double.infinity,
+            color: Color(0xffF7F7F7),
+            child: Container(
+                child: Column(children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Header(
+                    text: 'DaySpend',
+                    size: 20,
+                    italic: true,
+                  ),
+                  Spacer(),
+                  IconButton(
+                    onPressed: () {},
+                    icon: Icon(Icons.settings, size: 25),
+                  ),
+                  IconButton(
+                    onPressed: () {},
+                    icon: Icon(Icons.notifications, size: 25),
+                  ),
+                  IconButton(
+                      onPressed: () {}, icon: Icon(Icons.assessment, size: 25))
+                ],
               ),
-              Spacer(),
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.settings, size: 25),
+              Center(
+                heightFactor: 1,
+                child: Header(
+                  text: 'BUDGETS',
+                  size: 20,
+                  italic: false,
+                ),
               ),
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.notifications, size: 25),
-              ),
-              IconButton(
-                  onPressed: () {}, icon: Icon(Icons.assessment, size: 25))
-            ],
-          ),
-          Center(
-            heightFactor: 1,
-            child: Header(
-              text: 'BUDGETS',
-              size: 20,
-              italic: false,
-            ),
-          ),
-          SizedBox(height: 40),
-          budgetBars()
-        ])));
+              SizedBox(height: 40),
+              budgetBars()
+            ]))));
+  }
+}
+
+class MyClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    Path path = Path();
+    path.lineTo(0, size.height);
+    var curXPos = 0.0;
+    var curYPos = size.height;
+    var increment = size.width / 20;
+    while (curXPos < size.width) {
+      curXPos += increment;
+      path.arcToPoint(Offset(curXPos, curYPos), radius: Radius.circular(5));
+    }
+    path.lineTo(size.width, 0);
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) {
+    return false;
   }
 }
