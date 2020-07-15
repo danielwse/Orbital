@@ -212,6 +212,7 @@ class _MyAppState extends State<MyApp> {
           depth: 10,
         ),
         home: Scaffold(
+          resizeToAvoidBottomInset: false,
           body: PageView(
             children: pages,
             scrollDirection: Axis.horizontal,

@@ -14,8 +14,8 @@ import 'package:percent_indicator/percent_indicator.dart';
 import 'dart:math';
 import 'package:flip_card/flip_card.dart';
 import 'package:random_color/random_color.dart';
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:DaySpend/size_config.dart';
+import 'package:DaySpend/fonts/header.dart';
 
 //max spend part at top of page
 class MaxSpend extends StatefulWidget {
@@ -100,9 +100,11 @@ class _MaxSpendState extends State<MaxSpend> {
                                             'Max Spend: ${snapshot.data == '0' ? "Not Set" : snapshot.data}',
                                         labelStyle: TextStyle(
                                             fontSize: 16,
-                                            fontWeight: FontWeight.bold),
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.grey),
                                         hintText: "Enter This Week's Max Spend",
-                                        hintStyle: TextStyle(fontSize: 10),
+                                        hintStyle: TextStyle(
+                                            fontSize: 12, color: Colors.black),
                                         hintMaxLines: 2),
                                     keyboardType: TextInputType.number,
                                     onSubmitted: (value) {
@@ -161,16 +163,14 @@ class _ExpensesState extends State<Expenses> {
 
   //row of add, category text at the top
   Widget categoryHeader() {
-    return NeumorphicText(
-      "Categories",
-      textStyle: NeumorphicTextStyle(fontSize: 28, fontWeight: FontWeight.w300),
-      style: NeumorphicStyle(
-          lightSource: LightSource.top,
-          intensity: 0.8,
-          depth: 9,
-          color: Colors.black,
-          shape: NeumorphicShape.flat),
-      textAlign: TextAlign.center,
+    return Header(
+      text: 'Categories',
+      italic: false,
+      shadow:
+          Shadow(blurRadius: 2.5, color: Colors.black26, offset: Offset(0, 1)),
+      weight: FontWeight.w600,
+      color: Colors.black54,
+      size: MediaQuery.of(context).copyWith().size.width / 15,
     );
   }
 
@@ -185,6 +185,9 @@ class _ExpensesState extends State<Expenses> {
     SizeConfig().init(context);
 
     showModalBottomSheet(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(25.0),
+        ),
         isScrollControlled: true,
         context: context,
         builder: (builder) {
@@ -198,170 +201,204 @@ class _ExpensesState extends State<Expenses> {
                         AsyncSnapshot<dynamic> snapshot) {
                       return snapshot.hasData
                           ? SingleChildScrollView(
-                              child: Column(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                  Container(
-                                    height: SizeConfig.blockSizeVertical * 40,
-                                    decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(15)),
-                                        boxShadow: [
-                                          BoxShadow(
-                                              blurRadius: 10,
-                                              color: Colors.grey[300],
-                                              spreadRadius: 5)
-                                        ]),
-                                    child: Column(children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: <Widget>[
-                                          Column(
-                                            children: <Widget>[
-                                              FlatButton(
-                                                  onPressed: () {
-                                                    categoryController.clear();
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                  child: Icon(Icons.clear,
-                                                      size: 40)),
-                                              Text('Cancel')
-                                            ],
-                                          ),
-                                          Spacer(),
-                                          Column(children: <Widget>[
-                                            FlatButton(
-                                                onPressed: () {
-                                                  Categories category = Categories(
-                                                      name: categoryController
-                                                          .text,
-                                                      amount: 0,
-                                                      budgetPercentage:
-                                                          percentageController
-                                                                  .text.isEmpty
-                                                              ? "Not Set"
-                                                              : percentageController
-                                                                  .text,
-                                                      color: RandomColor()
-                                                          .randomColor(
-                                                              colorBrightness:
-                                                                  ColorBrightness
-                                                                      .light)
-                                                          .toString());
-                                                  if (categoryController
-                                                          .text.isNotEmpty &&
-                                                      _formKey.currentState
-                                                          .validate()) {
-                                                    categoryBloc
-                                                        .addCategory(category);
-
-                                                    Navigator.of(context).pop();
-                                                    FocusScope.of(context)
-                                                        .requestFocus(
-                                                            FocusNode());
-                                                    categoryController.clear();
-                                                  }
-                                                },
-                                                child: Icon(Icons.check,
-                                                    size: 40)),
-                                            Text('Add')
-                                          ]),
-                                        ],
-                                      ),
-                                      Container(
-                                          height:
-                                              SizeConfig.blockSizeVertical * 7,
-                                          alignment: Alignment.topCenter,
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 10, vertical: 10),
-                                          margin: const EdgeInsets.symmetric(
-                                              horizontal: 10, vertical: 10),
+                              child: Container(
+                                  padding: EdgeInsets.only(
+                                      bottom: MediaQuery.of(context)
+                                          .viewInsets
+                                          .bottom),
+                                  child: Column(
+                                      mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          height: 300,
                                           decoration: BoxDecoration(
-                                              color: Colors.grey[300],
-                                              borderRadius:
-                                                  BorderRadius.circular(10)),
-                                          child: TextFormField(
-                                              controller: categoryController,
-                                              autocorrect: true,
-                                              showCursor: true,
-                                              maxLengthEnforced: true,
-                                              maxLength: 13,
-                                              textAlign: TextAlign.start,
-                                              decoration:
-                                                  InputDecoration.collapsed(
-                                                hintText: 'Category Name',
-                                              ))),
-                                      Form(
-                                          key: _formKey,
-                                          autovalidate: true,
-                                          child: MoneyTextFormField(
-                                              percentRemainder:
-                                                  100 - snapshot1.data,
-                                              maxSpend: snapshot.data !=
-                                                      "Not Set"
-                                                  ? double.parse(snapshot.data)
-                                                  : null,
-                                              settings:
-                                                  MoneyTextFormFieldSettings(
-                                                      enabled: snapshot.data ==
-                                                              "Not Set"
-                                                          ? false
-                                                          : true,
-                                                      validator:
-                                                          Validators.compose([
-                                                        Validators.max(
-                                                            100 -
-                                                                snapshot1.data,
-                                                            "% must be less than ${100 - snapshot1.data}")
-                                                      ]),
-                                                      controller:
-                                                          percentageController,
-                                                      appearanceSettings:
-                                                          AppearanceSettings(
-                                                        hintText: snapshot
-                                                                    .data ==
-                                                                "Not Set"
-                                                            ? "Set A Max Spend"
-                                                            : 'Not Set',
-                                                        formattedStyle: snapshot
-                                                                    .data ==
-                                                                "Not Set"
-                                                            ? Theme.of(context)
-                                                                .textTheme
-                                                                .subtitle1
-                                                                .copyWith(
-                                                                  color: Theme.of(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(15)),
+                                          ),
+                                          child: Column(children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
+                                              children: <Widget>[
+                                                Column(
+                                                  children: <Widget>[
+                                                    FlatButton(
+                                                        onPressed: () {
+                                                          categoryController
+                                                              .clear();
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        },
+                                                        child: Icon(Icons.clear,
+                                                            size: 40)),
+                                                    Text('Cancel')
+                                                  ],
+                                                ),
+                                                Spacer(),
+                                                Column(children: <Widget>[
+                                                  FlatButton(
+                                                      onPressed: () {
+                                                        Categories category = Categories(
+                                                            name:
+                                                                categoryController
+                                                                    .text,
+                                                            amount: 0,
+                                                            budgetPercentage:
+                                                                percentageController
+                                                                        .text
+                                                                        .isEmpty
+                                                                    ? "Not Set"
+                                                                    : percentageController
+                                                                        .text,
+                                                            color: RandomColor()
+                                                                .randomColor(
+                                                                    colorBrightness:
+                                                                        ColorBrightness
+                                                                            .light)
+                                                                .toString());
+                                                        if (categoryController
+                                                                .text
+                                                                .isNotEmpty &&
+                                                            _formKey
+                                                                .currentState
+                                                                .validate()) {
+                                                          categoryBloc
+                                                              .addCategory(
+                                                                  category);
+
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                          FocusScope.of(context)
+                                                              .requestFocus(
+                                                                  FocusNode());
+                                                          categoryController
+                                                              .clear();
+                                                        }
+                                                      },
+                                                      child: Icon(Icons.check,
+                                                          size: 40)),
+                                                  Text('Add')
+                                                ]),
+                                              ],
+                                            ),
+                                            Container(
+                                                height: SizeConfig
+                                                        .blockSizeVertical *
+                                                    7,
+                                                alignment: Alignment.topCenter,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 10,
+                                                        vertical: 10),
+                                                margin:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 10,
+                                                        vertical: 10),
+                                                decoration: BoxDecoration(
+                                                    color: Colors.grey[300],
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10)),
+                                                child: TextField(
+                                                    controller:
+                                                        categoryController,
+                                                    autocorrect: true,
+                                                    showCursor: true,
+                                                    maxLengthEnforced: true,
+                                                    maxLength: 13,
+                                                    textAlign: TextAlign.start,
+                                                    decoration: InputDecoration
+                                                        .collapsed(
+                                                      hintText: 'Category Name',
+                                                    ))),
+                                            Form(
+                                                key: _formKey,
+                                                autovalidate: true,
+                                                child: MoneyTextFormField(
+                                                    percentRemainder:
+                                                        100 - snapshot1.data,
+                                                    maxSpend: snapshot.data !=
+                                                            "Not Set"
+                                                        ? double.parse(
+                                                            snapshot.data)
+                                                        : null,
+                                                    settings:
+                                                        MoneyTextFormFieldSettings(
+                                                            enabled: snapshot
+                                                                        .data ==
+                                                                    "Not Set"
+                                                                ? false
+                                                                : true,
+                                                            validator:
+                                                                Validators
+                                                                    .compose([
+                                                              Validators.max(
+                                                                  100 -
+                                                                      snapshot1
+                                                                          .data,
+                                                                  "% must be less than ${100 - snapshot1.data}")
+                                                            ]),
+                                                            controller:
+                                                                percentageController,
+                                                            appearanceSettings:
+                                                                AppearanceSettings(
+                                                              hintText: snapshot
+                                                                          .data ==
+                                                                      "Not Set"
+                                                                  ? "Set A Max Spend"
+                                                                  : 'Not Set',
+                                                              formattedStyle: snapshot
+                                                                          .data ==
+                                                                      "Not Set"
+                                                                  ? Theme.of(
                                                                           context)
-                                                                      .disabledColor,
-                                                                )
-                                                            : null,
-                                                        inputStyle: snapshot
-                                                                    .data ==
-                                                                "Not Set"
-                                                            ? Theme.of(context)
-                                                                .textTheme
-                                                                .subtitle1
-                                                                .copyWith(
-                                                                  color: Theme.of(
+                                                                      .textTheme
+                                                                      .subtitle1
+                                                                      .copyWith(
+                                                                        color: Theme.of(context)
+                                                                            .disabledColor,
+                                                                      )
+                                                                  : null,
+                                                              inputStyle: snapshot
+                                                                          .data ==
+                                                                      "Not Set"
+                                                                  ? Theme.of(
                                                                           context)
-                                                                      .disabledColor,
-                                                                )
-                                                            : null,
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                horizontal: 20),
-                                                        labelText:
-                                                            "Budget: % of Max Spend",
-                                                        labelStyle: TextStyle(
-                                                            fontSize: 20),
-                                                      ))))
-                                    ]),
-                                  )
-                                ]))
-                          : Container();
+                                                                      .textTheme
+                                                                      .subtitle1
+                                                                      .copyWith(
+                                                                        color: Theme.of(context)
+                                                                            .disabledColor,
+                                                                      )
+                                                                  : null,
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
+                                                                      horizontal:
+                                                                          20),
+                                                              labelText:
+                                                                  "Budget: % of Max Spend",
+                                                              labelStyle:
+                                                                  TextStyle(
+                                                                      fontSize:
+                                                                          20),
+                                                            ))))
+                                          ]),
+                                        )
+                                      ])))
+                          : Container(
+                              height: 300,
+                              color: Colors.transparent,
+                              child: Center(
+                                  child: SizedBox(
+                                height: 10,
+                                width: 10,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 1,
+                                ),
+                              )));
                     });
               });
         });
@@ -437,6 +474,7 @@ class _ExpensesState extends State<Expenses> {
                                         child: Column(children: [
                                           Text(item.name,
                                               style: TextStyle(
+                                                  color: Colors.black,
                                                   fontWeight: FontWeight.w400)),
                                           Spacer(),
                                           CircularPercentIndicator(
@@ -462,6 +500,7 @@ class _ExpensesState extends State<Expenses> {
                                                   : item.budgetPercentage +
                                                       '\%',
                                               style: new TextStyle(
+                                                  color: Colors.black,
                                                   fontSize: SizeConfig
                                                           .blockSizeVertical *
                                                       2.5),
@@ -472,8 +511,8 @@ class _ExpensesState extends State<Expenses> {
                                                 stringToColor(item.color),
                                           ),
                                           Spacer(),
-                                          AutoSizeText(
-                                            '${item.budgetPercentage == "Set A Max Spend" || item.budgetPercentage == "Not Set" || amountLeft == null ? "Not Set" : double.parse(amountLeft) > 0 ? '\$' + amountLeft + ' left' : '\$' + double.parse(amountLeft).abs().toStringAsFixed(2) + ' exceeded'}',
+                                          Text(
+                                            '${item.budgetPercentage == "Set A Max Spend" || item.budgetPercentage == "Not Set" || amountLeft == null ? "Not Set" : double.parse(amountLeft) > 0 ? '\$' + amountLeft + ' left' : '\$' + double.parse(amountLeft).abs().toStringAsFixed(2) + ' over'}',
                                             style: TextStyle(
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.bold,
@@ -485,28 +524,48 @@ class _ExpensesState extends State<Expenses> {
                                                         : Colors.red[800]),
                                           ),
                                         ])),
-                                    back: Container(
-                                        child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: <Widget>[
-                                          new IconButton(
-                                              color: Colors.blue[200],
-                                              icon: Icon(Icons.edit, size: 30),
-                                              onPressed: () {
-                                                cardKey.currentState
-                                                    .toggleCard();
-                                                showBottomSheet(
-                                                    context: context,
-                                                    builder: (context) =>
-                                                        EditCategory(
-                                                            expensesBloc,
-                                                            categoryBloc,
-                                                            item));
-                                                slidableController.activeState
-                                                    ?.close();
-                                              }),
-                                        ])));
+                                    back: Neumorphic(
+                                        style: NeumorphicStyle(
+                                            lightSource: LightSource.topRight,
+                                            color: Colors.white,
+                                            intensity: 5,
+                                            depth: 2,
+                                            boxShape:
+                                                NeumorphicBoxShape.roundRect(
+                                                    BorderRadius.circular(25))),
+                                        child: Container(
+                                            child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: <Widget>[
+                                              new IconButton(
+                                                  color: Colors.blue[200],
+                                                  icon: Icon(Icons.edit,
+                                                      size: 30),
+                                                  onPressed: () {
+                                                    cardKey.currentState
+                                                        .toggleCard();
+                                                    showModalBottomSheet(
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      25.0),
+                                                        ),
+                                                        isScrollControlled:
+                                                            true,
+                                                        context: context,
+                                                        builder: (context) =>
+                                                            EditCategory(
+                                                                expensesBloc,
+                                                                categoryBloc,
+                                                                item));
+                                                    slidableController
+                                                        .activeState
+                                                        ?.close();
+                                                  }),
+                                            ]))));
                               }
                               return FlipCard(
                                   key: cardKey,
@@ -523,6 +582,7 @@ class _ExpensesState extends State<Expenses> {
                                       Text(
                                         item.name,
                                         style: TextStyle(
+                                            color: Colors.black,
                                             fontWeight: FontWeight.w400),
                                       ),
                                       Spacer(),
@@ -546,6 +606,7 @@ class _ExpensesState extends State<Expenses> {
                                               ? "0%"
                                               : item.budgetPercentage + '\%',
                                           style: new TextStyle(
+                                              color: Colors.black,
                                               fontSize:
                                                   SizeConfig.blockSizeVertical *
                                                       2.5),
@@ -556,10 +617,9 @@ class _ExpensesState extends State<Expenses> {
                                             stringToColor(item.color),
                                       ),
                                       Spacer(),
-                                      AutoSizeText(
-                                        '${item.budgetPercentage == "Set A Max Spend" || item.budgetPercentage == "Not Set" || amountLeft == null ? "Not Set" : double.parse(amountLeft) > 0 ? '\$' + amountLeft + ' left' : '\$' + double.parse(amountLeft).abs().toStringAsFixed(2) + ' exceeded'}',
+                                      Text(
+                                        '${item.budgetPercentage == "Set A Max Spend" || item.budgetPercentage == "Not Set" || amountLeft == null ? "Not Set" : double.parse(amountLeft) > 0 ? '\$' + amountLeft + ' left' : '\$' + double.parse(amountLeft).abs().toStringAsFixed(2) + ' over'}',
                                         maxLines: 1,
-                                        minFontSize: 10,
                                         style: TextStyle(
                                             fontSize: 13,
                                             fontWeight: FontWeight.bold,
@@ -571,38 +631,61 @@ class _ExpensesState extends State<Expenses> {
                                       ),
                                     ]),
                                   ),
-                                  back: Container(
-                                      child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: <Widget>[
-                                        new IconButton(
-                                            color: Colors.blue[200],
-                                            icon: Icon(Icons.edit, size: 30),
-                                            onPressed: () {
-                                              cardKey.currentState.toggleCard();
-                                              showBottomSheet(
-                                                  context: context,
-                                                  builder: (context) =>
-                                                      EditCategory(expensesBloc,
-                                                          categoryBloc, item));
-                                              slidableController.activeState
-                                                  ?.close();
-                                            }),
-                                        new IconButton(
-                                            color: Colors.redAccent,
-                                            icon: Icon(Icons.delete_outline,
-                                                size: 30),
-                                            onPressed: () {
-                                              categoryBloc
-                                                  .deleteCategory(item.id);
-                                              expensesBloc
-                                                  .getExpensesByCategory(
-                                                      item.name)
-                                                  .then(
-                                                      (list) => list.isNotEmpty
-                                                          ? list
-                                                              .forEach(
+                                  back: Neumorphic(
+                                      style: NeumorphicStyle(
+                                          lightSource: LightSource.topRight,
+                                          color: Colors.white,
+                                          intensity: 5,
+                                          depth: 2,
+                                          boxShape:
+                                              NeumorphicBoxShape.roundRect(
+                                                  BorderRadius.circular(25))),
+                                      child: Center(
+                                          child: ButtonBar(
+                                              layoutBehavior:
+                                                  ButtonBarLayoutBehavior
+                                                      .constrained,
+                                              alignment:
+                                                  MainAxisAlignment.center,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: <Widget>[
+                                            IconButton(
+                                                color: Colors.blue[200],
+                                                icon: Icon(Icons.edit),
+                                                onPressed: () {
+                                                  cardKey.currentState
+                                                      .toggleCard();
+                                                  showModalBottomSheet(
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(25.0),
+                                                      ),
+                                                      isScrollControlled: true,
+                                                      context: context,
+                                                      builder: (context) =>
+                                                          EditCategory(
+                                                              expensesBloc,
+                                                              categoryBloc,
+                                                              item));
+                                                  slidableController.activeState
+                                                      ?.close();
+                                                }),
+                                            IconButton(
+                                                color: Colors.redAccent,
+                                                icon: Icon(
+                                                  Icons.delete_outline,
+                                                ),
+                                                onPressed: () {
+                                                  categoryBloc
+                                                      .deleteCategory(item.id);
+                                                  expensesBloc
+                                                      .getExpensesByCategory(
+                                                          item.name)
+                                                      .then((list) =>
+                                                          list.isNotEmpty
+                                                              ? list.forEach(
                                                                   (expense) => {
                                                                         expensesBloc.changeExpenseCategory(
                                                                             'Others',
@@ -611,9 +694,9 @@ class _ExpensesState extends State<Expenses> {
                                                                             expense.amount,
                                                                             'Others')
                                                                       })
-                                                          : null);
-                                            }),
-                                      ])));
+                                                              : null);
+                                                }),
+                                          ]))));
                             },
                           )))
                   : Center(
@@ -625,16 +708,14 @@ class _ExpensesState extends State<Expenses> {
   }
 
   Widget receiptHeader() {
-    return NeumorphicText(
-      "Receipts",
-      textStyle: NeumorphicTextStyle(fontSize: 28, fontWeight: FontWeight.w300),
-      style: NeumorphicStyle(
-          lightSource: LightSource.bottomRight,
-          intensity: 0.3,
-          depth: 10,
-          color: Colors.black,
-          shape: NeumorphicShape.concave),
-      textAlign: TextAlign.center,
+    return Header(
+      text: 'Receipts',
+      italic: false,
+      shadow:
+          Shadow(blurRadius: 2.5, color: Colors.black26, offset: Offset(0, 1)),
+      weight: FontWeight.w600,
+      color: Colors.black54,
+      size: MediaQuery.of(context).copyWith().size.width / 15,
     );
   }
 
@@ -705,10 +786,17 @@ class _ExpensesState extends State<Expenses> {
                                                                   item
                                                                       .description,
                                                                   style: TextStyle(
+                                                                      color: Colors
+                                                                          .black,
                                                                       fontSize:
                                                                           18)),
-                                                              Text("\$" +
-                                                                  "${item.amount.toStringAsFixed(2)}")
+                                                              Text(
+                                                                "\$" +
+                                                                    "${item.amount.toStringAsFixed(2)}",
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .black),
+                                                              )
                                                             ])),
                                                     Padding(
                                                         padding:
@@ -731,7 +819,10 @@ class _ExpensesState extends State<Expenses> {
                                                                         snapshot1
                                                                             .data)),
                                                               ),
-                                                              Text(item.date)
+                                                              Text(item.date,
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .black))
                                                             ])),
                                                   ],
                                                 )),
@@ -741,7 +832,16 @@ class _ExpensesState extends State<Expenses> {
                                                   icon: Icon(Icons.edit,
                                                       size: 30),
                                                   onPressed: () {
-                                                    showBottomSheet(
+                                                    showModalBottomSheet(
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      25.0),
+                                                        ),
+                                                        isScrollControlled:
+                                                            true,
                                                         context: context,
                                                         builder: (context) =>
                                                             EditExpense(
@@ -789,6 +889,12 @@ class _ExpensesState extends State<Expenses> {
     return NeumorphicApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(
+            appBar: PreferredSize(
+                preferredSize: Size.fromHeight(5),
+                child: AppBar(
+                  backgroundColor: Colors.white,
+                  brightness: Brightness.light,
+                )),
             backgroundColor: NeumorphicTheme.baseColor(context),
             resizeToAvoidBottomInset: false,
             floatingActionButton: SpeedDial(
@@ -810,7 +916,11 @@ class _ExpensesState extends State<Expenses> {
                       backgroundColor: NeumorphicTheme.baseColor(context),
                       label: 'Add Expense',
                       labelStyle: TextStyle(fontSize: 15),
-                      onTap: () => showBottomSheet(
+                      onTap: () => showModalBottomSheet(
+                          isScrollControlled: true,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25.0),
+                          ),
                           context: context,
                           builder: (context) =>
                               BottomSheetWidget(expensesBloc, categoryBloc))),

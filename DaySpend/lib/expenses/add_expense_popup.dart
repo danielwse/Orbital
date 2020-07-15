@@ -20,10 +20,14 @@ class _AddExpenseState extends State<AddExpense> {
     return showFab
         ? FloatingActionButton(
             child: Icon(Icons.add),
-            mini: true,
-            backgroundColor: Colors.lightBlue,
+            mini: false,
+            backgroundColor: Colors.white,
+            foregroundColor: Colors.black,
             onPressed: () {
               showModalBottomSheet(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25.0),
+                  ),
                   isScrollControlled: true,
                   context: context,
                   builder: (context) => BottomSheetWidget(
@@ -52,32 +56,22 @@ class BottomSheetWidget extends StatefulWidget {
 class _BottomSheetWidgetState extends State<BottomSheetWidget> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-        padding:
-            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-        height: 350,
-        child: SingleChildScrollView(
-          child: Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                  height: 450,
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(15)),
-                      boxShadow: [
-                        BoxShadow(
-                            blurRadius: 10,
-                            color: Colors.grey[300],
-                            spreadRadius: 5)
-                      ]),
-                  child: Column(children: [
-                    DecoratedTextField(widget.expensesBloc, widget.categoryBloc)
-                  ]),
-                )
+    return SingleChildScrollView(
+        child: Container(
+      padding:
+          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              height: 350,
+              child: Column(children: [
+                DecoratedTextField(widget.expensesBloc, widget.categoryBloc)
               ]),
-        ));
+            )
+          ]),
+    ));
   }
 }
 
