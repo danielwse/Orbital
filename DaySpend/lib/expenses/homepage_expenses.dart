@@ -142,38 +142,25 @@ class _HomePageExpensesState extends State<HomePageExpenses> {
     return Container(
         height: 350,
         width: double.infinity,
-        color: Color(0xffF7F7F7),
+        color: Colors.white,
         child: Container(
             child: Column(children: <Widget>[
           Row(
-            children: <Widget>[
-              Header(
-                text: 'DaySpend',
-                size: 20,
-                italic: true,
-              ),
-              Spacer(),
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.settings, size: 25),
-              ),
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.notifications, size: 25),
-              ),
-              IconButton(
-                  onPressed: () {}, icon: Icon(Icons.assessment, size: 25))
-            ],
+            children: <Widget>[],
           ),
           Center(
             heightFactor: 1,
             child: Header(
-              text: 'BUDGETS',
-              size: 20,
+              text: 'Budgets',
               italic: false,
+              shadow: Shadow(
+                  blurRadius: 2.5, color: Colors.black26, offset: Offset(0, 1)),
+              weight: FontWeight.w600,
+              color: Colors.black54,
+              size: MediaQuery.of(context).copyWith().size.width / 15,
             ),
           ),
-          SizedBox(height: 40),
+          SizedBox(height: 20),
           budgetBars()
         ])));
   }
