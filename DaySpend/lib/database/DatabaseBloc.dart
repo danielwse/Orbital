@@ -180,8 +180,8 @@ class CategoryBloc implements Bloc {
     getCategories();
   }
 
-  Future<bool> categoryExist(String categoryName) async {
-    var res = await _categoryRepository.categoryExist(categoryName);
+  Future categoryNameList() async {
+    var res = await _categoryRepository.categoryNameList();
     getCategories();
     return res;
   }

@@ -73,7 +73,7 @@ class _MaxSpendState extends State<MaxSpend> {
                                         counter: Offstage(),
                                         suffixIcon: IconButton(
                                             icon: Icon(Icons.check),
-                                            onPressed: () {
+                                            onPressed: () async {
                                               FocusScope.of(context)
                                                   .requestFocus(FocusNode());
                                               if (_maxSpendController
@@ -148,6 +148,7 @@ class _ExpensesState extends State<Expenses> {
   final percentageController = TextEditingController();
   final VariablesBloc variablesBloc = VariablesBloc();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _categoryFormKey = GlobalKey<FormState>();
 
   Random random = new Random();
 
@@ -199,206 +200,224 @@ class _ExpensesState extends State<Expenses> {
                     future: variablesBloc.getMaxSpend(),
                     builder: (BuildContext context,
                         AsyncSnapshot<dynamic> snapshot) {
-                      return snapshot.hasData
-                          ? SingleChildScrollView(
-                              child: Container(
-                                  padding: EdgeInsets.only(
-                                      bottom: MediaQuery.of(context)
-                                          .viewInsets
-                                          .bottom),
-                                  child: Column(
-                                      mainAxisSize: MainAxisSize.max,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          height: 300,
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(15)),
-                                          ),
-                                          child: Column(children: [
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.end,
-                                              children: <Widget>[
-                                                Column(
-                                                  children: <Widget>[
-                                                    FlatButton(
-                                                        onPressed: () {
-                                                          categoryController
-                                                              .clear();
-                                                          Navigator.of(context)
-                                                              .pop();
-                                                        },
-                                                        child: Icon(Icons.clear,
-                                                            size: 40)),
-                                                    Text('Cancel')
-                                                  ],
-                                                ),
-                                                Spacer(),
-                                                Column(children: <Widget>[
-                                                  FlatButton(
-                                                      onPressed: () {
-                                                        Categories category = Categories(
-                                                            name:
-                                                                categoryController
-                                                                    .text,
-                                                            amount: 0,
-                                                            budgetPercentage:
-                                                                percentageController
-                                                                        .text
-                                                                        .isEmpty
-                                                                    ? "Not Set"
-                                                                    : percentageController
-                                                                        .text,
-                                                            color: RandomColor()
-                                                                .randomColor(
-                                                                    colorBrightness:
-                                                                        ColorBrightness
-                                                                            .light)
-                                                                .toString());
-                                                        if (categoryController
-                                                                .text
-                                                                .isNotEmpty &&
-                                                            _formKey
-                                                                .currentState
-                                                                .validate()) {
-                                                          categoryBloc
-                                                              .addCategory(
-                                                                  category);
-
-                                                          Navigator.of(context)
-                                                              .pop();
-                                                          FocusScope.of(context)
-                                                              .requestFocus(
-                                                                  FocusNode());
-                                                          categoryController
-                                                              .clear();
-                                                        }
-                                                      },
-                                                      child: Icon(Icons.check,
-                                                          size: 40)),
-                                                  Text('Add')
-                                                ]),
-                                              ],
-                                            ),
-                                            Container(
-                                                height: SizeConfig
-                                                        .blockSizeVertical *
-                                                    7,
-                                                alignment: Alignment.topCenter,
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 10,
-                                                        vertical: 10),
-                                                margin:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 10,
-                                                        vertical: 10),
+                      return FutureBuilder(
+                          future: categoryBloc.categoryNameList(),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<dynamic> snapshot2) {
+                            return snapshot.hasData
+                                ? SingleChildScrollView(
+                                    child: Container(
+                                        padding: EdgeInsets.only(
+                                            bottom: MediaQuery.of(context)
+                                                .viewInsets
+                                                .bottom),
+                                        child: Column(
+                                            mainAxisSize: MainAxisSize.max,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              Container(
+                                                height: 300,
                                                 decoration: BoxDecoration(
-                                                    color: Colors.grey[300],
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10)),
-                                                child: TextField(
-                                                    controller:
-                                                        categoryController,
-                                                    autocorrect: true,
-                                                    showCursor: true,
-                                                    maxLengthEnforced: true,
-                                                    maxLength: 13,
-                                                    textAlign: TextAlign.start,
-                                                    decoration: InputDecoration
-                                                        .collapsed(
-                                                      hintText: 'Category Name',
-                                                    ))),
-                                            Form(
-                                                key: _formKey,
-                                                autovalidate: true,
-                                                child: MoneyTextFormField(
-                                                    percentRemainder:
-                                                        100 - snapshot1.data,
-                                                    maxSpend: snapshot.data !=
-                                                            "Not Set"
-                                                        ? double.parse(
-                                                            snapshot.data)
-                                                        : null,
-                                                    settings:
-                                                        MoneyTextFormFieldSettings(
-                                                            enabled: snapshot
-                                                                        .data ==
-                                                                    "Not Set"
-                                                                ? false
-                                                                : true,
-                                                            validator:
-                                                                Validators
-                                                                    .compose([
-                                                              Validators.max(
-                                                                  100 -
-                                                                      snapshot1
-                                                                          .data,
-                                                                  "% must be less than ${100 - snapshot1.data}")
-                                                            ]),
-                                                            controller:
-                                                                percentageController,
-                                                            appearanceSettings:
-                                                                AppearanceSettings(
-                                                              hintText: snapshot
-                                                                          .data ==
-                                                                      "Not Set"
-                                                                  ? "Set A Max Spend"
-                                                                  : 'Not Set',
-                                                              formattedStyle: snapshot
-                                                                          .data ==
-                                                                      "Not Set"
-                                                                  ? Theme.of(
-                                                                          context)
-                                                                      .textTheme
-                                                                      .subtitle1
-                                                                      .copyWith(
-                                                                        color: Theme.of(context)
-                                                                            .disabledColor,
-                                                                      )
-                                                                  : null,
-                                                              inputStyle: snapshot
-                                                                          .data ==
-                                                                      "Not Set"
-                                                                  ? Theme.of(
-                                                                          context)
-                                                                      .textTheme
-                                                                      .subtitle1
-                                                                      .copyWith(
-                                                                        color: Theme.of(context)
-                                                                            .disabledColor,
-                                                                      )
-                                                                  : null,
-                                                              padding: EdgeInsets
-                                                                  .symmetric(
-                                                                      horizontal:
-                                                                          20),
-                                                              labelText:
-                                                                  "Budget: % of Max Spend",
-                                                              labelStyle:
-                                                                  TextStyle(
-                                                                      fontSize:
-                                                                          20),
-                                                            ))))
-                                          ]),
-                                        )
-                                      ])))
-                          : Container(
-                              height: 300,
-                              color: Colors.transparent,
-                              child: Center(
-                                  child: SizedBox(
-                                height: 10,
-                                width: 10,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 1,
-                                ),
-                              )));
+                                                  color: Colors.white,
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(15)),
+                                                ),
+                                                child: Column(children: [
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.end,
+                                                    children: <Widget>[
+                                                      Column(
+                                                        children: <Widget>[
+                                                          FlatButton(
+                                                              onPressed: () {
+                                                                categoryController
+                                                                    .clear();
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop();
+                                                              },
+                                                              child: Icon(
+                                                                  Icons.clear,
+                                                                  size: 40)),
+                                                          Text('Cancel')
+                                                        ],
+                                                      ),
+                                                      Spacer(),
+                                                      Column(children: <Widget>[
+                                                        FlatButton(
+                                                            onPressed: () {
+                                                              Categories category = Categories(
+                                                                  name:
+                                                                      categoryController
+                                                                          .text,
+                                                                  amount: 0,
+                                                                  budgetPercentage: percentageController
+                                                                          .text
+                                                                          .isEmpty
+                                                                      ? "Not Set"
+                                                                      : percentageController
+                                                                          .text,
+                                                                  color: RandomColor()
+                                                                      .randomColor(
+                                                                          colorBrightness:
+                                                                              ColorBrightness.light)
+                                                                      .toString());
+                                                              if (categoryController
+                                                                      .text
+                                                                      .isNotEmpty &&
+                                                                  _formKey
+                                                                      .currentState
+                                                                      .validate() &&
+                                                                  _categoryFormKey
+                                                                      .currentState
+                                                                      .validate()) {
+                                                                categoryBloc
+                                                                    .addCategory(
+                                                                        category);
+
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop();
+                                                                FocusScope.of(
+                                                                        context)
+                                                                    .requestFocus(
+                                                                        FocusNode());
+                                                                categoryController
+                                                                    .clear();
+                                                              }
+                                                            },
+                                                            child: Icon(
+                                                                Icons.check,
+                                                                size: 40)),
+                                                        Text('Add')
+                                                      ]),
+                                                    ],
+                                                  ),
+                                                  Container(
+                                                      height: SizeConfig
+                                                              .blockSizeVertical *
+                                                          8.5,
+                                                      alignment:
+                                                          Alignment.topCenter,
+                                                      padding:
+                                                          const EdgeInsets.symmetric(
+                                                              horizontal: 10,
+                                                              vertical: 10),
+                                                      margin:
+                                                          const EdgeInsets.symmetric(
+                                                              horizontal: 10,
+                                                              vertical: 10),
+                                                      decoration: BoxDecoration(
+                                                          color:
+                                                              Colors.grey[300],
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                  10)),
+                                                      child: Form(
+                                                          key: _categoryFormKey,
+                                                          autovalidate: false,
+                                                          child: TextFormField(
+                                                              validator: (value) =>
+                                                                  snapshot2.data.contains(categoryController.text.toLowerCase())
+                                                                      ? "Category Already Exists"
+                                                                      : null,
+                                                              controller:
+                                                                  categoryController,
+                                                              autocorrect: true,
+                                                              showCursor: true,
+                                                              maxLengthEnforced:
+                                                                  true,
+                                                              maxLength: 13,
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .start,
+                                                              decoration:
+                                                                  InputDecoration.collapsed(
+                                                                hintText:
+                                                                    'Category Name',
+                                                              )))),
+                                                  Form(
+                                                      key: _formKey,
+                                                      autovalidate: true,
+                                                      child: MoneyTextFormField(
+                                                          percentRemainder:
+                                                              100 -
+                                                                  snapshot1
+                                                                      .data,
+                                                          maxSpend: snapshot
+                                                                      .data !=
+                                                                  "Not Set"
+                                                              ? double.parse(
+                                                                  snapshot.data)
+                                                              : null,
+                                                          settings:
+                                                              MoneyTextFormFieldSettings(
+                                                                  enabled: snapshot
+                                                                              .data ==
+                                                                          "Not Set"
+                                                                      ? false
+                                                                      : true,
+                                                                  validator:
+                                                                      Validators
+                                                                          .compose([
+                                                                    Validators.max(
+                                                                        100 -
+                                                                            snapshot1.data,
+                                                                        "% must be less than ${100 - snapshot1.data}")
+                                                                  ]),
+                                                                  controller:
+                                                                      percentageController,
+                                                                  appearanceSettings:
+                                                                      AppearanceSettings(
+                                                                    hintText: snapshot.data ==
+                                                                            "Not Set"
+                                                                        ? "Set A Max Spend"
+                                                                        : 'Not Set',
+                                                                    formattedStyle: snapshot.data ==
+                                                                            "Not Set"
+                                                                        ? Theme.of(context)
+                                                                            .textTheme
+                                                                            .subtitle1
+                                                                            .copyWith(
+                                                                              color: Theme.of(context).disabledColor,
+                                                                            )
+                                                                        : null,
+                                                                    inputStyle: snapshot.data ==
+                                                                            "Not Set"
+                                                                        ? Theme.of(context)
+                                                                            .textTheme
+                                                                            .subtitle1
+                                                                            .copyWith(
+                                                                              color: Theme.of(context).disabledColor,
+                                                                            )
+                                                                        : null,
+                                                                    padding: EdgeInsets.symmetric(
+                                                                        horizontal:
+                                                                            20),
+                                                                    labelText:
+                                                                        "Budget: % of Max Spend",
+                                                                    labelStyle: TextStyle(
+                                                                        fontSize:
+                                                                            20),
+                                                                  ))))
+                                                ]),
+                                              )
+                                            ])))
+                                : Container(
+                                    height: 300,
+                                    color: Colors.transparent,
+                                    child: Center(
+                                        child: SizedBox(
+                                      height: 10,
+                                      width: 10,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 1,
+                                      ),
+                                    )));
+                          });
                     });
               });
         });
@@ -899,11 +918,9 @@ class _ExpensesState extends State<Expenses> {
             resizeToAvoidBottomInset: false,
             floatingActionButton: SpeedDial(
                 backgroundColor: Colors.white,
-                foregroundColor: Colors.white,
-                child: NeumorphicIcon(
+                foregroundColor: Colors.black,
+                child: Icon(
                   Icons.add,
-                  size: 45,
-                  style: NeumorphicStyle(depth: 40, intensity: 0.9),
                 ),
                 overlayColor: Colors.black,
                 overlayOpacity: 0.4,

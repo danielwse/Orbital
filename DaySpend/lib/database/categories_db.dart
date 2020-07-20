@@ -100,15 +100,14 @@ class CategoryDao {
     return res;
   }
 
-  Future<bool> categoryExist(String categoryName) async {
+  Future categoryNameList() async {
+    var list = [];
     final db = await dbProvider.database;
-    var result = await db.query("Categories", columns: ['name']).then((list) =>
-        list.where((element) => element['name'] == categoryName).toList());
-    if (result.isNotEmpty) {
-      return true;
-    } else {
-      return false;
-    }
+    await db.query("Categories", columns: ['name']).then(
+        (element) => element.forEach((element) {
+              list.add(element['name'].toLowerCase());
+            }));
+    return list;
   }
 }
 
@@ -129,6 +128,5 @@ class CategoryRepository {
       categoryDao.changeBudget(newBudget, categoryID);
   Future getCategoryColor(String categoryName) =>
       categoryDao.getCategoryColour(categoryName);
-  Future categoryExist(String categoryName) =>
-      categoryDao.categoryExist(categoryName);
+  Future categoryNameList() => categoryDao.categoryNameList();
 }
