@@ -1,15 +1,18 @@
 import 'dart:math';
 import 'dart:typed_data';
-
+import 'package:flutter/material.dart';
+import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
+import 'package:path_provider/path_provider.dart';
+import 'package:flutter_full_pdf_viewer/flutter_full_pdf_viewer.dart';
 
-Future<Uint8List> generateReport(PdfPageFormat pageFormat) async {
+generateReport(PdfPageFormat pageFormat) async {
   const tableHeaders = ['Category', 'Budget', 'Expense', 'Result'];
 
   const dataTable = [
-    ['Phone', 80, 95, -15],
+    ['Pony', 80, 95, -15],
     ['Internet', 250, 230, 20],
     ['Electricity', 300, 375, -75],
     ['Movies', 85, 80, 5],
@@ -28,8 +31,8 @@ Future<Uint8List> generateReport(PdfPageFormat pageFormat) async {
     pw.Page(
       pageFormat: pageFormat,
       theme: pw.ThemeData.withFont(
-        base: pw.Font.ttf(await rootBundle.load('assets/open-sans.ttf')),
-        bold: pw.Font.ttf(await rootBundle.load('assets/open-sans-bold.ttf')),
+        base: pw.Font.ttf(await rootBundle.load('assets/OpenSans-Regular.ttf')),
+        bold: pw.Font.ttf(await rootBundle.load('assets/OpenSans-Bold.ttf')),
       ),
       build: (context) {
         final chart1 = pw.Chart(
@@ -218,7 +221,11 @@ Future<Uint8List> generateReport(PdfPageFormat pageFormat) async {
       },
     ),
   );
+  var content = document.save();
+  var output = await getTemporaryDirectory();
+  var file = File("${output.path}/example.pdf");
+  print(output.path);
+  await file.writeAsBytes(content);
 
-  // Return the PDF file content
-  return document.save();
+  return file.path;
 }

@@ -19,7 +19,7 @@ class ExpensesDao {
 
   Future<List<Expense>> getAllExpenses() async {
     final db = await dbProvider.database;
-    var res = await db.query("Expenses");
+    var res = await db.query("Expenses", orderBy: "date DESC");
     List<Expense> list =
         res.isNotEmpty ? res.map((c) => Expense.fromMap(c)).toList() : [];
     return list;

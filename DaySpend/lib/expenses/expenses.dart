@@ -151,6 +151,7 @@ class _ExpensesState extends State<Expenses> {
   final VariablesBloc variablesBloc = VariablesBloc();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _categoryFormKey = GlobalKey<FormState>();
+  String mode = "recentReceipts";
 
   Random random = new Random();
 
@@ -186,7 +187,6 @@ class _ExpensesState extends State<Expenses> {
 //add category pop-up on clicking add icon in header
   void _showAddCategory(BuildContext context) {
     SizeConfig().init(context);
-
     showModalBottomSheet(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(25.0),
@@ -229,7 +229,8 @@ class _ExpensesState extends State<Expenses> {
                                                 child: Column(children: [
                                                   Row(
                                                     mainAxisAlignment:
-                                                        MainAxisAlignment.end,
+                                                        MainAxisAlignment
+                                                            .center,
                                                     children: <Widget>[
                                                       Column(
                                                         children: <Widget>[
@@ -250,6 +251,24 @@ class _ExpensesState extends State<Expenses> {
                                                                   size: 40)),
                                                           Text('Cancel')
                                                         ],
+                                                      ),
+                                                      Spacer(),
+                                                      Header(
+                                                        text: 'Add Category',
+                                                        shadow: Shadow(
+                                                            blurRadius: 2.5,
+                                                            color:
+                                                                Colors.black26,
+                                                            offset:
+                                                                Offset(0, 1)),
+                                                        weight: FontWeight.w600,
+                                                        color: Colors.black54,
+                                                        size: MediaQuery.of(
+                                                                    context)
+                                                                .copyWith()
+                                                                .size
+                                                                .width /
+                                                            20,
                                                       ),
                                                       Spacer(),
                                                       Column(children: <Widget>[
@@ -604,12 +623,18 @@ class _ExpensesState extends State<Expenses> {
                                         boxShape: NeumorphicBoxShape.roundRect(
                                             BorderRadius.circular(25))),
                                     child: Column(children: [
-                                      Text(
-                                        item.name,
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.w400),
-                                      ),
+                                      Container(
+                                          margin: EdgeInsets.symmetric(
+                                              horizontal: 15),
+                                          child: FittedBox(
+                                              fit: BoxFit.fitWidth,
+                                              child: Text(
+                                                item.name,
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontWeight:
+                                                        FontWeight.w400),
+                                              ))),
                                       Spacer(),
                                       CircularPercentIndicator(
                                         radius:
@@ -744,6 +769,12 @@ class _ExpensesState extends State<Expenses> {
     );
   }
 
+  static DateTime convertStringtoDatetime(String date) {
+    String result =
+        date.substring(0, 4) + date.substring(5, 7) + date.substring(8);
+    return DateTime.parse(result);
+  }
+
   Widget allReceipts() {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
@@ -758,7 +789,23 @@ class _ExpensesState extends State<Expenses> {
                       height: height / 3.2,
                       child: ListView.builder(
                           scrollDirection: Axis.vertical,
-                          itemCount: snapshot.data.length,
+                          itemCount: mode == 'recentReceipts'
+                              ? snapshot.data
+                                  .where((element) =>
+                                      convertStringtoDatetime(element.date)
+                                          .isAfter(DateTime.now()
+                                              .subtract(Duration(days: 7))))
+                                  .length
+                              : mode == 'month'
+                                  ? snapshot.data
+                                      .where((element) =>
+                                          convertStringtoDatetime(element.date)
+                                              .isAfter(DateTime(
+                                                  DateTime.now().year,
+                                                  DateTime.now().month,
+                                                  1)))
+                                      .length
+                                  : snapshot.data.length,
                           itemBuilder: (context, int position) {
                             final item = snapshot.data[position];
 
@@ -920,17 +967,57 @@ class _ExpensesState extends State<Expenses> {
                   backgroundColor: Colors.white,
                   brightness: Brightness.light,
                 )),
-            backgroundColor: NeumorphicTheme.baseColor(context),
+            backgroundColor: Colors.transparent,
             resizeToAvoidBottomInset: false,
             floatingActionButton: SpeedDial(
                 backgroundColor: Colors.white,
                 foregroundColor: Colors.black,
                 child: Icon(
-                  Icons.add,
+                  Icons.menu,
                 ),
                 overlayColor: Colors.black,
                 overlayOpacity: 0.4,
                 children: [
+                  mode == "recentReceipts"
+                      ? SpeedDialChild(
+                          child: Icon(
+                            Icons.reply_all,
+                            size: 25,
+                          ),
+                          backgroundColor: NeumorphicTheme.baseColor(context),
+                          label: 'This Month\'s Receipts',
+                          labelStyle: TextStyle(fontSize: 15),
+                          onTap: () {
+                            setState(() {
+                              mode = 'month';
+                            });
+                          })
+                      : SpeedDialChild(
+                          child: Icon(
+                            Icons.receipt,
+                            size: 25,
+                          ),
+                          backgroundColor: NeumorphicTheme.baseColor(context),
+                          label: 'Past 7 Day\'s Receipts',
+                          labelStyle: TextStyle(fontSize: 15),
+                          onTap: () {
+                            setState(() {
+                              mode = 'recentReceipts';
+                            });
+                          }),
+                  SpeedDialChild(
+                      child: Icon(
+                        Icons.archive,
+                        size: 25,
+                      ),
+                      backgroundColor: NeumorphicTheme.baseColor(context),
+                      label: 'All Archived Receipts',
+                      labelStyle: TextStyle(fontSize: 15),
+                      onTap: () {
+                        setState(() {
+                          mode = 'archives';
+                        });
+                      }),
                   SpeedDialChild(
                       child: Icon(
                         Icons.receipt,
