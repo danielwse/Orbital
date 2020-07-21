@@ -7,6 +7,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:DaySpend/expenses/edit_category.dart';
 import 'package:DaySpend/expenses/edit_expense.dart';
 import 'package:moneytextformfield/moneytextformfield.dart';
+import 'package:pdf/pdf.dart';
 import 'package:wc_form_validators/wc_form_validators.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
@@ -16,6 +17,7 @@ import 'package:flip_card/flip_card.dart';
 import 'package:random_color/random_color.dart';
 import 'package:DaySpend/size_config.dart';
 import 'package:DaySpend/fonts/header.dart';
+import 'package:DaySpend/pdf/report.dart';
 
 //max spend part at top of page
 class MaxSpend extends StatefulWidget {
@@ -233,6 +235,10 @@ class _ExpensesState extends State<Expenses> {
                                                         children: <Widget>[
                                                           FlatButton(
                                                               onPressed: () {
+                                                                generateReport(
+                                                                    PdfPageFormat
+                                                                        .a3);
+
                                                                 categoryController
                                                                     .clear();
                                                                 Navigator.of(

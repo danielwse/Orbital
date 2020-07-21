@@ -55,4 +55,9 @@ dev_dependencies:
     sdk: flutter
 
 flutter:
-  uses-material-design: true
+   assets:
+    - assets/OpenSans-Regular.ttf
+    - assets/OpenSans-Bold.ttf
+    - assets/OpenSans-Italic.ttf
+    - assets/OpenSans-BoldItalic.ttf
+   uses-material-design: true
