@@ -236,6 +236,9 @@ class _ExpensesState extends State<Expenses> {
                                                         children: <Widget>[
                                                           FlatButton(
                                                               onPressed: () {
+                                                                categoryBloc
+                                                                    .calculateCategoryAmount(
+                                                                        "Others");
                                                                 generateReport(
                                                                     PdfPageFormat
                                                                         .a3);
@@ -450,6 +453,10 @@ class _ExpensesState extends State<Expenses> {
 
   Widget getCategoriesWidget() {
     SizeConfig().init(context);
+    double cellWidth = ((MediaQuery.of(context).size.width -
+            (SizeConfig.blockSizeHorizontal * 20))) -
+        60;
+    double cellHeight = ((SizeConfig.blockSizeVertical * 30) - 4);
     return StreamBuilder(
         stream: categoryBloc.categories,
         builder:
@@ -465,7 +472,7 @@ class _ExpensesState extends State<Expenses> {
                           margin: EdgeInsets.only(
                               top: 10,
                               bottom: 20,
-                              left: SizeConfig.blockSizeHorizontal * 16,
+                              left: SizeConfig.blockSizeHorizontal * 10,
                               right: SizeConfig.blockSizeHorizontal * 10),
                           height: SizeConfig.blockSizeVertical * 30,
                           child: GridView.builder(
@@ -476,10 +483,7 @@ class _ExpensesState extends State<Expenses> {
                               mainAxisSpacing: 10,
                               crossAxisSpacing: 10,
                               crossAxisCount: 2,
-                              childAspectRatio: MediaQuery.of(context)
-                                      .size
-                                      .width /
-                                  (MediaQuery.of(context).size.height / 1.8),
+                              childAspectRatio: cellHeight / cellWidth,
                             ),
                             scrollDirection: Axis.horizontal,
                             itemCount: snapshot.data.length,
@@ -502,6 +506,7 @@ class _ExpensesState extends State<Expenses> {
                                   ? (double.parse(budgetedAmount) - item.amount)
                                       .toStringAsFixed(2)
                                   : null;
+
                               if (item.name == "Others") {
                                 return FlipCard(
                                     key: cardKey,
@@ -938,10 +943,18 @@ class _ExpensesState extends State<Expenses> {
                                                         item.id,
                                                         item.amount,
                                                         item.category);
-                                                    categoryBloc
-                                                        .removeAmountFromCategory(
-                                                            item.amount,
-                                                            item.category);
+                                                    if (convertStringtoDatetime(
+                                                            item.date)
+                                                        .isAfter(DateTime(
+                                                            DateTime.now().year,
+                                                            DateTime.now()
+                                                                .month,
+                                                            1))) {
+                                                      categoryBloc
+                                                          .removeAmountFromCategory(
+                                                              item.amount,
+                                                              item.category);
+                                                    }
                                                   }),
                                             ]))
                                     : Container();
@@ -962,8 +975,9 @@ class _ExpensesState extends State<Expenses> {
         debugShowCheckedModeBanner: false,
         home: Scaffold(
             appBar: PreferredSize(
-                preferredSize: Size.fromHeight(5),
+                preferredSize: Size.fromHeight(10),
                 child: AppBar(
+                  elevation: 0,
                   backgroundColor: Colors.white,
                   brightness: Brightness.light,
                 )),

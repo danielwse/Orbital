@@ -128,6 +128,10 @@ class _EditCategoryState extends State<EditCategory> {
                                                                           .currentState
                                                                           .validate()
                                                               ? () {
+                                                                  CategoryBloc()
+                                                                      .calculateCategoryAmount(widget
+                                                                          .category
+                                                                          .name);
                                                                   if (_categoryFormKey
                                                                       .currentState
                                                                       .validate()) {

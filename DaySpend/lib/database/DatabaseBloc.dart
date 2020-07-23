@@ -141,6 +141,11 @@ class CategoryBloc implements Bloc {
     getCategories();
   }
 
+  calculateCategoryAmount(String category) async {
+    await _categoryRepository.calculateCategoryAmount(category);
+    getCategories();
+  }
+
   removeAmountFromCategory(double deleteAmount, String category) async {
     await _categoryRepository.removeAmountFromCategory(deleteAmount, category);
     getCategories();
@@ -180,7 +185,7 @@ class CategoryBloc implements Bloc {
     getCategories();
   }
 
-  Future categoryNameList() async {
+  Future<List<String>> categoryNameList() async {
     var res = await _categoryRepository.categoryNameList();
     getCategories();
     return res;

@@ -172,22 +172,48 @@ class _EditExpenseState extends State<EditExpense> {
                           FlatButton(
                               onPressed: isButtonEnabled
                                   ? () {
-                                      if (dateChanged) {
-                                        widget.expensesBloc.changeDate(
-                                            formattedDate, widget.expenseID);
-                                      }
-                                      if (descriptionChanged) {
-                                        widget.expensesBloc.changeDescription(
-                                          _renameController.text,
-                                          widget.expenseID,
-                                        );
-                                      }
-                                      if (amountChanged) {
-                                        widget.expensesBloc.changeAmount(
-                                            double.parse(
-                                                _amountController.text),
-                                            widget.expenseID);
-                                        if (!categoryChanged) {
+                                      if (convertStringtoDatetime(formattedDate)
+                                          .isAfter(DateTime(DateTime.now().year,
+                                              DateTime.now().month, 1))) {
+                                        if (dateChanged) {
+                                          widget.expensesBloc.changeDate(
+                                              formattedDate, widget.expenseID);
+                                          widget.categoryBloc
+                                              .calculateCategoryAmount(
+                                                  widget.category);
+                                        }
+                                        if (descriptionChanged) {
+                                          widget.expensesBloc.changeDescription(
+                                            _renameController.text,
+                                            widget.expenseID,
+                                          );
+                                        }
+                                        if (amountChanged) {
+                                          widget.expensesBloc.changeAmount(
+                                              double.parse(
+                                                  _amountController.text),
+                                              widget.expenseID);
+                                          if (!categoryChanged) {
+                                            widget.categoryBloc
+                                                .calculateCategoryAmount(
+                                                    _currentCategory.name);
+                                            widget.categoryBloc
+                                                .removeAmountFromCategory(
+                                                    widget.initialAmount,
+                                                    widget.category);
+                                            widget.categoryBloc
+                                                .addAmountToCategory(
+                                                    double.parse(
+                                                        _amountController.text),
+                                                    widget.category);
+                                          }
+                                        }
+                                        if (categoryChanged) {
+                                          widget.expensesBloc
+                                              .changeExpenseCategory(
+                                                  _currentCategory.name,
+                                                  widget.expenseID);
+
                                           widget.categoryBloc
                                               .removeAmountFromCategory(
                                                   widget.initialAmount,
@@ -196,25 +222,45 @@ class _EditExpenseState extends State<EditExpense> {
                                               .addAmountToCategory(
                                                   double.parse(
                                                       _amountController.text),
-                                                  widget.category);
+                                                  _currentCategory.name);
                                         }
+                                        Navigator.of(context).pop();
+                                      } else {
+                                        if (dateChanged) {
+                                          widget.expensesBloc.changeDate(
+                                              formattedDate, widget.expenseID);
+                                        }
+                                        if (descriptionChanged) {
+                                          widget.expensesBloc.changeDescription(
+                                            _renameController.text,
+                                            widget.expenseID,
+                                          );
+                                        }
+                                        if (amountChanged) {
+                                          widget.expensesBloc.changeAmount(
+                                              double.parse(
+                                                  _amountController.text),
+                                              widget.expenseID);
+                                        }
+                                        if (categoryChanged) {
+                                          widget.expensesBloc
+                                              .changeExpenseCategory(
+                                                  _currentCategory.name,
+                                                  widget.expenseID);
+                                          if (convertStringtoDatetime(
+                                                  widget.date)
+                                              .isAfter(DateTime(
+                                                  DateTime.now().year,
+                                                  DateTime.now().month,
+                                                  1))) {
+                                            widget.categoryBloc
+                                                .removeAmountFromCategory(
+                                                    widget.initialAmount,
+                                                    widget.category);
+                                          }
+                                        }
+                                        Navigator.of(context).pop();
                                       }
-                                      if (categoryChanged) {
-                                        widget.expensesBloc
-                                            .changeExpenseCategory(
-                                                _currentCategory.name,
-                                                widget.expenseID);
-
-                                        widget.categoryBloc
-                                            .removeAmountFromCategory(
-                                                widget.initialAmount,
-                                                widget.category);
-                                        widget.categoryBloc.addAmountToCategory(
-                                            double.parse(
-                                                _amountController.text),
-                                            _currentCategory.name);
-                                      }
-                                      Navigator.of(context).pop();
                                     }
                                   : null,
                               child: Icon(Icons.done, size: 40)),

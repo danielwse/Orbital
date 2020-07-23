@@ -187,6 +187,12 @@ class _DecoratedTextFieldState extends State<DecoratedTextField> {
     );
   }
 
+  static DateTime convertStringtoDatetime(String date) {
+    String result =
+        date.substring(0, 4) + date.substring(5, 7) + date.substring(8);
+    return DateTime.parse(result);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(children: <Widget>[
@@ -223,9 +229,13 @@ class _DecoratedTextFieldState extends State<DecoratedTextField> {
                               _currentCategory.name,
                               double.parse(amountController.text),
                               formattedDate);
-                          widget.categoryBloc.addAmountToCategory(
-                              double.parse(amountController.text),
-                              _currentCategory.name);
+                          if (convertStringtoDatetime(formattedDate).isAfter(
+                              DateTime(DateTime.now().year,
+                                  DateTime.now().month, 1))) {
+                            widget.categoryBloc.addAmountToCategory(
+                                double.parse(amountController.text),
+                                _currentCategory.name);
+                          }
 
                           Navigator.of(context).pop();
                         }

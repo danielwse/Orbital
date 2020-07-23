@@ -32,6 +32,33 @@ class CategoryDao {
     return res;
   }
 
+  static DateTime convertStringtoDatetime(String date) {
+    String result =
+        date.substring(0, 4) + date.substring(5, 7) + date.substring(8);
+    return DateTime.parse(result);
+  }
+
+  calculateCategoryAmount(String category) async {
+    double totalAmt = 0;
+    final db = await dbProvider.database;
+    var res =
+        await db.query("Expenses", columns: ['category', 'amount', 'date']);
+    for (final expense in res) {
+      if (expense['category'].toLowerCase() == category.toLowerCase() &&
+          convertStringtoDatetime(expense['date']).isAfter(
+              DateTime(DateTime.now().year, DateTime.now().month, 1))) {
+        totalAmt += expense['amount'];
+      }
+    }
+    var result = await db.rawUpdate('''
+    UPDATE Categories
+    SET amount = $totalAmt
+    WHERE name = '${category[0].toUpperCase() + category.substring(1)}'
+    ''');
+
+    return result;
+  }
+
   Future<int> removeAmountFromCategory(
       double deleteAmount, String category) async {
     final db = await dbProvider.database;
@@ -100,8 +127,8 @@ class CategoryDao {
     return res;
   }
 
-  Future categoryNameList() async {
-    var list = [];
+  Future<List<String>> categoryNameList() async {
+    List<String> list = [];
     final db = await dbProvider.database;
     await db.query("Categories", columns: ['name']).then(
         (element) => element.forEach((element) {
@@ -129,4 +156,6 @@ class CategoryRepository {
   Future getCategoryColor(String categoryName) =>
       categoryDao.getCategoryColour(categoryName);
   Future categoryNameList() => categoryDao.categoryNameList();
+  Future calculateCategoryAmount(String category) =>
+      categoryDao.calculateCategoryAmount(category);
 }
