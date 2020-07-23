@@ -17,49 +17,26 @@ class Homepage extends StatefulWidget {
 class _HomepageState extends State<Homepage> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(
-          brightness: Brightness.light,
-          titleSpacing: 8,
-          automaticallyImplyLeading: false,
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Header(
-                text: 'DaySpend',
-                size: 20,
-                italic: true,
-              ),
-              Spacer(),
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.settings, size: 25),
-              ),
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.notifications, size: 25),
-              ),
-              IconButton(
-                  onPressed: () {}, icon: Icon(Icons.assessment, size: 25))
-            ],
-          ),
-        ),
+    return Scaffold(
+      appBar: AppBar(
+        brightness: Brightness.light,
+        titleSpacing: 8,
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
-        floatingActionButton: AddExpense(),
-        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-        body: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              HomePageExpenses(),
-              PlannerHome(
-                notificationFn: widget.notificationFn,
-                disableNotificationFn: widget.disableNotificationFn,
-              )
-            ],
-          ),
+        elevation: 0,
+      ),
+      backgroundColor: Colors.white,
+      floatingActionButton: AddExpense(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      body: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            HomePageExpenses(),
+            PlannerHome(
+              notificationFn: widget.notificationFn,
+              disableNotificationFn: widget.disableNotificationFn,
+            )
+          ],
         ),
       ),
     );
