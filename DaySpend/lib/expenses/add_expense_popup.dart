@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:DaySpend/database/DatabaseBloc.dart';
 import 'package:DaySpend/database/db_models.dart';
+import 'package:DaySpend/fonts/header.dart';
 
 class AddExpense extends StatefulWidget {
   AddExpense({Key key}) : super(key: key);
@@ -186,6 +187,12 @@ class _DecoratedTextFieldState extends State<DecoratedTextField> {
     );
   }
 
+  static DateTime convertStringtoDatetime(String date) {
+    String result =
+        date.substring(0, 4) + date.substring(5, 7) + date.substring(8);
+    return DateTime.parse(result);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(children: <Widget>[
@@ -203,6 +210,15 @@ class _DecoratedTextFieldState extends State<DecoratedTextField> {
             ],
           ),
           Spacer(),
+          Header(
+            text: 'Add Receipt',
+            shadow: Shadow(
+                blurRadius: 2.5, color: Colors.black26, offset: Offset(0, 1)),
+            weight: FontWeight.w600,
+            color: Colors.black54,
+            size: MediaQuery.of(context).copyWith().size.width / 20,
+          ),
+          Spacer(),
           Column(
             children: <Widget>[
               FlatButton(
@@ -213,9 +229,13 @@ class _DecoratedTextFieldState extends State<DecoratedTextField> {
                               _currentCategory.name,
                               double.parse(amountController.text),
                               formattedDate);
-                          widget.categoryBloc.addAmountToCategory(
-                              double.parse(amountController.text),
-                              _currentCategory.name);
+                          if (convertStringtoDatetime(formattedDate).isAfter(
+                              DateTime(DateTime.now().year,
+                                  DateTime.now().month, 1))) {
+                            widget.categoryBloc.addAmountToCategory(
+                                double.parse(amountController.text),
+                                _currentCategory.name);
+                          }
 
                           Navigator.of(context).pop();
                         }

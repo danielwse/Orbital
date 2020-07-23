@@ -127,9 +127,30 @@ class _HomePageExpensesState extends State<HomePageExpenses> {
                                                 ),
                                                 width: 300,
                                               )
+                                            : Container(),
+                                        position == snapshot.data.length - 1
+                                            ? Container(
+                                                margin:
+                                                    EdgeInsets.only(top: 30),
+                                                alignment: Alignment.center,
+                                                child: Text(
+                                                  "Add a new category \n ←",
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                    color: Colors.grey,
+                                                    fontSize:
+                                                        MediaQuery.of(context)
+                                                                .copyWith()
+                                                                .size
+                                                                .width /
+                                                            30,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                              )
                                             : Container()
                                       ]);
-                                    }))
+                                    })),
                           ]))
                         : Container();
                   })
@@ -140,7 +161,7 @@ class _HomePageExpensesState extends State<HomePageExpenses> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        height: 350,
+        height: MediaQuery.of(context).copyWith().size.height / 2.5,
         width: double.infinity,
         color: Colors.white,
         child: Container(
@@ -161,7 +182,7 @@ class _HomePageExpensesState extends State<HomePageExpenses> {
             ),
           ),
           SizedBox(height: 20),
-          budgetBars()
+          budgetBars(),
         ])));
   }
 }

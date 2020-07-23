@@ -74,6 +74,13 @@ Future<void> main() async {
     print("Removed Expired tasks");
   });
 
+  await CategoryBloc()
+      .categoryNameList()
+      .then((value) => value.forEach((category) {
+            CategoryBloc().calculateCategoryAmount(category);
+          }))
+      .then((value) => print("Updated Categories"));
+
   runApp(MyApp());
 }
 
