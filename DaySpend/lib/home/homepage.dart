@@ -2,13 +2,6 @@ import 'package:DaySpend/expenses/add_expense_popup.dart';
 import 'package:DaySpend/planner/homepage/planner_view.dart';
 import 'package:flutter/material.dart';
 import 'package:DaySpend/expenses/homepage_expenses.dart';
-<<<<<<< HEAD
-=======
-import 'package:DaySpend/fonts/header.dart';
-import 'package:flutter_full_pdf_viewer/full_pdf_viewer_scaffold.dart';
-import 'package:DaySpend/pdf/report.dart';
-import 'package:pdf/pdf.dart';
->>>>>>> 0ca75e0a0bb6a730a037db7b7564aceb58fb1c79
 
 class Homepage extends StatefulWidget {
   final Function notificationFn;
