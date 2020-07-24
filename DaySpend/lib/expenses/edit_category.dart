@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:moneytextformfield/moneytextformfield.dart';
 import 'package:wc_form_validators/wc_form_validators.dart';
 import 'package:DaySpend/database/db_models.dart';
+import 'package:DaySpend/fonts/header.dart';
 
 class EditCategory extends StatefulWidget {
   final ExpensesBloc expensesBloc;
@@ -76,7 +77,7 @@ class _EditCategoryState extends State<EditCategory> {
                                             Column(children: <Widget>[
                                               Row(
                                                 mainAxisAlignment:
-                                                    MainAxisAlignment.end,
+                                                    MainAxisAlignment.center,
                                                 children: <Widget>[
                                                   Column(
                                                     children: <Widget>[
@@ -91,6 +92,22 @@ class _EditCategoryState extends State<EditCategory> {
                                                               size: 40)),
                                                       Text('Cancel')
                                                     ],
+                                                  ),
+                                                  Spacer(),
+                                                  Header(
+                                                    text: 'Edit Category',
+                                                    italic: false,
+                                                    shadow: Shadow(
+                                                        blurRadius: 2.5,
+                                                        color: Colors.black26,
+                                                        offset: Offset(0, 1)),
+                                                    weight: FontWeight.w600,
+                                                    color: Colors.black54,
+                                                    size: MediaQuery.of(context)
+                                                            .copyWith()
+                                                            .size
+                                                            .width /
+                                                        20,
                                                   ),
                                                   Spacer(),
                                                   Column(
@@ -111,6 +128,10 @@ class _EditCategoryState extends State<EditCategory> {
                                                                           .currentState
                                                                           .validate()
                                                               ? () {
+                                                                  CategoryBloc()
+                                                                      .calculateCategoryAmount(widget
+                                                                          .category
+                                                                          .name);
                                                                   if (_categoryFormKey
                                                                       .currentState
                                                                       .validate()) {
