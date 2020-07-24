@@ -49,7 +49,7 @@ class _HomePageExpensesState extends State<HomePageExpenses> {
                         ? SingleChildScrollView(
                             child: Column(children: <Widget>[
                             SizedBox(
-                                height: 220,
+                                height: MediaQuery.of(context).size.height / 3,
                                 child: ListView.builder(
                                     // itemCount: snapshot.data
                                     //     .where((element) =>
@@ -134,7 +134,7 @@ class _HomePageExpensesState extends State<HomePageExpenses> {
                                                     EdgeInsets.only(top: 30),
                                                 alignment: Alignment.center,
                                                 child: Text(
-                                                  "Add a new category \n ←",
+                                                  "Swipe to add a new category \n ←",
                                                   textAlign: TextAlign.center,
                                                   style: TextStyle(
                                                     color: Colors.grey,
@@ -181,7 +181,6 @@ class _HomePageExpensesState extends State<HomePageExpenses> {
               size: MediaQuery.of(context).copyWith().size.width / 15,
             ),
           ),
-          SizedBox(height: 20),
           budgetBars(),
         ])));
   }

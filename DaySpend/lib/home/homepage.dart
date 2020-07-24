@@ -1,11 +1,6 @@
-import 'package:DaySpend/expenses/add_expense_popup.dart';
 import 'package:DaySpend/planner/homepage/planner_view.dart';
 import 'package:flutter/material.dart';
 import 'package:DaySpend/expenses/homepage_expenses.dart';
-import 'package:DaySpend/fonts/header.dart';
-import 'package:flutter_full_pdf_viewer/full_pdf_viewer_scaffold.dart';
-import 'package:DaySpend/pdf/report.dart';
-import 'package:pdf/pdf.dart';
 
 class Homepage extends StatefulWidget {
   final Function notificationFn;
@@ -21,6 +16,7 @@ class _HomepageState extends State<Homepage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomPadding: true,
       appBar: AppBar(
         brightness: Brightness.light,
         titleSpacing: 8,
@@ -29,8 +25,6 @@ class _HomepageState extends State<Homepage> {
         elevation: 0,
       ),
       backgroundColor: Colors.white,
-      floatingActionButton: AddExpense(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[

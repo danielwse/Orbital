@@ -88,6 +88,23 @@ class DBProvider {
             .randomColor(colorBrightness: ColorBrightness.light)
             .toString()
       });
+      await db.insert("Categories", {
+        "name": "Transport",
+        "amount": 0,
+        "budgetPercentage": "Not Set",
+        "color": RandomColor()
+            .randomColor(colorBrightness: ColorBrightness.light)
+            .toString()
+      });
+
+      await db.insert("Categories", {
+        "name": "Shopping",
+        "amount": 0,
+        "budgetPercentage": "Not Set",
+        "color": RandomColor()
+            .randomColor(colorBrightness: ColorBrightness.light)
+            .toString()
+      });
     });
   }
 }
