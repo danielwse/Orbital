@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -11,7 +10,7 @@ const PdfColor lightGreen = PdfColor.fromInt(0xffcdf1e7);
 
 Future<Uint8List> generateResume(PdfPageFormat format) async {
   final pw.Document doc =
-  pw.Document(title: 'My Résumé', author: 'David PHAM-VAN');
+      pw.Document(title: 'My Résumé', author: 'David PHAM-VAN');
 
 //  final PdfImage profileImage = PdfImage.file(
 //    doc.document,
@@ -27,53 +26,53 @@ Future<Uint8List> generateResume(PdfPageFormat format) async {
           child: pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: <pw.Widget>[
-                pw.Container(
-                    padding: const pw.EdgeInsets.only(left: 30, bottom: 20),
-                    child: pw.Column(
-                        crossAxisAlignment: pw.CrossAxisAlignment.start,
-                        children: <pw.Widget>[
-                          pw.Text('Parnella Charlesbois',
-                              textScaleFactor: 2,
-                              style: pw.Theme.of(context)
-                                  .defaultTextStyle
-                                  .copyWith(fontWeight: pw.FontWeight.bold)),
-                          pw.Padding(padding: const pw.EdgeInsets.only(top: 10)),
-                          pw.Text('Electrotyper',
-                              textScaleFactor: 1.2,
-                              style: pw.Theme.of(context).defaultTextStyle.copyWith(
-                                  fontWeight: pw.FontWeight.bold, color: green)),
-                          pw.Padding(padding: const pw.EdgeInsets.only(top: 20)),
-                          pw.Row(
-                              crossAxisAlignment: pw.CrossAxisAlignment.start,
-                              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                              children: <pw.Widget>[
-                                pw.Column(
-                                    crossAxisAlignment: pw.CrossAxisAlignment.start,
-                                    children: <pw.Widget>[
-                                      pw.Text('568 Port Washington Road'),
-                                      pw.Text('Nordegg, AB T0M 2H0'),
-                                      pw.Text('Canada, ON'),
-                                    ]),
-                                pw.Column(
-                                    crossAxisAlignment: pw.CrossAxisAlignment.start,
-                                    children: <pw.Widget>[
-                                      pw.Text('+1 403-721-6898'),
-                                      _UrlText('p.charlesbois@yahoo.com',
-                                          'mailto:p.charlesbois@yahoo.com'),
-                                      _UrlText('wholeprices.ca',
-                                          'https://wholeprices.ca'),
-                                    ]),
-                                pw.Padding(padding: pw.EdgeInsets.zero)
-                              ]),
-                        ])),
-                _Category(title: 'Work Experience'),
-                _Block(title: 'Tour bus driver'),
-                _Block(title: 'Logging equipment operator'),
-                _Block(title: 'Foot doctor'),
-                _Category(title: 'Education'),
-                _Block(title: 'Bachelor Of Commerce'),
-                _Block(title: 'Bachelor Interior Design'),
-              ])),
+            pw.Container(
+                padding: const pw.EdgeInsets.only(left: 30, bottom: 20),
+                child: pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: <pw.Widget>[
+                      pw.Text('Parnella Charlesbois',
+                          textScaleFactor: 2,
+                          style: pw.Theme.of(context)
+                              .defaultTextStyle
+                              .copyWith(fontWeight: pw.FontWeight.bold)),
+                      pw.Padding(padding: const pw.EdgeInsets.only(top: 10)),
+                      pw.Text('Electrotyper',
+                          textScaleFactor: 1.2,
+                          style: pw.Theme.of(context).defaultTextStyle.copyWith(
+                              fontWeight: pw.FontWeight.bold, color: green)),
+                      pw.Padding(padding: const pw.EdgeInsets.only(top: 20)),
+                      pw.Row(
+                          crossAxisAlignment: pw.CrossAxisAlignment.start,
+                          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                          children: <pw.Widget>[
+                            pw.Column(
+                                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                                children: <pw.Widget>[
+                                  pw.Text('568 Port Washington Road'),
+                                  pw.Text('Nordegg, AB T0M 2H0'),
+                                  pw.Text('Canada, ON'),
+                                ]),
+                            pw.Column(
+                                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                                children: <pw.Widget>[
+                                  pw.Text('+1 403-721-6898'),
+                                  _UrlText('p.charlesbois@yahoo.com',
+                                      'mailto:p.charlesbois@yahoo.com'),
+                                  _UrlText('wholeprices.ca',
+                                      'https://wholeprices.ca'),
+                                ]),
+                            pw.Padding(padding: pw.EdgeInsets.zero)
+                          ]),
+                    ])),
+            _Category(title: 'Work Experience'),
+            _Block(title: 'Tour bus driver'),
+            _Block(title: 'Logging equipment operator'),
+            _Block(title: 'Foot doctor'),
+            _Category(title: 'Education'),
+            _Block(title: 'Bachelor Of Commerce'),
+            _Block(title: 'Bachelor Interior Design'),
+          ])),
       pw.Container(
         height: double.infinity,
         width: 2,
@@ -119,7 +118,7 @@ Future<pw.PageTheme> _myPageTheme(PdfPageFormat format) async {
     theme: pw.ThemeData.withFont(
 //      base: pw.Font.ttf(await rootBundle.load('assets/open-sans.ttf')),
 //      bold: pw.Font.ttf(await rootBundle.load('assets/open-sans-bold.ttf')),
-    ),
+        ),
     buildBackground: (pw.Context context) {
       return pw.FullPage(
         ignoreMargins: true,

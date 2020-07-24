@@ -32,11 +32,16 @@ class ExpensesDao {
     return result;
   }
 
-  Future<int> changeExpenseCategory(String category, int id) async {
+  Future<int> changeExpenseCategory(int categoryID, int id) async {
     final db = await dbProvider.database;
+    var categoryName = await db.query(
+      "Categories",
+      where: "id = $categoryID ",
+    );
+
     var res = await db.rawUpdate('''
     UPDATE Expenses 
-    SET category = '$category'
+    SET category = '${categoryName[0]["name"]}'
     WHERE id = $id
     ''');
     return res;
@@ -99,8 +104,8 @@ class ExpensesRepository {
       expensesDao.deleteExpense(id, amount, category);
   Future getExpensesByCategory(String category) =>
       expensesDao.getExpensesByCategory(category);
-  Future changeExpenseCategory(String category, int id) =>
-      expensesDao.changeExpenseCategory(category, id);
+  Future changeExpenseCategory(int categoryID, int id) =>
+      expensesDao.changeExpenseCategory(categoryID, id);
   Future changeDescription(String newDescription, int id) =>
       expensesDao.changeDescription(newDescription, id);
   Future changeAmount(double newAmount, int id) =>

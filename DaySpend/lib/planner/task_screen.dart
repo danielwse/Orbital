@@ -66,6 +66,7 @@ class _TaskScreenState extends State<TaskScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomPadding: true,
       backgroundColor: Color(0xffF7F7F7),
       appBar: AppBar(
         brightness: Brightness.light,

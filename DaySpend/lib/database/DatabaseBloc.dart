@@ -44,8 +44,8 @@ class ExpensesBloc implements Bloc {
     return res;
   }
 
-  changeExpenseCategory(String category, int id) async {
-    await _expensesRepository.changeExpenseCategory(category, id);
+  changeExpenseCategory(int categoryID, int id) async {
+    await _expensesRepository.changeExpenseCategory(categoryID, id);
     getExpenses();
   }
 

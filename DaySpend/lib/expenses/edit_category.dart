@@ -1,9 +1,11 @@
 import 'package:DaySpend/database/DatabaseBloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:moneytextformfield/moneytextformfield.dart';
 import 'package:wc_form_validators/wc_form_validators.dart';
 import 'package:DaySpend/database/db_models.dart';
 import 'package:DaySpend/fonts/header.dart';
+import 'package:DaySpend/expenses/inputFormatters.dart';
 
 class EditCategory extends StatefulWidget {
   final ExpensesBloc expensesBloc;
@@ -151,7 +153,7 @@ class _EditCategoryState extends State<EditCategory> {
                                                                               .isNotEmpty
                                                                           ? list.forEach((expense) =>
                                                                               {
-                                                                                widget.expensesBloc.changeExpenseCategory(_renameController.text, expense.id)
+                                                                                widget.expensesBloc.changeExpenseCategory(widget.category.id, expense.id)
                                                                               })
                                                                           : null);
                                                                   String newBudget = percentageController.text ==
@@ -257,6 +259,12 @@ class _EditCategoryState extends State<EditCategory> {
                                                           : null,
                                                       settings:
                                                           MoneyTextFormFieldSettings(
+                                                              inputFormatters: [
+                                                            WhitelistingTextInputFormatter
+                                                                .digitsOnly,
+                                                            DecimalTextInputFormatter(
+                                                                decimalRange: 1)
+                                                          ],
                                                               onChanged: () =>
                                                                   change(),
                                                               enabled: snapshot

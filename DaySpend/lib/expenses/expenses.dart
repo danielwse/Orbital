@@ -7,17 +7,17 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:DaySpend/expenses/edit_category.dart';
 import 'package:DaySpend/expenses/edit_expense.dart';
 import 'package:moneytextformfield/moneytextformfield.dart';
-import 'package:pdf/pdf.dart';
 import 'package:wc_form_validators/wc_form_validators.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:percent_indicator/percent_indicator.dart';
-import 'dart:math';
+import 'dart:math' as math;
 import 'package:flip_card/flip_card.dart';
 import 'package:random_color/random_color.dart';
 import 'package:DaySpend/size_config.dart';
 import 'package:DaySpend/fonts/header.dart';
-import 'package:DaySpend/pdf/report.dart';
+import 'package:flutter/services.dart';
+import 'package:DaySpend/expenses/inputFormatters.dart';
 
 //max spend part at top of page
 class MaxSpend extends StatefulWidget {
@@ -68,11 +68,15 @@ class _MaxSpendState extends State<MaxSpend> {
                                   padding: EdgeInsets.only(
                                       left: width / 4.5, right: width / 15),
                                   child: TextField(
-                                    maxLength: 6,
+                                    inputFormatters: [
+                                      DecimalTextInputFormatter(
+                                          decimalRange: 2),
+                                      DecimalPointTextInputFormatter(),
+                                      LengthLimitingTextInputFormatter(6),
+                                    ],
                                     textAlign: TextAlign.center,
                                     controller: _maxSpendController,
                                     decoration: InputDecoration(
-                                        counter: Offstage(),
                                         suffixIcon: IconButton(
                                             icon: Icon(Icons.check),
                                             onPressed: () async {
@@ -153,7 +157,7 @@ class _ExpensesState extends State<Expenses> {
   final GlobalKey<FormState> _categoryFormKey = GlobalKey<FormState>();
   String mode = "recentReceipts";
 
-  Random random = new Random();
+  math.Random random = new math.Random();
 
   @override
   dispose() {
@@ -239,9 +243,6 @@ class _ExpensesState extends State<Expenses> {
                                                                 categoryBloc
                                                                     .calculateCategoryAmount(
                                                                         "Others");
-                                                                generateReport(
-                                                                    PdfPageFormat
-                                                                        .a3);
 
                                                                 categoryController
                                                                     .clear();
@@ -383,6 +384,13 @@ class _ExpensesState extends State<Expenses> {
                                                               : null,
                                                           settings:
                                                               MoneyTextFormFieldSettings(
+                                                                  inputFormatters: [
+                                                                WhitelistingTextInputFormatter
+                                                                    .digitsOnly,
+                                                                DecimalTextInputFormatter(
+                                                                    decimalRange:
+                                                                        1)
+                                                              ],
                                                                   enabled: snapshot
                                                                               .data ==
                                                                           "Not Set"
@@ -472,7 +480,7 @@ class _ExpensesState extends State<Expenses> {
                           margin: EdgeInsets.only(
                               top: 10,
                               bottom: 20,
-                              left: SizeConfig.blockSizeHorizontal * 10,
+                              left: SizeConfig.blockSizeHorizontal * 11,
                               right: SizeConfig.blockSizeHorizontal * 10),
                           height: SizeConfig.blockSizeVertical * 30,
                           child: GridView.builder(
@@ -507,7 +515,119 @@ class _ExpensesState extends State<Expenses> {
                                       .toStringAsFixed(2)
                                   : null;
 
-                              if (item.name == "Others") {
+                              if (item.id == 1) {
+                                return FlipCard(
+                                    key: cardKey,
+                                    direction: FlipDirection.HORIZONTAL,
+                                    front: Neumorphic(
+                                        style: NeumorphicStyle(
+                                            lightSource: LightSource.topRight,
+                                            color: Colors.white,
+                                            intensity: 5,
+                                            depth: 2,
+                                            boxShape:
+                                                NeumorphicBoxShape.roundRect(
+                                                    BorderRadius.circular(25))),
+                                        child: Column(children: [
+                                          Text(item.name,
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w400)),
+                                          Spacer(),
+                                          CircularPercentIndicator(
+                                            radius:
+                                                SizeConfig.blockSizeVertical *
+                                                    8,
+                                            lineWidth:
+                                                SizeConfig.blockSizeHorizontal *
+                                                    2,
+                                            animation: true,
+                                            percent: item.budgetPercentage ==
+                                                    "Not Set"
+                                                ? 0
+                                                : double.parse(
+                                                        item.budgetPercentage) *
+                                                    0.01,
+                                            center: new Text(
+                                              item.budgetPercentage ==
+                                                          "Set A Max Spend" ||
+                                                      item.budgetPercentage ==
+                                                          "Not Set"
+                                                  ? "0%"
+                                                  : item.budgetPercentage +
+                                                      '\%',
+                                              style: new TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: SizeConfig
+                                                          .blockSizeVertical *
+                                                      2.5),
+                                            ),
+                                            circularStrokeCap:
+                                                CircularStrokeCap.round,
+                                            progressColor:
+                                                stringToColor(item.color),
+                                          ),
+                                          Spacer(),
+                                          Text(
+                                            '${item.budgetPercentage == "Set A Max Spend" || item.budgetPercentage == "Not Set" || amountLeft == null ? "Not Set" : double.parse(amountLeft) > 0 ? '\$' + amountLeft + ' left' : '\$' + double.parse(amountLeft).abs().toStringAsFixed(2) + ' over'}',
+                                            style: TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold,
+                                                color: amountLeft == null
+                                                    ? Colors.green
+                                                    : double.parse(amountLeft) >
+                                                            0
+                                                        ? Colors.green
+                                                        : Colors.red[800]),
+                                          ),
+                                        ])),
+                                    back: Neumorphic(
+                                        style: NeumorphicStyle(
+                                            lightSource: LightSource.topRight,
+                                            color: Colors.white,
+                                            intensity: 5,
+                                            depth: 2,
+                                            boxShape:
+                                                NeumorphicBoxShape.roundRect(
+                                                    BorderRadius.circular(25))),
+                                        child: Container(
+                                            child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: <Widget>[
+                                              new IconButton(
+                                                  color: Colors.blue[200],
+                                                  icon: Icon(Icons.edit,
+                                                      size: 30),
+                                                  onPressed: () {
+                                                    cardKey.currentState
+                                                        .toggleCard();
+                                                    showModalBottomSheet(
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      25.0),
+                                                        ),
+                                                        isScrollControlled:
+                                                            true,
+                                                        context: context,
+                                                        builder: (context) =>
+                                                            EditCategory(
+                                                                expensesBloc,
+                                                                categoryBloc,
+                                                                item));
+                                                    slidableController
+                                                        .activeState
+                                                        ?.close();
+                                                  }),
+                                            ]))));
+                              }
+
+                              if (item.id == 2 ||
+                                  item.id == 3 ||
+                                  item.id == 4) {
                                 return FlipCard(
                                     key: cardKey,
                                     direction: FlipDirection.HORIZONTAL,
@@ -672,18 +792,21 @@ class _ExpensesState extends State<Expenses> {
                                             stringToColor(item.color),
                                       ),
                                       Spacer(),
-                                      Text(
-                                        '${item.budgetPercentage == "Set A Max Spend" || item.budgetPercentage == "Not Set" || amountLeft == null ? "Not Set" : double.parse(amountLeft) > 0 ? '\$' + amountLeft + ' left' : '\$' + double.parse(amountLeft).abs().toStringAsFixed(2) + ' over'}',
-                                        maxLines: 1,
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.bold,
-                                            color: amountLeft == null
-                                                ? Colors.green
-                                                : double.parse(amountLeft) > 0
-                                                    ? Colors.green
-                                                    : Colors.red[800]),
-                                      ),
+                                      FittedBox(
+                                        fit: BoxFit.fitWidth,
+                                        child: Text(
+                                          '${item.budgetPercentage == "Set A Max Spend" || item.budgetPercentage == "Not Set" || amountLeft == null ? "Not Set" : double.parse(amountLeft) > 0 ? '\$' + amountLeft + ' left' : '\$' + double.parse(amountLeft).abs().toStringAsFixed(2) + ' over'}',
+                                          maxLines: 1,
+                                          style: TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.bold,
+                                              color: amountLeft == null
+                                                  ? Colors.green
+                                                  : double.parse(amountLeft) > 0
+                                                      ? Colors.green
+                                                      : Colors.red[800]),
+                                        ),
+                                      )
                                     ]),
                                   ),
                                   back: Neumorphic(
@@ -743,7 +866,7 @@ class _ExpensesState extends State<Expenses> {
                                                               ? list.forEach(
                                                                   (expense) => {
                                                                         expensesBloc.changeExpenseCategory(
-                                                                            'Others',
+                                                                            1,
                                                                             expense.id),
                                                                         categoryBloc.addAmountToCategory(
                                                                             expense.amount,
@@ -763,15 +886,28 @@ class _ExpensesState extends State<Expenses> {
   }
 
   Widget receiptHeader() {
-    return Header(
-      text: 'Receipts',
-      italic: false,
-      shadow:
-          Shadow(blurRadius: 2.5, color: Colors.black26, offset: Offset(0, 1)),
-      weight: FontWeight.w600,
-      color: Colors.black54,
-      size: MediaQuery.of(context).copyWith().size.width / 15,
-    );
+    return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      Header(
+        text: 'Receipts',
+        italic: false,
+        shadow: Shadow(
+            blurRadius: 2.5, color: Colors.black26, offset: Offset(0, 1)),
+        weight: FontWeight.w600,
+        color: Colors.black54,
+        size: MediaQuery.of(context).copyWith().size.width / 15,
+      ),
+      Header(
+        text: mode == 'month'
+            ? ' (This Month)'
+            : mode == 'archives' ? ' (All)' : ' (Past 7 Days)',
+        italic: false,
+        shadow: Shadow(
+            blurRadius: 2.5, color: Colors.black26, offset: Offset(0, 1)),
+        weight: FontWeight.w400,
+        color: Colors.black54,
+        size: MediaQuery.of(context).copyWith().size.width / 23,
+      ),
+    ]);
   }
 
   static DateTime convertStringtoDatetime(String date) {
@@ -791,7 +927,7 @@ class _ExpensesState extends State<Expenses> {
                 physics: ScrollPhysics(),
                 child: Column(children: [
                   SizedBox(
-                      height: height / 3.2,
+                      height: height / 3,
                       child: ListView.builder(
                           scrollDirection: Axis.vertical,
                           itemCount: mode == 'recentReceipts'
@@ -821,7 +957,7 @@ class _ExpensesState extends State<Expenses> {
                                   AsyncSnapshot<dynamic> snapshot1) {
                                 return snapshot1.hasData
                                     ? Container(
-                                        height: height / 14,
+                                        height: height / 13,
                                         margin: EdgeInsets.symmetric(
                                             horizontal: width / 8,
                                             vertical: height / 180),
@@ -995,7 +1131,7 @@ class _ExpensesState extends State<Expenses> {
                   mode == "recentReceipts"
                       ? SpeedDialChild(
                           child: Icon(
-                            Icons.reply_all,
+                            Icons.date_range,
                             size: 25,
                           ),
                           backgroundColor: NeumorphicTheme.baseColor(context),
@@ -1008,7 +1144,7 @@ class _ExpensesState extends State<Expenses> {
                           })
                       : SpeedDialChild(
                           child: Icon(
-                            Icons.receipt,
+                            Icons.reply,
                             size: 25,
                           ),
                           backgroundColor: NeumorphicTheme.baseColor(context),
@@ -1025,7 +1161,7 @@ class _ExpensesState extends State<Expenses> {
                         size: 25,
                       ),
                       backgroundColor: NeumorphicTheme.baseColor(context),
-                      label: 'All Archived Receipts',
+                      label: 'All Receipts',
                       labelStyle: TextStyle(fontSize: 15),
                       onTap: () {
                         setState(() {
@@ -1038,7 +1174,7 @@ class _ExpensesState extends State<Expenses> {
                         size: 25,
                       ),
                       backgroundColor: NeumorphicTheme.baseColor(context),
-                      label: 'Add Expense',
+                      label: 'Add Receipt',
                       labelStyle: TextStyle(fontSize: 15),
                       onTap: () => showModalBottomSheet(
                           isScrollControlled: true,

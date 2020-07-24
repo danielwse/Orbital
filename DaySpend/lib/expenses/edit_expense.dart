@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:DaySpend/database/db_models.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:DaySpend/fonts/header.dart';
+import 'package:DaySpend/expenses/inputFormatters.dart';
+import 'package:flutter/services.dart';
 
 class EditExpense extends StatefulWidget {
   final ExpensesBloc expensesBloc;
@@ -113,6 +115,8 @@ class _EditExpenseState extends State<EditExpense> {
                     },
                     use24hFormat: true,
                     maximumDate: DateTime.now(),
+                    minimumDate:
+                        DateTime(DateTime.now().year, DateTime.now().month, 1),
                     minimumYear: DateTime.now().year,
                     maximumYear: DateTime.now().year,
                     mode: CupertinoDatePickerMode.date),
@@ -211,7 +215,7 @@ class _EditExpenseState extends State<EditExpense> {
                                         if (categoryChanged) {
                                           widget.expensesBloc
                                               .changeExpenseCategory(
-                                                  _currentCategory.name,
+                                                  _currentCategory.id,
                                                   widget.expenseID);
 
                                           widget.categoryBloc
@@ -245,7 +249,7 @@ class _EditExpenseState extends State<EditExpense> {
                                         if (categoryChanged) {
                                           widget.expensesBloc
                                               .changeExpenseCategory(
-                                                  _currentCategory.name,
+                                                  _currentCategory.id,
                                                   widget.expenseID);
                                           if (convertStringtoDatetime(
                                                   widget.date)
@@ -305,6 +309,11 @@ class _EditExpenseState extends State<EditExpense> {
                         color: Colors.grey[300],
                         borderRadius: BorderRadius.circular(10)),
                     child: TextField(
+                        inputFormatters: [
+                          DecimalTextInputFormatter(decimalRange: 2),
+                          DecimalPointTextInputFormatter(),
+                          LengthLimitingTextInputFormatter(8),
+                        ],
                         controller: _amountController,
                         onChanged: (val) {
                           amountChange();

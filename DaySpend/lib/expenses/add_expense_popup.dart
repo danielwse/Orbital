@@ -5,6 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:DaySpend/database/DatabaseBloc.dart';
 import 'package:DaySpend/database/db_models.dart';
 import 'package:DaySpend/fonts/header.dart';
+import 'package:DaySpend/expenses/inputFormatters.dart';
+import 'package:flutter/services.dart';
 
 class AddExpense extends StatefulWidget {
   AddExpense({Key key}) : super(key: key);
@@ -177,6 +179,8 @@ class _DecoratedTextFieldState extends State<DecoratedTextField> {
                     },
                     use24hFormat: true,
                     maximumDate: DateTime.now(),
+                    minimumDate:
+                        DateTime(DateTime.now().year, DateTime.now().month, 1),
                     minimumYear: DateTime.now().year,
                     maximumYear: DateTime.now().year,
                     mode: CupertinoDatePickerMode.date),
@@ -275,6 +279,11 @@ class _DecoratedTextFieldState extends State<DecoratedTextField> {
         decoration: BoxDecoration(
             color: Colors.grey[300], borderRadius: BorderRadius.circular(10)),
         child: TextField(
+            inputFormatters: [
+              DecimalTextInputFormatter(decimalRange: 2),
+              DecimalPointTextInputFormatter(),
+              LengthLimitingTextInputFormatter(8),
+            ],
             controller: amountController,
             onChanged: (val) {
               isEmpty();

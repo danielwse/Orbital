@@ -13,7 +13,6 @@ class PlannerHome extends StatefulWidget {
 }
 
 class _PlannerHomeState extends State<PlannerHome> {
-
   final TasksBloc tasksBloc = TasksBloc();
 
   @override
@@ -25,12 +24,15 @@ class _PlannerHomeState extends State<PlannerHome> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height/2,
+      height: MediaQuery.of(context).size.height / 2.5,
       width: MediaQuery.of(context).size.width,
       // ignore: missing_required_param
       child: ChangeNotifierProvider(
         builder: (context) => PlannerWidgetFunctions(),
-        child: TodayTaskList(tasksBloc: tasksBloc, disableNotificationFn: widget.disableNotificationFn, notificationFn: widget.notificationFn),
+        child: TodayTaskList(
+            tasksBloc: tasksBloc,
+            disableNotificationFn: widget.disableNotificationFn,
+            notificationFn: widget.notificationFn),
       ),
     );
   }
