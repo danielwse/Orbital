@@ -625,9 +625,7 @@ class _ExpensesState extends State<Expenses> {
                                             ]))));
                               }
 
-                              if (item.id == 2 ||
-                                  item.id == 3 ||
-                                  item.id == 4) {
+                              if (item.id == 2 || item.id == 3) {
                                 return FlipCard(
                                     key: cardKey,
                                     direction: FlipDirection.HORIZONTAL,

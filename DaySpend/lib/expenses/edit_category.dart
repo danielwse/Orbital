@@ -319,8 +319,11 @@ class _EditCategoryState extends State<EditCategory> {
                                                                     .symmetric(
                                                                         horizontal:
                                                                             20),
-                                                                labelText:
-                                                                    "Change Budget %",
+                                                                labelText: snapshot
+                                                                            .data ==
+                                                                        "Not Set"
+                                                                    ? "Set A Max Spend First"
+                                                                    : "Change Budget %",
                                                                 labelStyle:
                                                                     TextStyle(
                                                                         fontSize:
